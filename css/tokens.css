@@ -18,4 +18,36 @@
   --page-top-padding-desktop: 80px;     /* Desktop, max 1799px */
   --page-top-padding-tablet: 40px;      /* Tablet, max 1279px */
   --page-top-padding-mobile: 20px;      /* Mobile, max 800px */
+
+  /* Typography — font sizes per breakpoint.
+     Only font-sizes are tokenized; line-height, letter-spacing, and
+     padding/margin are hardcoded inline in base.css (element-specific,
+     less likely to need centralized control). */
+
+  --font-size-h1-large: 64px;
+  --font-size-h1-desktop: 64px;
+  --font-size-h1-tablet: 56px;
+  --font-size-h1-mobile: 48px;
+
+  /* H1 pink-span variant (Giant Heading).
+     Mobile intentionally larger than Tablet — not a typo. */
+  --font-size-h1-span-large: 32pt;
+  --font-size-h1-span-desktop: 28pt;
+  --font-size-h1-span-tablet: 20pt;
+  --font-size-h1-span-mobile: 32pt;
+
+  --font-size-h2-large: 38px;
+  --font-size-h2-desktop: 38px;
+  --font-size-h2-tablet: 32px;
+  --font-size-h2-mobile: 28px;
+
+  --font-size-h3-large: 24px;
+  --font-size-h3-desktop: 24px;
+  --font-size-h3-tablet: 22px;
+  --font-size-h3-mobile: 20px;
+
+  --font-size-body-large: 20px;
+  --font-size-body-desktop: 18px;
+  --font-size-body-tablet: 17px;
+  --font-size-body-mobile: 16px;
 }
