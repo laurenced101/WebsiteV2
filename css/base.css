@@ -394,3 +394,97 @@ h3 {
   padding: 0 !important;
   margin: 0 !important;
 }
+
+/* -------------------------------------------------------------------------
+   Default callout — no bg-* class.
+   100vw full-bleed: width = viewport, negative left/right margins of
+   (50% - 50vw) pull the element out of the centered content max-width
+   so it spans the full screen. flex row / align-items flex-end so
+   children inside lay out like a section header.
+   ------------------------------------------------------------------------- */
+
+.notion-callout:not([class*="bg-"]) {
+  width: var(--callout-width-default) !important;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+  margin-top: 100px !important;
+  margin-bottom: 30px !important;
+  padding: var(--callout-padding-default) !important;
+  border: var(--callout-border-default) !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-end !important;
+}
+
+/* -------------------------------------------------------------------------
+   Grey — 100% of content area, centered.
+   Targets both "gray" (Notion's spelling) and "grey" defensively.
+   ------------------------------------------------------------------------- */
+
+.notion-callout.bg-gray-light,
+.notion-callout.bg-grey-light {
+  width: var(--callout-width-grey) !important;
+  margin: var(--callout-margin-top) auto var(--callout-margin-bottom) !important;
+  padding: var(--callout-padding-grey) !important;
+  border: var(--callout-border-grey) !important;
+}
+
+/* -------------------------------------------------------------------------
+   Blue — 80% of content area, centered. Bumps to 100% on Tablet/Mobile
+   so it doesn't get awkwardly narrow at smaller widths.
+   ------------------------------------------------------------------------- */
+
+.notion-callout.bg-blue-light {
+  width: var(--callout-width-blue) !important;
+  margin: var(--callout-margin-top) auto var(--callout-margin-bottom) !important;
+  padding: var(--callout-padding-blue) !important;
+  border: var(--callout-border-blue) !important;
+}
+
+@media (max-width: 1279px) {
+  .notion-callout.bg-blue-light {
+    width: 100% !important;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Pink — 60% of content area, centered. Bumps to 100% on Tablet/Mobile
+   for the same reason as blue (60% gets too narrow at those widths).
+   ------------------------------------------------------------------------- */
+
+.notion-callout.bg-pink-light {
+  width: var(--callout-width-pink) !important;
+  margin: var(--callout-margin-top) auto var(--callout-margin-bottom) !important;
+  padding: var(--callout-padding-pink) !important;
+  border: var(--callout-border-pink) !important;
+}
+
+@media (max-width: 1279px) {
+  .notion-callout.bg-pink-light {
+    width: 100% !important;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Purple — 60% of content area, left-aligned.
+   margin: top auto bottom 0 → right=auto, left=0 → hugs left edge.
+   ------------------------------------------------------------------------- */
+
+.notion-callout.bg-purple-light {
+  width: var(--callout-width-purple) !important;
+  margin: var(--callout-margin-top) auto var(--callout-margin-bottom) 0 !important;
+  padding: var(--callout-padding-purple) !important;
+  border: var(--callout-border-purple) !important;
+}
+
+/* -------------------------------------------------------------------------
+   Red — 60% of content area, right-aligned.
+   margin: top 0 bottom auto → left=auto, right=0 → hugs right edge.
+   ------------------------------------------------------------------------- */
+
+.notion-callout.bg-red-light {
+  width: var(--callout-width-red) !important;
+  margin: var(--callout-margin-top) 0 var(--callout-margin-bottom) auto !important;
+  padding: var(--callout-padding-red) !important;
+  border: var(--callout-border-red) !important;
+}
