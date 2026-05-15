@@ -11,9 +11,13 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Neutralize Super's default left/right padding so our layout widths fully
-   control horizontal space. */
-.notion-root {
+/* Neutralize Super's default left/right padding on the body wrapper and the
+   navbar/footer outer bars so our layout widths fully control horizontal
+   space. Without this, the navbar/footer __content elements end up more
+   inset than the body content. */
+.notion-root,
+.super-navbar,
+.super-footer {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
