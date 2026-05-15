@@ -545,3 +545,59 @@ h3 {
   font-weight: 400 !important;
   padding: 0 !important;
 }
+
+/* =========================================================================
+   Footer
+   Border, padding, grid behavior, and child-element rules. Some selectors
+   target child elements (__list, __list-links, __icons) that may not
+   appear on every page depending on Super's footer config; the rules
+   apply when that content exists.
+   ========================================================================= */
+
+.super-footer {
+  border-top: var(--footer-border-width) solid var(--color-primary) !important;
+  padding-top: var(--footer-padding-top) !important;
+  padding-bottom: var(--footer-padding-bottom) !important;
+}
+
+/* Lighter font weight across all footer content (overrides headings,
+   body text, links inside the footer). */
+.super-footer,
+.super-footer * {
+  font-weight: var(--footer-font-weight) !important;
+}
+
+/* Override Super's fixed-row-height grid; rows auto-size to content. */
+.super-footer__content {
+  grid-template-rows: auto !important;
+  align-items: start !important;
+  padding-bottom: 40px !important;
+}
+
+.super-footer__list {
+  gap: var(--footer-list-gap) !important;
+}
+
+.super-footer__list-links {
+  gap: var(--footer-list-links-gap) !important;
+}
+
+.super-footer__icons {
+  align-items: start !important;
+  padding: 0 !important;
+}
+
+/* Logo cell: tight, no fixed height baggage from Super. */
+.super-footer__logo {
+  line-height: 1 !important;
+  margin: 0 !important;
+  height: auto !important;
+  min-height: unset !important;
+  max-height: unset !important;
+  align-self: start !important;
+}
+
+/* Allow the brand text to wrap (Super defaults to nowrap). */
+.super-footer__logo-text {
+  white-space: normal !important;
+}
