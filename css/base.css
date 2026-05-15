@@ -234,3 +234,85 @@ h1 span.highlighted-color.color-pink {
     line-height: 72px !important;
   }
 }
+
+/* -------------------------------------------------------------------------
+   H2
+   ------------------------------------------------------------------------- */
+
+/* Large Desktop (1800px+) — default */
+h2 {
+  font-size: var(--font-size-h2-large) !important;
+  line-height: 120% !important;
+  letter-spacing: -1px !important;
+  margin-top: 40px !important;
+  font-weight: 300 !important;
+  color: var(--color-primary) !important;
+}
+
+/* Desktop (max 1799px) */
+@media (max-width: 1799px) {
+  h2 {
+    font-size: var(--font-size-h2-desktop) !important;
+  }
+}
+
+/* Tablet (max 1279px) */
+@media (max-width: 1279px) {
+  h2 {
+    font-size: var(--font-size-h2-tablet) !important;
+    letter-spacing: -0.8px !important;
+    margin-top: 24px !important;
+  }
+}
+
+/* Mobile (max 800px) */
+@media (max-width: 800px) {
+  h2 {
+    font-size: var(--font-size-h2-mobile) !important;
+    letter-spacing: -0.5px !important;
+    margin-top: 4px !important;
+    margin-bottom: 4px !important;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   H3
+   ------------------------------------------------------------------------- */
+
+/* Large Desktop (1800px+) — default */
+h3 {
+  font-size: var(--font-size-h3-large) !important;
+  line-height: 130% !important;
+  letter-spacing: -0.5px !important;
+  margin-top: 20px !important;
+  margin-bottom: 16px !important;
+  font-weight: 600 !important;
+  color: var(--color-primary) !important;
+}
+
+/* Desktop (max 1799px) */
+@media (max-width: 1799px) {
+  h3 {
+    font-size: var(--font-size-h3-desktop) !important;
+  }
+}
+
+/* Tablet (max 1279px) */
+@media (max-width: 1279px) {
+  h3 {
+    font-size: var(--font-size-h3-tablet) !important;
+    letter-spacing: -0.4px !important;
+    margin-top: 16px !important;
+    margin-bottom: 12px !important;
+  }
+}
+
+/* Mobile (max 800px) — no margin-top on mobile */
+@media (max-width: 800px) {
+  h3 {
+    font-size: var(--font-size-h3-mobile) !important;
+    letter-spacing: -0.3px !important;
+    margin-top: 0 !important;
+    margin-bottom: 4px !important;
+  }
+}
