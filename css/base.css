@@ -48,8 +48,14 @@ html {
 /* =========================================================================
    Layout widths
    Applied to navbar, content wrapper, content, and footer.
-   Large Desktop / Desktop: centered max-width.
-   Tablet / Mobile: full width minus 2× margin.
+   Large Desktop / Desktop: centered max-width on the inner __content
+   elements.
+   Tablet / Mobile: side gutters via padding on the outer bar containers
+   (.super-navbar, .super-content-wrapper, .super-footer). The inner
+   __content elements have width:100% from Super, so they fit the padded
+   content area cleanly. Putting the gutter on .super-content directly
+   would compound with the wrapper's gutter and let width:100% overflow
+   the viewport — keep it on the outer layer only.
    ========================================================================= */
 
 /* Large Desktop (1800px+) — default */
@@ -74,24 +80,33 @@ html {
 
 /* Tablet (max 1279px) */
 @media (max-width: 1279px) {
+  /* Side gutters via padding on the outer bar containers. */
+  .super-navbar,
+  .super-content-wrapper,
+  .super-footer {
+    padding-left: var(--layout-margin-tablet) !important;
+    padding-right: var(--layout-margin-tablet) !important;
+  }
+
+  /* Drop the Large/Desktop centered max-width; let the inner __content
+     fill the padded outer bar. */
   .super-navbar__content,
   .super-content-wrapper,
   .super-content,
   .super-footer__content {
     max-width: none !important;
-    margin-left: var(--layout-margin-tablet) !important;
-    margin-right: var(--layout-margin-tablet) !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 }
 
 /* Mobile (max 800px) */
 @media (max-width: 800px) {
-  .super-navbar__content,
+  .super-navbar,
   .super-content-wrapper,
-  .super-content,
-  .super-footer__content {
-    margin-left: var(--layout-margin-mobile) !important;
-    margin-right: var(--layout-margin-mobile) !important;
+  .super-footer {
+    padding-left: var(--layout-margin-mobile) !important;
+    padding-right: var(--layout-margin-mobile) !important;
   }
 }
 
