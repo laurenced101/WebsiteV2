@@ -1,9 +1,21 @@
-/* tokens.css — design tokens for laurence-dawes.design
-   The one place to adjust padding, type, colors, etc.
-   Placeholder values for now; real tokens land in a later session. */
+/* tokens.css — design tokens for laurence-dawes.design.
+   The one place to adjust padding, type, color. */
 
 :root {
-  --page-padding: 50px;
-  --color-bg: #ffffff;
-  --color-fg: #111111;
+  /* Color */
+  --color-primary: #0000F5;
+
+  /* Layout max-widths (centered, used on Large Desktop + Desktop) */
+  --layout-max-width-large: 1200px;     /* Large Desktop, 1800px+ */
+  --layout-max-width-desktop: 1000px;   /* Desktop, max 1799px */
+
+  /* Layout margins (used on Tablet + Mobile in place of max-width) */
+  --layout-margin-tablet: 20px;         /* Tablet, max 1279px */
+  --layout-margin-mobile: 12px;         /* Mobile, max 800px */
+
+  /* Page top padding (gap between navbar and content) */
+  --page-top-padding-large: 100px;      /* Large Desktop, 1800px+ */
+  --page-top-padding-desktop: 80px;     /* Desktop, max 1799px */
+  --page-top-padding-tablet: 40px;      /* Tablet, max 1279px */
+  --page-top-padding-mobile: 20px;      /* Mobile, max 800px */
 }
