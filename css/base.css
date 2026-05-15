@@ -364,3 +364,33 @@ h3 {
   text-align: right !important;
   padding: 12px 0 0 !important;
 }
+
+/* =========================================================================
+   Callouts
+   Notion callout background color = a layout preset (width + alignment).
+   Padding and border tune per color via tokens.css; default 0 / none.
+
+     default (no bg)  100vw, full-bleed, centered
+     grey             100% of content area, centered
+     blue              80% of content area, centered (Tablet/Mobile: 100%)
+     pink              60% of content area, centered (Tablet/Mobile: 100%)
+     purple            60% of content area, left-aligned
+     red               60% of content area, right-aligned
+   ========================================================================= */
+
+/* Base reset — applies to all callouts. Strip Super's background and
+   icon, and zero inner padding/margin so we have a clean container that
+   only layout rules act on. */
+.notion-callout {
+  background: transparent !important;
+}
+
+.notion-callout__icon {
+  display: none !important;
+}
+
+.notion-callout__content,
+.notion-callout .notion-image {
+  padding: 0 !important;
+  margin: 0 !important;
+}
