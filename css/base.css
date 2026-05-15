@@ -127,3 +127,110 @@ html {
     padding-top: var(--page-top-padding-mobile) !important;
   }
 }
+
+/* =========================================================================
+   Typography
+   Headings (h1/h2/h3) and body text. Font sizes come from tokens.css;
+   line-height, letter-spacing, and padding/margin are hardcoded inline.
+   ========================================================================= */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+body {
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
+  animation: fadeIn 1s ease-in;
+}
+
+/* Heading reset — zero Super's heading-wrapper padding, constrain heading
+   width so long words don't run flush to the right edge, force left align. */
+.notion-heading {
+  padding: 0 !important;
+}
+
+h1, h2, h3 {
+  max-width: 95% !important;
+  text-align: left !important;
+}
+
+/* -------------------------------------------------------------------------
+   H1
+   ------------------------------------------------------------------------- */
+
+/* Large Desktop (1800px+) — default */
+h1 {
+  font-size: var(--font-size-h1-large) !important;
+  line-height: 72px !important;
+  letter-spacing: 0.6px !important;
+  padding-bottom: 20px !important;
+  font-weight: 500 !important;
+  color: var(--color-primary) !important;
+}
+
+/* Desktop (max 1799px) */
+@media (max-width: 1799px) {
+  h1 {
+    font-size: var(--font-size-h1-desktop) !important;
+    padding-bottom: 120px !important;
+  }
+}
+
+/* Tablet (max 1279px) */
+@media (max-width: 1279px) {
+  h1 {
+    font-size: var(--font-size-h1-tablet) !important;
+    line-height: 62px !important;
+    letter-spacing: 0.5px !important;
+    padding-bottom: 80px !important;
+  }
+}
+
+/* Mobile (max 800px) */
+@media (max-width: 800px) {
+  h1 {
+    font-size: var(--font-size-h1-mobile) !important;
+    line-height: 54px !important;
+    letter-spacing: 0.4px !important;
+    padding-bottom: 60px !important;
+  }
+}
+
+/* H1 pink-span variant ("Giant Heading"). Targets Notion's color-pink
+   span inside an h1; color is overridden to primary. */
+
+/* Large Desktop (1800px+) — default */
+h1 span.highlighted-color.color-pink {
+  font-size: var(--font-size-h1-span-large) !important;
+  line-height: 26px !important;
+  font-weight: 300 !important;
+  letter-spacing: 0.04em !important;
+  color: var(--color-primary) !important;
+}
+
+/* Desktop (max 1799px) */
+@media (max-width: 1799px) {
+  h1 span.highlighted-color.color-pink {
+    font-size: var(--font-size-h1-span-desktop) !important;
+    line-height: 36px !important;
+  }
+}
+
+/* Tablet (max 1279px) */
+@media (max-width: 1279px) {
+  h1 span.highlighted-color.color-pink {
+    font-size: var(--font-size-h1-span-tablet) !important;
+    line-height: 32px !important;
+  }
+}
+
+/* Mobile (max 800px) */
+@media (max-width: 800px) {
+  h1 span.highlighted-color.color-pink {
+    font-size: var(--font-size-h1-span-mobile) !important;
+    line-height: 72px !important;
+  }
+}
