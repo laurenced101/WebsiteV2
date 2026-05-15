@@ -1,0 +1,7 @@
+/* base.css — base/reset layer over Super's default layout CSS.
+   Real styles land in a later session. The hotpink body below is a
+   sanity check: if the page background is hotpink, this file is loading. */
+
+body {
+  background: hotpink;
+}

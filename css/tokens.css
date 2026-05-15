@@ -1,0 +1,9 @@
+/* tokens.css — design tokens for laurence-dawes.design
+   The one place to adjust padding, type, colors, etc.
+   Placeholder values for now; real tokens land in a later session. */
+
+:root {
+  --page-padding: 50px;
+  --color-bg: #ffffff;
+  --color-fg: #111111;
+}
