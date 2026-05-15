@@ -1,7 +1,30 @@
-/* base.css — base/reset layer over Super's default layout CSS.
-   Real styles land in a later session. The hotpink body below is a
-   sanity check: if the page background is hotpink, this file is loading. */
+/* base.css — base/reset layer for laurence-dawes.design.
+   Loads on every page via Super's site-wide code injection.
+   Sits on top of Super's default layout CSS; most overrides need !important
+   because Super's selectors are highly specific. */
 
-body {
-  background: hotpink;
+/* =========================================================================
+   Base reset
+   ========================================================================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Neutralize Super's default left/right padding so our layout widths fully
+   control horizontal space. */
+.notion-root {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Hide Super's auto-generated page title block. */
+.notion-header {
+  display: none !important;
+}
+
+/* Override Super's global `transition: all` on .notion-button so it doesn't
+   interfere with future animations. Override only — no styling. */
+.notion-button {
+  transition: none !important;
 }
