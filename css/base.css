@@ -28,3 +28,86 @@ html {
 .notion-button {
   transition: none !important;
 }
+
+/* =========================================================================
+   Layout widths
+   Applied to navbar, content wrapper, content, and footer.
+   Large Desktop / Desktop: centered max-width.
+   Tablet / Mobile: full width minus 2× margin.
+   ========================================================================= */
+
+/* Large Desktop (1800px+) — default */
+.super-navbar__content,
+.super-content-wrapper,
+.super-content,
+.super-footer__content {
+  max-width: var(--layout-max-width-large) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Desktop (max 1799px) */
+@media (max-width: 1799px) {
+  .super-navbar__content,
+  .super-content-wrapper,
+  .super-content,
+  .super-footer__content {
+    max-width: var(--layout-max-width-desktop) !important;
+  }
+}
+
+/* Tablet (max 1279px) */
+@media (max-width: 1279px) {
+  .super-navbar__content,
+  .super-content-wrapper,
+  .super-content,
+  .super-footer__content {
+    max-width: none !important;
+    margin-left: var(--layout-margin-tablet) !important;
+    margin-right: var(--layout-margin-tablet) !important;
+  }
+}
+
+/* Mobile (max 800px) */
+@media (max-width: 800px) {
+  .super-navbar__content,
+  .super-content-wrapper,
+  .super-content,
+  .super-footer__content {
+    margin-left: var(--layout-margin-mobile) !important;
+    margin-right: var(--layout-margin-mobile) !important;
+  }
+}
+
+/* =========================================================================
+   Page top padding
+   Gap between navbar and content; scales per breakpoint.
+   padding-bottom: 0 — footer handles its own spacing.
+   ========================================================================= */
+
+/* Large Desktop (1800px+) — default */
+.super-content {
+  padding-top: var(--page-top-padding-large) !important;
+  padding-bottom: 0 !important;
+}
+
+/* Desktop (max 1799px) */
+@media (max-width: 1799px) {
+  .super-content {
+    padding-top: var(--page-top-padding-desktop) !important;
+  }
+}
+
+/* Tablet (max 1279px) */
+@media (max-width: 1279px) {
+  .super-content {
+    padding-top: var(--page-top-padding-tablet) !important;
+  }
+}
+
+/* Mobile (max 800px) */
+@media (max-width: 800px) {
+  .super-content {
+    padding-top: var(--page-top-padding-mobile) !important;
+  }
+}
