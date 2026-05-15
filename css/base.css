@@ -11,13 +11,25 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Neutralize Super's default left/right padding on the body wrapper and the
-   navbar/footer outer bars so our layout widths fully control horizontal
-   space. Without this, the navbar/footer __content elements end up more
-   inset than the body content. */
+/* Neutralize Super's default left/right padding on the body wrapper and
+   the navbar/footer outer bars so our layout widths fully control
+   horizontal space. */
 .notion-root,
 .super-navbar,
 .super-footer {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Align the navbar's inner content with the body content edges. Super
+   adds horizontal padding at multiple layers inside .super-navbar__content
+   (8px on __content, 16px on __logo, 16px+8px on __actions); compounded
+   they push the brand ~24px inward from our max-width edge while body
+   content sits flush. Zero those outer-layer paddings. Per-item padding
+   stays so links keep their hover/click area. */
+.super-navbar__content,
+.super-navbar__logo,
+.super-navbar__actions {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
