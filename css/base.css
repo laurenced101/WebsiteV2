@@ -504,3 +504,44 @@ h3 {
   padding: var(--callout-padding-red) !important;
   border: var(--callout-border-red) !important;
 }
+
+/* =========================================================================
+   Navbar
+   Border, link styling, brand styling, and small alignment tweaks. The
+   navbar's structural alignment (max-width on Large/Desktop, side-gutter
+   padding on Tablet/Mobile, brand flush with body content edges) is set
+   in the Layout widths section above; this section is pure visual style.
+   ========================================================================= */
+
+.super-navbar {
+  border-bottom: var(--navbar-border-width) solid var(--color-primary) !important;
+}
+
+.super-navbar__actions {
+  padding: 0 !important;
+  color: var(--color-primary) !important;
+}
+
+/* Pull the right edge of the nav list out by one item's padding-right so
+   the rightmost link's text aligns with the body content's right edge. */
+.super-navbar__item-list {
+  gap: var(--navbar-item-gap) !important;
+  margin-right: -12px !important;
+}
+
+/* Nav links (and, technically, the brand link, which is also .notion-link —
+   overridden by the .super-navbar__logo rule below). */
+.super-navbar .notion-link {
+  color: var(--color-primary) !important;
+  font-weight: var(--navbar-link-font-weight) !important;
+  font-size: var(--navbar-link-font-size) !important;
+}
+
+/* Brand logo: lighter than the nav links. Specificity 0,2,0 matches the
+   .notion-link rule above; source order makes this win for the brand and
+   its inner span. Padding is re-zeroed comprehensively (top/bottom too). */
+.super-navbar .super-navbar__logo,
+.super-navbar .super-navbar__logo * {
+  font-weight: 400 !important;
+  padding: 0 !important;
+}
