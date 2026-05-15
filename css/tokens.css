@@ -50,4 +50,43 @@
   --font-size-body-desktop: 18px;
   --font-size-body-tablet: 17px;
   --font-size-body-mobile: 16px;
+
+  /* Callouts — Notion callout background color = a layout preset.
+     Color determines width + alignment; padding and border tune per
+     color (default to 0 / "none"; enable per color as needed). */
+
+  /* Per-color widths */
+  --callout-width-default: 100vw;       /* full-bleed, escapes content max-width */
+  --callout-width-grey:    100%;        /* full content area, centered */
+  --callout-width-blue:    80%;         /* centered (Tablet/Mobile: 100% via base.css) */
+  --callout-width-pink:    60%;         /* centered (Tablet/Mobile: 100% via base.css) */
+  --callout-width-purple:  60%;         /* left-aligned */
+  --callout-width-red:     60%;         /* right-aligned */
+
+  /* Per-color padding */
+  --callout-padding-default: 0;
+  --callout-padding-grey:    0;
+  --callout-padding-blue:    0;
+  --callout-padding-pink:    0;
+  --callout-padding-purple:  0;
+  --callout-padding-red:     0;
+
+  /* Per-color border ("none" to disable; for a primary-color border use e.g.
+     --callout-border-blue: var(--callout-border-width) solid var(--callout-border-color); ) */
+  --callout-border-default: none;
+  --callout-border-grey:    none;
+  --callout-border-blue:    none;
+  --callout-border-pink:    none;
+  --callout-border-purple:  none;
+  --callout-border-red:     none;
+
+  /* Shared vertical spacing — the default callout has more breathing room
+     above and overrides these inline in base.css. */
+  --callout-margin-top:    40px;
+  --callout-margin-bottom: 40px;
+
+  /* Shared border styling — reference these from per-color border tokens
+     when enabling a border on a specific color. */
+  --callout-border-color: var(--color-primary);
+  --callout-border-width: 1.5px;
 }
