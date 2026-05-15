@@ -316,3 +316,51 @@ h3 {
     margin-bottom: 4px !important;
   }
 }
+
+/* -------------------------------------------------------------------------
+   Body text
+   ------------------------------------------------------------------------- */
+
+/* Large Desktop (1800px+) — default */
+.notion-text {
+  font-size: var(--font-size-body-large) !important;
+  line-height: 160% !important;
+  letter-spacing: -0.5px !important;
+  font-weight: 400 !important;
+}
+
+/* Desktop (max 1799px) */
+@media (max-width: 1799px) {
+  .notion-text {
+    font-size: var(--font-size-body-desktop) !important;
+  }
+}
+
+/* Tablet (max 1279px) */
+@media (max-width: 1279px) {
+  .notion-text {
+    font-size: var(--font-size-body-tablet) !important;
+    letter-spacing: -0.4px !important;
+  }
+}
+
+/* Mobile (max 800px) */
+@media (max-width: 800px) {
+  .notion-text {
+    font-size: var(--font-size-body-mobile) !important;
+    letter-spacing: -0.3px !important;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Images and captions
+   ------------------------------------------------------------------------- */
+
+.notion-image {
+  display: block !important;
+}
+
+.notion-caption {
+  text-align: right !important;
+  padding: 12px 0 0 !important;
+}
