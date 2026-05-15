@@ -56,8 +56,8 @@
      color (default to 0 / "none"; enable per color as needed). */
 
   /* Per-color widths */
-  --callout-width-default: 100vw;       /* full-bleed, escapes content max-width */
-  --callout-width-grey:    100%;        /* full content area, centered */
+  --callout-width-default: 100%;        /* full content area, centered */
+  --callout-width-grey:    100vw;       /* full-bleed, escapes content max-width */
   --callout-width-blue:    80%;         /* centered (Tablet/Mobile: 100% via base.css) */
   --callout-width-pink:    60%;         /* centered (Tablet/Mobile: 100% via base.css) */
   --callout-width-purple:  60%;         /* left-aligned */
