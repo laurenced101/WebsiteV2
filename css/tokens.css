@@ -89,4 +89,21 @@
      when enabling a border on a specific color. */
   --callout-border-color: var(--color-primary);
   --callout-border-width: 1.5px;
+
+  /* Chrome — navbar + footer.
+     Border color for both reuses --color-primary. */
+
+  /* Navbar */
+  --navbar-border-width:    1.5px;
+  --navbar-link-font-size:  18px;
+  --navbar-link-font-weight: 500;
+  --navbar-item-gap:        10px;
+
+  /* Footer (old project used pt for border width; px here for consistency) */
+  --footer-border-width:    1.2px;
+  --footer-padding-top:     30px;
+  --footer-padding-bottom:  20px;
+  --footer-list-gap:        22px;
+  --footer-list-links-gap:  12px;
+  --footer-font-weight:     300;
 }
