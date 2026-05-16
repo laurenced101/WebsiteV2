@@ -106,4 +106,37 @@
   --footer-list-gap:        22px;
   --footer-list-links-gap:  12px;
   --footer-font-weight:     300;
+
+  /* Buttons — Notion button background color = a style preset, mirroring
+     the callout pattern. Hover values are shared across all button types
+     today; split into per-button tokens later if any treatment wants a
+     different feel. */
+
+  /* Blue button — large text-style, borderless */
+  --button-blue-font-size:   8vw;
+  --button-blue-font-weight: 300;
+  --button-blue-padding:     12% 0;
+
+  /* Pink button — framed (used as the scroll-to-top trigger; click
+     behavior lands in session #7) */
+  --button-pink-font-size:    38px;
+  --button-pink-font-weight:  300;
+  --button-pink-padding:      24%;
+  --button-pink-border-width: 3px;
+
+  /* Default button — small framed, no color set */
+  --button-default-font-size:    16px;
+  --button-default-font-weight:  500;
+  --button-default-border-width: 2px;
+  --button-default-color:        #111111;
+  --button-default-padding:      12px 20px;
+
+  /* Navbar CTA (Super's native .super-navbar__cta, if configured) */
+  --button-cta-padding:     10px 16px;
+  --button-cta-font-weight: 500;
+
+  /* Shared hover */
+  --button-hover-scale:    1.03;
+  --button-hover-opacity:  0.5;
+  --button-hover-duration: 300ms;
 }
