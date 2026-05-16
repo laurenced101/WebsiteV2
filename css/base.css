@@ -667,30 +667,22 @@ h3 {
 }
 
 /* -------------------------------------------------------------------------
-   Hover — shared transform + opacity. Targets the .notion-button WRAPPER
-   (block-level, display: block) rather than the inline-flex __content
-   inside it. Transforming an inline-flex element nudges the surrounding
-   line box on Safari, which shows up as a 1–2px reflow of content below
-   the button on hover. The wrapper is block-level, so its transform is
-   purely a paint-time operation. Navbar CTA hovers directly.
-
-   Overrides the session #2 transition: none on .notion-button — we want
-   transform and opacity to animate; other properties remain untransitioned.
+   Hover — opacity only. The scale transform was producing a layout-shift
+   symptom on the first hover after page load (only the first; subsequent
+   hovers were clean). Multiple fix attempts targeting layer promotion,
+   wrapper vs content scaling, and inline-flex baselines all failed to
+   resolve it. Opacity changes cannot reflow layout — they are paint-
+   only — so dropping the scale eliminates the symptom by construction.
+   The shared --button-hover-scale token stays in tokens.css for easy
+   re-introduction once the root cause is identified.
    ------------------------------------------------------------------------- */
 
 .notion-button,
 .super-navbar__cta {
-  transition: transform var(--button-hover-duration) ease,
-              opacity   var(--button-hover-duration) ease !important;
-  /* Pre-promote to a composited layer so the FIRST hover after page
-     load doesn't have to create one — layer creation on the fly was
-     causing a brief, perceived layout shift on the first hover only
-     (subsequent hovers were already clean). */
-  will-change: transform !important;
+  transition: opacity var(--button-hover-duration) ease !important;
 }
 
 .notion-button:hover,
 .super-navbar__cta:hover {
-  transform: scale(var(--button-hover-scale)) !important;
   opacity: var(--button-hover-opacity) !important;
 }
