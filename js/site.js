@@ -155,29 +155,22 @@
 (function () {
   "use strict";
 
-  const SCROLL_DURATION_MS = 1100;
+  const SCROLL_DURATION_MS = 1900;
   const BOUND_ATTR = "data-scroll-top-bound";
 
-  // easeOutCubic — uniform velocity at the start, gentle deceleration to
-  // a stop. Earlier easeInOutQuart had near-zero velocity at both ends,
-  // producing sub-1px-per-frame deltas that read as choppy regardless of
-  // FPS. easeOutCubic keeps every frame's delta perceptually meaningful.
-  const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+  const easeInOutQuart = (t) =>
+    t < 0.5
+      ? 8 * t * t * t * t
+      : 1 - Math.pow(-2 * t + 2, 4) / 2;
 
   const smoothScrollToTop = () => {
     const startY = window.scrollY;
     if (startY === 0) return;
-
-    // Direct scrollTop assignment instead of window.scrollTo(). The
-    // scrollTop setter is always instant by spec — CSS scroll-behavior
-    // does not apply to direct property writes, so each rAF tick lands
-    // exactly where we tell it.
-    const scrollEl = document.scrollingElement || document.documentElement;
     const startTime = performance.now();
 
     const step = (now) => {
       const t = Math.min((now - startTime) / SCROLL_DURATION_MS, 1);
-      scrollEl.scrollTop = startY * (1 - easeOutCubic(t));
+      window.scrollTo(0, startY * (1 - easeInOutQuart(t)));
       if (t < 1) requestAnimationFrame(step);
     };
 
