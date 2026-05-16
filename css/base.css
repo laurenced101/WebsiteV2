@@ -682,6 +682,11 @@ h3 {
 .super-navbar__cta {
   transition: transform var(--button-hover-duration) ease,
               opacity   var(--button-hover-duration) ease !important;
+  /* Pre-promote to a composited layer so the FIRST hover after page
+     load doesn't have to create one — layer creation on the fly was
+     causing a brief, perceived layout shift on the first hover only
+     (subsequent hovers were already clean). */
+  will-change: transform !important;
 }
 
 .notion-button:hover,
