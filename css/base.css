@@ -601,3 +601,67 @@ h3 {
 .super-footer__logo-text {
   white-space: normal !important;
 }
+
+/* =========================================================================
+   Buttons
+   Notion button background color = a style preset (mirrors callouts):
+     blue   → large text-style, borderless
+     pink   → framed (scroll-to-top trigger; click behavior in session #7)
+     none   → small framed, dark text
+   Plus Super's navbar CTA (.super-navbar__cta) when configured. Hover
+   values are shared tokens today; split per-button later if any
+   treatment wants a different feel.
+   ========================================================================= */
+
+/* Wrappers — default to right-aligned (flex-end); pink button (scroll-
+   to-top) centers. */
+.notion-button {
+  display: block !important;
+  align-self: flex-end !important;
+}
+
+.notion-button:has(.bg-pink-light) {
+  align-self: center !important;
+}
+
+/* Default button — no bg-* class. Small framed, dark text. */
+.notion-button__content:not([class*="bg-"]) {
+  font-size: var(--button-default-font-size) !important;
+  font-weight: var(--button-default-font-weight) !important;
+  padding: var(--button-default-padding) !important;
+  border: var(--button-default-border-width) solid var(--button-default-color) !important;
+  color: var(--button-default-color) !important;
+  background-color: transparent !important;
+  border-radius: 0 !important;
+}
+
+/* Blue button — large text-style, borderless, primary color. */
+.notion-button__content.bg-blue-light {
+  padding: var(--button-blue-padding) !important;
+  font-size: var(--button-blue-font-size) !important;
+  font-weight: var(--button-blue-font-weight) !important;
+  color: var(--color-primary) !important;
+  border: none !important;
+  background-color: transparent !important;
+}
+
+/* Pink button — framed, primary-color outline. */
+.notion-button__content.bg-pink-light {
+  padding: var(--button-pink-padding) !important;
+  font-size: var(--button-pink-font-size) !important;
+  font-weight: var(--button-pink-font-weight) !important;
+  color: var(--color-primary) !important;
+  border: var(--button-pink-border-width) solid var(--color-primary) !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+}
+
+/* Navbar CTA — Super's native CTA button. Inert until configured in
+   Super; activates automatically when the element appears. */
+.super-navbar__cta {
+  padding: var(--button-cta-padding) !important;
+  font-weight: var(--button-cta-font-weight) !important;
+  border: 2px solid var(--color-primary) !important;
+  color: var(--color-primary) !important;
+  background: transparent !important;
+}
