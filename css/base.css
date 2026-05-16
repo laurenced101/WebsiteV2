@@ -679,6 +679,11 @@ h3 {
 .super-navbar__cta {
   transition: transform var(--button-hover-duration) ease,
               opacity   var(--button-hover-duration) ease !important;
+  /* Force a composited layer so the hover scale doesn't trigger a
+     line-box recalc on Safari (.notion-button__content is inline-flex,
+     and Safari can reflow neighboring blocks when an inline-level
+     element scales). */
+  will-change: transform !important;
 }
 
 .notion-button__content:not([class*="bg-"]):hover,
