@@ -135,3 +135,86 @@
     subtree:   true
   });
 })();
+
+/* =========================================================================
+   2. Smooth scroll-to-top
+   Pink buttons (.notion-button__content.bg-pink-light) intercept their
+   click and animate the page scroll from current Y to 0 over
+   SCROLL_DURATION_MS using easeInOutQuart. Color-as-behavior: every pink
+   button is a scroll-to-top trigger by design, consistent with the
+   button color/style preset system from session #6.
+
+   In Notion the button content is rendered as an <a>; the handler binds
+   to that (or falls back to the .notion-button wrapper if Notion changes
+   its markup later) so the whole hit area is captured.
+
+   Same SPA concerns as Part 1 — MutationObserver + timed retries + a
+   data-attribute bind-guard to prevent double-binding.
+   ========================================================================= */
+
+(function () {
+  "use strict";
+
+  const SCROLL_DURATION_MS = 1900;
+  const BOUND_ATTR = "data-scroll-top-bound";
+
+  const easeInOutQuart = (t) =>
+    t < 0.5
+      ? 8 * t * t * t * t
+      : 1 - Math.pow(-2 * t + 2, 4) / 2;
+
+  const smoothScrollToTop = () => {
+    const startY = window.scrollY;
+    if (startY === 0) return;
+    const startTime = performance.now();
+
+    const step = (now) => {
+      const t = Math.min((now - startTime) / SCROLL_DURATION_MS, 1);
+      window.scrollTo(0, startY * (1 - easeInOutQuart(t)));
+      if (t < 1) requestAnimationFrame(step);
+    };
+
+    requestAnimationFrame(step);
+  };
+
+  const bind = (el) => {
+    if (el.getAttribute(BOUND_ATTR)) return;
+    el.setAttribute(BOUND_ATTR, "true");
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      smoothScrollToTop();
+    });
+  };
+
+  const scan = () => {
+    document.querySelectorAll(".notion-button__content.bg-pink-light").forEach((content) => {
+      const target = content.closest("a") || content.closest(".notion-button") || content;
+      bind(target);
+    });
+  };
+
+  const onReady = () => {
+    scan();
+    setTimeout(scan, 200);
+    setTimeout(scan, 800);
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", onReady);
+  } else {
+    onReady();
+  }
+
+  let scanScheduled = false;
+  const scheduleScan = () => {
+    if (scanScheduled) return;
+    scanScheduled = true;
+    requestAnimationFrame(() => {
+      scanScheduled = false;
+      scan();
+    });
+  };
+  new MutationObserver(scheduleScan).observe(document.body, {
+    childList: true,
+    subtree:   true
+  });
+})();
