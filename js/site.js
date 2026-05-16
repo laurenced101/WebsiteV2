@@ -167,23 +167,19 @@
     const startY = window.scrollY;
     if (startY === 0) return;
 
-    // base.css sets html { scroll-behavior: smooth }, which makes every
-    // scrollTo() call inside our rAF loop re-smoothed by the browser and
-    // fight our easing (visibly jittery in Safari). Disable it for the
-    // duration of the animation; our easing is the smoothing.
-    const html = document.documentElement;
-    const prevBehavior = html.style.scrollBehavior;
-    html.style.scrollBehavior = "auto";
-
+    // Direct scrollTop assignment instead of window.scrollTo(). The
+    // scrollTop setter is always instant by spec — CSS scroll-behavior
+    // does not apply to direct property writes, so each rAF tick lands
+    // exactly where we tell it. window.scrollTo() in Safari still got
+    // re-smoothed even after we toggled html.style.scrollBehavior; this
+    // path sidesteps the issue entirely.
+    const scrollEl = document.scrollingElement || document.documentElement;
     const startTime = performance.now();
+
     const step = (now) => {
       const t = Math.min((now - startTime) / SCROLL_DURATION_MS, 1);
-      window.scrollTo(0, startY * (1 - easeInOutQuart(t)));
-      if (t < 1) {
-        requestAnimationFrame(step);
-      } else {
-        html.style.scrollBehavior = prevBehavior;
-      }
+      scrollEl.scrollTop = startY * (1 - easeInOutQuart(t));
+      if (t < 1) requestAnimationFrame(step);
     };
 
     requestAnimationFrame(step);
