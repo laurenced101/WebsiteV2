@@ -665,3 +665,26 @@ h3 {
   color: var(--color-primary) !important;
   background: transparent !important;
 }
+
+/* -------------------------------------------------------------------------
+   Hover — shared transform + opacity across all four button types. The
+   .notion-button wrapper has `transition: none` from the base reset
+   (session #2); transitions are declared per-element on the targets that
+   actually animate (the __content / __cta).
+   ------------------------------------------------------------------------- */
+
+.notion-button__content:not([class*="bg-"]),
+.notion-button__content.bg-blue-light,
+.notion-button__content.bg-pink-light,
+.super-navbar__cta {
+  transition: transform var(--button-hover-duration) ease,
+              opacity   var(--button-hover-duration) ease !important;
+}
+
+.notion-button__content:not([class*="bg-"]):hover,
+.notion-button__content.bg-blue-light:hover,
+.notion-button__content.bg-pink-light:hover,
+.super-navbar__cta:hover {
+  transform: scale(var(--button-hover-scale)) !important;
+  opacity: var(--button-hover-opacity) !important;
+}
