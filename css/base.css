@@ -680,9 +680,26 @@ h3 {
 .notion-button,
 .super-navbar__cta {
   transition: opacity var(--button-hover-duration) ease !important;
+  /* Pre-promote to a composited layer on page load via translateZ(0) so
+     the first hover doesn't trigger layer creation. The pink button has
+     padding: 24% on .notion-button__content.bg-pink-light inside an
+     align-self: center wrapper — that's a circular sizing setup, and
+     Safari can resolve it slightly differently before vs after the
+     first layer promotion (~1px subpixel difference), which manifested
+     as the "content below moves on first hover" symptom. translateZ(0)
+     and will-change: opacity together force the layer up front so the
+     resolution happens once at load and stays stable. */
+  transform: translateZ(0) !important;
+  will-change: opacity !important;
 }
 
 .notion-button:hover,
 .super-navbar__cta:hover {
   opacity: var(--button-hover-opacity) !important;
+}
+
+/* Explicit width on the pink button content to break the circular
+   dependency between content width and percentage padding. */
+.notion-button__content.bg-pink-light {
+  width: fit-content !important;
 }
