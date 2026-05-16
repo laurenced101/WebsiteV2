@@ -9,7 +9,7 @@ This repo hosts the site's CSS, served via **GitHub Pages** and pulled into Supe
 - `css/tokens.css` — design tokens (`:root` custom properties). One place to change padding, type, color.
 - `css/base.css` — base/reset layer applied site-wide. Typography, callouts, navbar, footer, buttons, layout widths.
 - `css/page-*.css` — page-specific CSS, added as pages get substantial unique styling.
-- `js/site.js` — site-wide JavaScript.
+- `js/site.js` — site-wide JavaScript. Reveal-on-scroll + smooth scroll-to-top.
 - `js/page-*.js` — page-specific JS, added per page when needed.
 
 `tokens.css`, `base.css`, and `site.js` are wired into Super's **site-wide** code injection. The `page-*` files are wired into Super's **per-page** code injection.

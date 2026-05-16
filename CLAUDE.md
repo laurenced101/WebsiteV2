@@ -18,7 +18,7 @@ Fresh rebuild of the personal portfolio at laurence-dawes.design. Runs on **Supe
 - `css/tokens.css` — design tokens (`:root` custom properties). One place to change padding, type, color.
 - `css/base.css` — base/reset layer applied site-wide. Typography, callouts, navbar, footer, buttons, layout widths.
 - `css/page-*.css` — page-specific CSS (e.g. `page-home.css`, `page-projects.css`). Used only when a page has substantial unique styling.
-- `js/site.js` — site-wide JavaScript (reveal animations, footer fixes, etc.).
+- `js/site.js` — site-wide JavaScript. Currently provides reveal-on-scroll (h1s + blue buttons) and smooth scroll-to-top (pink buttons). Plain vanilla JS, two independent IIFEs.
 - `js/page-*.js` — page-specific JS (e.g. `page-projects.js` for the gallery card rebuild).
 
 ### Super wiring split
