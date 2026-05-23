@@ -1,0 +1,36 @@
+@import "./tokens.css";
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--surface, #F7F7F7);
+  color: var(--ink, #111);
+  font-family: 'Space Grotesk', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; }
+
+/* Wrap pattern — centered max-width with breakpoint gutters */
+.wrap {
+  max-width: var(--layout-max-width-desktop, 1000px);
+  margin: 0 auto;
+}
+@media (min-width: 1800px) {
+  .wrap { max-width: var(--layout-max-width-large, 1200px); }
+}
+@media (max-width: 1279px) {
+  .wrap {
+    max-width: none;
+    padding-left: var(--layout-margin-tablet, 20px);
+    padding-right: var(--layout-margin-tablet, 20px);
+  }
+}
+@media (max-width: 800px) {
+  .wrap {
+    padding-left: var(--layout-margin-mobile, 12px);
+    padding-right: var(--layout-margin-mobile, 12px);
+  }
+}

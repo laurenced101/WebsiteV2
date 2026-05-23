@@ -1,0 +1,206 @@
+---
+// experience.astro — the EXPERIENCE page (formerly /projects).
+// Ported one-to-one from the v7 PROJECTS prototype (projects-d2-prototype_7.html),
+// with the /projects -> /experience rename applied. Dossier above, project index
+// below. Project data is hardcoded for now (Session 1); Session 2 swaps it for a
+// build-time Notion fetch with no template changes.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectRow from '../components/ProjectRow.astro';
+import { projects } from '../data/projects.js';
+---
+<BaseLayout title="/experience" active="experience">
+  <!-- Statement -->
+  <section class="statement">
+    <div class="wrap">
+      <h1>/experience</h1>
+      <p>Two decades leading the design of <span class="accent">physical play, augmented reality and immersive experiences</span> — taking ideas from first concept to global launch for brands reaching audiences in the millions.</p>
+    </div>
+  </section>
+
+  <!-- Disciplines -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-label">Disciplines</div>
+      <div class="disciplines-row">
+        <div class="discipline"><div class="discipline-num">01</div><div class="discipline-title">Physical play</div><div class="discipline-desc">Toy and product systems developed for global children's brands.</div></div>
+        <div class="discipline"><div class="discipline-num">02</div><div class="discipline-title">Augmented reality</div><div class="discipline-desc">Location-based and camera-driven experiences built for mobile.</div></div>
+        <div class="discipline"><div class="discipline-num">03</div><div class="discipline-title">Immersive experience</div><div class="discipline-desc">Installations and spatial experiences for brand and retail.</div></div>
+        <div class="discipline"><div class="discipline-num">04</div><div class="discipline-title">Innovation strategy</div><div class="discipline-desc">Technology roadmaps connecting emerging tech to brand goals.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="section stats">
+    <div class="wrap">
+      <div class="section-label">By the numbers</div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-num">20+</div><div class="stat-label">Years designing play &amp; immersive experiences</div></div>
+        <div class="stat"><div class="stat-num">100M+</div><div class="stat-label">People reached worldwide</div></div>
+        <div class="stat"><div class="stat-num">15</div><div class="stat-label">Awards &amp; patents</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Client wall (placeholder cells for now) -->
+  <section class="section clients">
+    <div class="wrap">
+      <div class="section-label">Selected partners &amp; clients</div>
+      <div class="logo-grid">
+        <div class="logo-row"><div class="logo-cell">LOGO</div><div class="logo-cell">LOGO</div><div class="logo-cell">LOGO</div><div class="logo-cell">LOGO</div><div class="logo-cell">LOGO</div></div>
+        <div class="logo-row"><div class="logo-cell">LOGO</div><div class="logo-cell">LOGO</div><div class="logo-cell">LOGO</div><div class="logo-cell">LOGO</div><div class="logo-cell">LOGO</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hard rule -->
+  <div class="hard-rule-wrap"><div class="wrap"></div></div>
+
+  <!-- Index -->
+  <section class="index">
+    <div class="wrap">
+      <div class="index-head">
+        <h2>Selected &amp; public-facing work</h2>
+        <p class="sub">A short, public view of the portfolio — confidential projects available to discuss on request.</p>
+      </div>
+
+      <div class="index-grid index-col-head">
+        <div>Brand</div>
+        <div>Project</div>
+        <div>Discipline</div>
+        <div>Year</div>
+        <div></div>
+      </div>
+
+      <div id="project-list">
+        {projects.map((p, i) => <ProjectRow project={p} idx={i} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom note -->
+  <div class="bottom-note">
+    <div class="wrap">Selected public-facing work — full portfolio available on request.</div>
+  </div>
+</BaseLayout>
+
+<!-- `.index-grid` is global so the index column header (this page) and the project
+     rows (ProjectRow component, separate style scope) share one column template. -->
+<style is:global>
+  .index-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr 130px 50px 150px;
+    column-gap: 20px;
+    align-items: center;
+  }
+  @media (max-width: 900px) {
+    .index-grid { grid-template-columns: 130px 1fr 100px 50px 110px; column-gap: 14px; }
+  }
+</style>
+
+<style>
+  /* STATEMENT */
+  .statement .wrap {
+    padding: 80px 0 70px;
+    border-bottom: 2.5px solid var(--color-primary);
+  }
+  .statement h1 { font-size: 70px; font-weight: 400; color: var(--color-primary); line-height: 1; margin-bottom: 24px; }
+  .statement p { font-size: 32px; font-weight: 500; line-height: 1.4; }
+  .statement .accent { color: var(--color-primary); }
+
+  /* SECTIONS */
+  .section .wrap { padding: 56px 0; border-bottom: var(--outline) solid var(--color-primary); }
+  .section.stats .wrap { padding: 64px 0; }
+  .section.clients .wrap { padding: 56px 0 64px; border-bottom: 0; }
+  .section-label {
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.96px; text-transform: uppercase;
+    color: var(--grey-light); margin-bottom: 28px;
+  }
+
+  /* DISCIPLINES */
+  .disciplines-row { display: flex; gap: 24px; }
+  .discipline {
+    flex: 1; border-top: var(--outline) solid var(--color-primary);
+    padding-top: 16px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .discipline-num { font-size: 15px; color: var(--color-primary); }
+  .discipline-title { font-size: 19px; font-weight: 500; color: var(--ink); }
+  .discipline-desc { font-size: 13px; color: var(--grey-mid); line-height: 1.5; }
+
+  /* STATS */
+  .stats-row { display: flex; gap: 24px; }
+  .stat { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+  .stat-num { font-size: 86px; font-weight: 500; color: var(--color-primary); line-height: 1; letter-spacing: -0.02em; }
+  .stat-label { font-size: 14px; color: var(--grey-mid); line-height: 1.4; }
+
+  /* CLIENT WALL */
+  .logo-grid { display: flex; flex-direction: column; gap: 16px; }
+  .logo-row { display: flex; gap: 16px; }
+  .logo-cell {
+    flex: 1; height: 94px; background: var(--grey-bg);
+    display: flex; align-items: center; justify-content: center;
+    color: #adadad; font-size: 11px; font-weight: 500;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+
+  /* HARD RULE */
+  .hard-rule-wrap .wrap { height: var(--hard-rule); background: var(--color-primary); }
+
+  /* INDEX */
+  .index .wrap { padding: 64px 0 90px; }
+  .index-head {
+    padding-bottom: 18px;
+    border-bottom: var(--outline) solid var(--color-primary);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .index-head h2 { font-size: 24px; font-weight: 500; }
+  .index-head .sub { font-size: 15px; color: var(--grey-mid); line-height: 1.5; }
+
+  .index-col-head {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--color-primary);
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 0.96px; text-transform: uppercase;
+    color: var(--grey-light);
+  }
+
+  /* BOTTOM */
+  .bottom-note .wrap {
+    padding: 64px 0; text-align: center;
+    font-size: 12px; letter-spacing: 0.96px;
+    text-transform: uppercase; color: var(--grey-light);
+  }
+
+  /* TABLET fallback */
+  @media (max-width: 900px) {
+    .statement h1 { font-size: 56px; }
+    .statement p { font-size: 24px; }
+    .stat-num { font-size: 64px; }
+  }
+</style>
+
+<script>
+  // ===== Expand / collapse =====
+  // Toggling `.expanded` on `.project` drives the panel open (CSS) and tells the
+  // slideshow RAF (in Slideshow.astro) which tracks to auto-advance. On collapse,
+  // reset the slideshow back to the first frame.
+  document.querySelectorAll('.project-row').forEach((row) => {
+    row.addEventListener('click', () => {
+      const project = row.parentElement;
+      const wasExpanded = project.classList.contains('expanded');
+      // Collapse all (and reset their slideshows to position 0)
+      document.querySelectorAll('.project.expanded').forEach((p) => {
+        p.classList.remove('expanded');
+        const track = p.querySelector('.panel-slideshow-track');
+        if (track && track._state) {
+          track._state.position = 0;
+          track._state.endPauseStart = 0;
+          track.classList.remove('snapping');
+          track.style.transform = 'translateX(0px)';
+        }
+      });
+      if (!wasExpanded) project.classList.add('expanded');
+    });
+  });
+</script>

@@ -1,0 +1,64 @@
+/* tokens.css — design tokens for laurence-dawes.design (Astro).
+   The one place to adjust color, layout, and type scale.
+
+   Ported from the old Super build's tokens.css. The reusable system
+   (color, layout widths/margins, type scale) carried over unchanged;
+   the Super-only presets (Notion callout widths, button style presets,
+   navbar/footer chrome tokens) were dropped — they only existed to style
+   Notion's DOM. The page-level design tokens below (surface, ink, greys,
+   expand-tint, outline, hard-rule) come from the v7 PROJECTS prototype. */
+
+:root {
+  /* Color */
+  --color-primary: #0000F5;
+
+  /* Surface + ink */
+  --surface: #F7F7F7;
+  --surface-trans: rgba(247, 247, 247, 0.92);
+  --ink: #111111;
+
+  /* Greys */
+  --grey-mid: #6b6b6b;
+  --grey-light: #9a9a9a;
+  --grey-bg: #e8e8e8;
+
+  /* Accent tint (expanded project panel) */
+  --expand-tint: #ECECFF;
+
+  /* Rules */
+  --outline: 1.5px;
+  --hard-rule: 4px;
+
+  /* Layout max-widths (centered, used on Large Desktop + Desktop) */
+  --layout-max-width-large: 1200px;     /* Large Desktop, 1800px+ */
+  --layout-max-width-desktop: 1000px;   /* Desktop, max 1799px */
+
+  /* Layout margins (used on Tablet + Mobile in place of max-width) */
+  --layout-margin-tablet: 20px;         /* Tablet, max 1279px */
+  --layout-margin-mobile: 12px;         /* Mobile, max 800px */
+
+  /* Typography — font sizes per breakpoint.
+     Only font-sizes are tokenized; line-height, letter-spacing, and
+     padding/margin stay element-specific in component styles. Kept for
+     the HOME / ABOUT / PROCESS ports in later sessions. */
+
+  --font-size-h1-large: 64px;
+  --font-size-h1-desktop: 64px;
+  --font-size-h1-tablet: 56px;
+  --font-size-h1-mobile: 48px;
+
+  --font-size-h2-large: 38px;
+  --font-size-h2-desktop: 38px;
+  --font-size-h2-tablet: 32px;
+  --font-size-h2-mobile: 28px;
+
+  --font-size-h3-large: 24px;
+  --font-size-h3-desktop: 24px;
+  --font-size-h3-tablet: 22px;
+  --font-size-h3-mobile: 20px;
+
+  --font-size-body-large: 20px;
+  --font-size-body-desktop: 18px;
+  --font-size-body-tablet: 17px;
+  --font-size-body-mobile: 16px;
+}

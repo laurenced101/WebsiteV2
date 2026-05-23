@@ -1,0 +1,238 @@
+---
+// Slideshow.astro — auto-advancing, transform-driven image slideshow.
+// Ported one-to-one from the v7 PROJECTS prototype. Renders the
+// wrapper > viewport > track structure plus controls (only when there's
+// more than one image). The script below wires up every instance on the
+// page: RAF-driven auto-advance, hover/touch pause, and button snap.
+const { images = [] } = Astro.props;
+const total = images.length;
+---
+<div class="panel-slideshow-wrapper">
+  <div class="panel-slideshow">
+    <div class="panel-slideshow-track">
+      {images.map((src) => (
+        <div class="slideshow-image"><img loading="lazy" src={src} alt="" /></div>
+      ))}
+    </div>
+  </div>
+  {total > 1 && (
+    <div class="slideshow-controls">
+      <button class="slideshow-btn slideshow-prev" aria-label="Previous image">←</button>
+      <button class="slideshow-btn slideshow-next" aria-label="Next image">→</button>
+      <span class="slideshow-counter">1 / {total}</span>
+      <span class="slideshow-status">Auto-advancing</span>
+    </div>
+  )}
+</div>
+
+<style>
+  /* ===== SLIDESHOW — transform-based for reliable continuous motion ===== */
+  .panel-slideshow {
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+  }
+  .panel-slideshow-track {
+    display: flex;
+    gap: 16px;
+    transform: translateX(0);
+    will-change: transform;
+    /* No transition by default — RAF drives the motion. */
+  }
+  .panel-slideshow-track.snapping {
+    transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .slideshow-image {
+    flex: 0 0 auto;
+    width: 480px;
+    height: 320px;
+    background: var(--grey-bg);
+    overflow: hidden;
+  }
+  .slideshow-image img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .slideshow-controls {
+    display: flex; align-items: center; gap: 16px;
+    margin-top: 16px; margin-bottom: 28px;
+  }
+  .slideshow-btn {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--color-primary);
+    background: transparent; color: var(--color-primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .slideshow-btn:hover { background: var(--color-primary); color: var(--surface); }
+  .slideshow-counter {
+    font-size: 11px;
+    letter-spacing: 0.72px;
+    text-transform: uppercase;
+    color: var(--ink); font-weight: 500;
+    min-width: 50px;
+  }
+  .slideshow-status {
+    font-size: 10px;
+    letter-spacing: 0.96px;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    margin-left: auto;
+  }
+  .panel-slideshow-wrapper.auto-on .slideshow-status { opacity: 1; }
+
+  @media (max-width: 900px) {
+    .slideshow-image { width: 360px; height: 240px; }
+  }
+</style>
+
+<script>
+  // ===== Slideshow setup + auto-advance =====
+  const AUTO_SCROLL_SPEED = 50;            // px/sec — leisurely
+  const BUTTON_PAUSE_MS   = 2500;
+  const END_PAUSE_MS      = 1500;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll('.panel-slideshow-wrapper').forEach((wrapper) => {
+    const viewport = wrapper.querySelector('.panel-slideshow');
+    const track    = wrapper.querySelector('.panel-slideshow-track');
+    const images   = wrapper.querySelectorAll('.slideshow-image');
+    const counter  = wrapper.querySelector('.slideshow-counter');
+    const prevBtn  = wrapper.querySelector('.slideshow-prev');
+    const nextBtn  = wrapper.querySelector('.slideshow-next');
+    const total    = images.length;
+
+    if (total <= 1 || !track) return;
+
+    // Per-track state, attached to the element so the global RAF can find it.
+    const state = {
+      position: 0,        // float, current X translate (positive = scrolled right)
+      paused: false,
+      pauseUntil: 0,
+      endPauseStart: 0,
+    };
+    track._state = state;
+
+    if (!prefersReducedMotion) wrapper.classList.add('auto-on');
+
+    const slideStep = () => images[0].offsetWidth + 16;
+
+    function updateCounter() {
+      if (!counter) return;
+      const idx = Math.round(state.position / slideStep());
+      const clamped = Math.max(0, Math.min(idx, total - 1));
+      counter.textContent = `${clamped + 1} / ${total}`;
+    }
+    updateCounter();
+
+    function setPosition(px, withTransition) {
+      state.position = px;
+      if (withTransition) {
+        track.classList.add('snapping');
+        track.style.transform = `translateX(-${px}px)`;
+        setTimeout(() => track.classList.remove('snapping'), 460);
+      } else {
+        track.style.transform = `translateX(-${px}px)`;
+      }
+      updateCounter();
+    }
+
+    // Hover / touch pause
+    const pause = () => {
+      state.paused = true;
+      wrapper.classList.remove('auto-on');
+    };
+    const resumeIfReady = () => {
+      if (Date.now() >= state.pauseUntil) {
+        state.paused = false;
+        if (!prefersReducedMotion) wrapper.classList.add('auto-on');
+      }
+    };
+    viewport.addEventListener('mouseenter', pause);
+    viewport.addEventListener('mouseleave', resumeIfReady);
+    viewport.addEventListener('touchstart', pause, { passive: true });
+    viewport.addEventListener('touchend', resumeIfReady);
+
+    // Button click — snap to next/prev image with wrap-around, then pause briefly
+    function handleClick(direction) {
+      return (e) => {
+        e.stopPropagation();
+        state.paused = true;
+        state.pauseUntil = Date.now() + BUTTON_PAUSE_MS;
+        wrapper.classList.remove('auto-on');
+
+        const step = slideStep();
+        const currentIdx = Math.round(state.position / step);
+        let newIdx = currentIdx + direction;
+        if (newIdx < 0) newIdx = total - 1;
+        if (newIdx > total - 1) newIdx = 0;
+        setPosition(newIdx * step, true);
+
+        setTimeout(() => {
+          if (Date.now() >= state.pauseUntil) {
+            state.paused = false;
+            if (!prefersReducedMotion) wrapper.classList.add('auto-on');
+          }
+        }, BUTTON_PAUSE_MS);
+      };
+    }
+    prevBtn.addEventListener('click', handleClick(-1));
+    nextBtn.addEventListener('click', handleClick(+1));
+  });
+
+  // ===== Global RAF — drives auto-advance on expanded tracks =====
+  if (!prefersReducedMotion) {
+    let lastTime = 0;
+    function tick(time) {
+      const dt = lastTime ? Math.min((time - lastTime) / 1000, 0.1) : 0;
+      lastTime = time;
+
+      document.querySelectorAll('.project.expanded .panel-slideshow-track').forEach((track) => {
+        const state = track._state;
+        if (!state || state.paused) return;
+        // Don't fight an in-flight snap transition.
+        if (track.classList.contains('snapping')) return;
+
+        const images = track.querySelectorAll('.slideshow-image');
+        if (!images.length) return;
+        const slideStep = images[0].offsetWidth + 16;
+        const maxPos = (images.length - 1) * slideStep;
+        if (maxPos <= 0) return;
+
+        // Reached the last slide — pause, then loop back smoothly
+        if (state.position >= maxPos - 0.5) {
+          if (!state.endPauseStart) state.endPauseStart = time;
+          if (time - state.endPauseStart >= END_PAUSE_MS) {
+            track.classList.add('snapping');
+            state.position = 0;
+            track.style.transform = 'translateX(0px)';
+            setTimeout(() => track.classList.remove('snapping'), 460);
+            state.endPauseStart = 0;
+          }
+          return;
+        }
+        state.endPauseStart = 0;
+
+        state.position += AUTO_SCROLL_SPEED * dt;
+        if (state.position > maxPos) state.position = maxPos;
+        track.style.transform = `translateX(-${state.position}px)`;
+
+        // Update counter (cheap — just looks at position)
+        const counter = track.parentElement.parentElement.querySelector('.slideshow-counter');
+        if (counter) {
+          const idx = Math.round(state.position / slideStep);
+          const clamped = Math.max(0, Math.min(idx, images.length - 1));
+          counter.textContent = `${clamped + 1} / ${images.length}`;
+        }
+      });
+
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+</script>

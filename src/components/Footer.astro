@@ -1,0 +1,37 @@
+---
+// Footer.astro — bordered footer box, ported from the v7 prototype.
+// Build-credit line changed from the prototype's "Prototype — D2 Dossier"
+// to "Built with Astro" (this is a real Astro site now).
+const year = new Date().getFullYear();
+---
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-content">
+      <p>© laurence dawes {year}</p>
+      <div class="footer-icons">
+        <a href="#" class="footer-icon" aria-label="LinkedIn">in</a>
+        <a href="#" class="footer-icon" aria-label="Email">✉</a>
+      </div>
+      <div class="footer-rule"></div>
+      <p>Built with Astro</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer { padding: 0 0 44px; }
+  .footer-content {
+    border: var(--outline) solid var(--color-primary);
+    padding: 24px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .footer-content p { font-size: 12px; letter-spacing: 0.24px; color: var(--color-primary); line-height: 22px; }
+  .footer-icons { display: flex; gap: 12px; align-items: center; }
+  .footer-icon {
+    width: 22px; height: 22px;
+    background: var(--color-primary); color: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+  }
+  .footer-rule { width: 34px; height: 1px; background: var(--color-primary); }
+</style>

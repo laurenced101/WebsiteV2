@@ -1,0 +1,44 @@
+---
+// Navbar.astro — sticky top nav, ported from the v7 prototype.
+// `active` marks the current section: 'about' | 'experience' | 'process' | 'articles'.
+const { active } = Astro.props;
+const links = [
+  { key: 'about', label: 'About', href: '/about' },
+  { key: 'experience', label: 'Experience', href: '/experience' },
+  { key: 'process', label: 'Process', href: '/process' },
+  { key: 'articles', label: 'Articles', href: '#' },
+];
+---
+<nav class="navbar">
+  <div class="wrap navbar-inner">
+    <a class="logo" href="/"><span class="light">laurence-dawes.</span>design</a>
+    <div class="nav-buttons">
+      {links.map((l) => (
+        <a class={`nav-btn${active === l.key ? ' active' : ''}`} href={l.href}>{l.label}</a>
+      ))}
+    </div>
+  </div>
+</nav>
+
+<style>
+  .navbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface-trans);
+    border-bottom: var(--outline) solid var(--color-primary);
+    backdrop-filter: saturate(140%) blur(8px);
+    -webkit-backdrop-filter: saturate(140%) blur(8px);
+    padding: 16px 0;
+  }
+  .navbar-inner { display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-size: 18px; font-weight: 700; color: var(--color-primary); letter-spacing: 4.32px; }
+  .logo .light { font-weight: 400; letter-spacing: 7.92px; }
+  .nav-buttons { display: flex; gap: 18px; }
+  .nav-btn {
+    padding: 6px 14px;
+    border: 2px solid var(--color-primary);
+    background: transparent; color: var(--color-primary);
+    font-weight: 600; font-size: 14px; cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .nav-btn.active, .nav-btn:hover { background: var(--color-primary); color: var(--surface); }
+</style>
