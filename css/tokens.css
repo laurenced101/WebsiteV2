@@ -108,9 +108,8 @@
   --footer-font-weight:     300;
 
   /* Buttons — Notion button background color = a style preset, mirroring
-     the callout pattern. Hover values are shared across all button types
-     today; split into per-button tokens later if any treatment wants a
-     different feel. */
+     the callout pattern. Hover lives in js/site.js (WAAPI scale + opacity
+     on blue buttons only) so no hover tokens here. */
 
   /* Blue button — large text-style, borderless */
   --button-blue-font-size:   8vw;
@@ -134,9 +133,4 @@
   /* Navbar CTA (Super's native .super-navbar__cta, if configured) */
   --button-cta-padding:     10px 16px;
   --button-cta-font-weight: 500;
-
-  /* Shared hover */
-  --button-hover-scale:    1.03;
-  --button-hover-opacity:  0.5;
-  --button-hover-duration: 300ms;
 }

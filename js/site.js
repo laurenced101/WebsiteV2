@@ -1,33 +1,35 @@
 /* site.js — site-wide JavaScript for laurence-dawes.design.
    Two independent behaviors, each in its own IIFE:
-     1. Reveal-on-scroll for h1s and blue buttons (fade-up).
+     1. Reveal-on-scroll for h1s and blue buttons (translate3d fade-up),
+        plus a WAAPI hover (scale + opacity) on blue buttons.
      2. Smooth scroll-to-top for pink buttons.
    Plain vanilla JS, no dependencies. Loaded via Super's site-wide code
    injection with `defer`. */
 
 /* =========================================================================
-   1. Reveal-on-scroll
-   IntersectionObserver fades target elements up into place when they
-   enter the viewport. Targets: every h1, and every .notion-button that
-   contains a .bg-blue-light child (the blue button treatment).
+   1. Reveal + blue-button hover
 
-   Each target is set hidden inline at registration time (opacity 0 +
-   translateY). If site.js fails to load entirely, the elements stay un-
-   hidden and just render — safe failure mode.
+   IntersectionObserver fades target elements up into place when they enter
+   the viewport. Targets: every h1, and every .notion-button that contains
+   a .bg-blue-light child (the blue button treatment).
 
-   After each reveal finishes, animation.commitStyles() bakes the end
-   state into inline style and animation.cancel() removes the WAAPI
-   animation. This is important: it lets the session #6 CSS :hover rules
-   on buttons apply cleanly afterwards (a WAAPI animation in fill:forwards
-   state would otherwise shadow them).
+   Both reveal and hover are WAAPI. Two reasons this matters:
+     - Reveal uses translate3d (not translateY), which forces a GPU
+       compositor layer. The hover scale then reuses the same layer.
+       This is what prevents the Safari first-hover layout-shift bug.
+     - Hover bypasses CSS entirely, so Super's global `transition: all`
+       on .notion-button can't interfere — no transition handoff dance
+       and no CSS workaround layer needed in base.css.
+
+   Marker class .ln-blue-button is added at register so hover is decoupled
+   from reveal completion (above-the-fold buttons get hover immediately).
 
    prefers-reduced-motion: reduce — early-return, leave targets visible
-   with no observer attached.
+   with no observer attached and no hover.
 
-   Super does client-side navigation (content swaps without a full reload),
-   so a MutationObserver re-scans the DOM as it changes, plus a couple of
-   timed retries cover late-rendered nodes. Registration is guarded by a
-   data-attribute so the same element never animates twice.
+   Super does client-side navigation, so a MutationObserver re-scans the
+   DOM as it changes, plus two timed retries cover late-rendered nodes.
+   Each element is guarded so it only registers once.
    ========================================================================= */
 
 (function () {
@@ -37,24 +39,30 @@
   const REVEAL_DURATION_MS = 1000;
   const REVEAL_EASING      = "cubic-bezier(0.22, 1, 0.36, 1)";
   const REVEAL_DISTANCE_PX = 28;
-  const STAGGER_H1_MS      = 100;   // delay between successive h1s revealing together
-  const STAGGER_BUTTON_MS  = 120;   // delay between successive blue buttons revealing together
+  const STAGGER_H1_MS      = 100;
+  const STAGGER_BUTTON_MS  = 120;
+
+  // === Hover tuning (blue buttons only) ===
+  const HOVER_SCALE        = 1.03;
+  const HOVER_OPACITY      = 0.5;
+  const HOVER_DURATION_MS  = 300;
+  const HOVER_EASING       = "ease";
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-  const REGISTERED_ATTR = "data-reveal-registered";
+  const REGISTERED_ATTR   = "data-reveal-registered";
+  const BLUE_BUTTON_CLASS = "ln-blue-button";
 
   const setHidden = (el) => {
-    el.style.opacity    = "0";
-    el.style.transform  = "translateY(" + REVEAL_DISTANCE_PX + "px)";
-    el.style.willChange = "opacity, transform";
+    el.style.opacity   = "0";
+    el.style.transform = "translate3d(0, " + REVEAL_DISTANCE_PX + "px, 0)";
   };
 
   const animateIn = (el, delayMs) => {
-    const anim = el.animate(
+    el.animate(
       [
-        { opacity: 0, transform: "translateY(" + REVEAL_DISTANCE_PX + "px)" },
-        { opacity: 1, transform: "translateY(0)" }
+        { opacity: 0, transform: "translate3d(0, " + REVEAL_DISTANCE_PX + "px, 0)" },
+        { opacity: 1, transform: "translate3d(0, 0, 0)" }
       ],
       {
         duration: REVEAL_DURATION_MS,
@@ -63,12 +71,30 @@
         fill:     "forwards"
       }
     );
-    anim.addEventListener("finish", () => {
-      // Bake end state into inline style, then drop the WAAPI animation so
-      // CSS :hover rules from session #6 aren't shadowed by fill:forwards.
-      try { anim.commitStyles(); } catch (_) { /* commitStyles can throw on disconnected nodes; harmless */ }
-      anim.cancel();
-      el.style.willChange = "";
+  };
+
+  // Always include translate3d alongside scale so the GPU layer stays
+  // explicit across rest and hover states (belt-and-braces; once a layer
+  // exists Safari tends to keep it, but pinning the transform keeps the
+  // intent obvious).
+  const attachHover = (el) => {
+    el.addEventListener("mouseenter", () => {
+      el.animate(
+        [
+          { transform: "translate3d(0, 0, 0) scale(1)",              opacity: 1 },
+          { transform: "translate3d(0, 0, 0) scale(" + HOVER_SCALE + ")", opacity: HOVER_OPACITY }
+        ],
+        { duration: HOVER_DURATION_MS, easing: HOVER_EASING, fill: "forwards" }
+      );
+    });
+    el.addEventListener("mouseleave", () => {
+      el.animate(
+        [
+          { transform: "translate3d(0, 0, 0) scale(" + HOVER_SCALE + ")", opacity: HOVER_OPACITY },
+          { transform: "translate3d(0, 0, 0) scale(1)",              opacity: 1 }
+        ],
+        { duration: HOVER_DURATION_MS, easing: HOVER_EASING, fill: "forwards" }
+      );
     });
   };
 
@@ -95,20 +121,27 @@
     rootMargin: "0px 0px -40px 0px"
   });
 
-  const register = (el) => {
+  const registerReveal = (el) => {
     if (el.getAttribute(REGISTERED_ATTR)) return;
     el.setAttribute(REGISTERED_ATTR, "true");
     setHidden(el);
     observer.observe(el);
   };
 
-  const scan = () => {
-    document.querySelectorAll("h1").forEach(register);
-    document.querySelectorAll(".notion-button:has(.bg-blue-light)").forEach(register);
+  const registerBlueButton = (el) => {
+    if (el.classList.contains(BLUE_BUTTON_CLASS)) return;
+    el.classList.add(BLUE_BUTTON_CLASS);
+    attachHover(el);
   };
 
-  // Initial pass — run immediately if DOM is parsed, otherwise wait. Plus a
-  // pair of timed retries for any content Super hydrates after first paint.
+  const scan = () => {
+    document.querySelectorAll("h1").forEach(registerReveal);
+    document.querySelectorAll(".notion-button:has(.bg-blue-light)").forEach((el) => {
+      registerReveal(el);
+      registerBlueButton(el);
+    });
+  };
+
   const onReady = () => {
     scan();
     setTimeout(scan, 200);
@@ -120,7 +153,6 @@
     onReady();
   }
 
-  // SPA-safe: rescan when the DOM mutates, throttled to once per frame.
   let scanScheduled = false;
   const scheduleScan = () => {
     if (scanScheduled) return;
