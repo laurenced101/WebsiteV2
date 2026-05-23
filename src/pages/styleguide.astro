@@ -35,6 +35,25 @@ import '../styles/global.css';
   <body>
     <div class="sg-corner">styleguide</div>
 
+    <!-- Token editor — live-tweak every token, persist to localStorage, export tokens.css.
+         Controls are built by JS from a name-only manifest; values come from getComputedStyle
+         so nothing is duplicated. Panel chrome uses literal colors (not tokens) so it stays
+         legible even while you're editing --ink / --surface. -->
+    <button id="sg-edit-toggle" class="sg-edit-toggle" type="button">✎ Edit tokens</button>
+    <aside id="sg-editor" class="sg-editor" hidden aria-label="Token editor">
+      <div class="sg-editor-head">
+        <strong>Token editor</strong>
+        <button id="sg-editor-close" type="button" aria-label="Close">×</button>
+      </div>
+      <div class="sg-editor-actions">
+        <button id="sg-copy" type="button">Copy tokens.css</button>
+        <button id="sg-reset" type="button">Reset</button>
+      </div>
+      <div class="sg-editor-hint">Edits are live + saved in this browser. They don't change the repo until you Copy and commit.</div>
+      <div id="sg-editor-body" class="sg-editor-body"></div>
+      <textarea id="sg-export" class="sg-export" readonly hidden></textarea>
+    </aside>
+
     <main class="sg">
       <!-- HEADER -->
       <header class="sg-header">
@@ -384,14 +403,228 @@ import '../styles/global.css';
     </main>
 
     <script>
-      // Populate every .sg-val with the live computed value of its token, so the
-      // readouts can never drift from tokens.css. Values are static across
-      // breakpoints (tokens.css has no media queries), so a single pass is enough.
+      // ===== Token readouts + live editor =====
+      // The editor overrides tokens at runtime via root.style.setProperty(). Because
+      // every value on this page (and the whole site) reads through var(--token), a
+      // single setProperty cascades everywhere instantly — no rebuild. Overrides are
+      // persisted to localStorage and can be exported as a tokens.css block.
       const root = document.documentElement;
-      document.querySelectorAll('.sg-val').forEach((el) => {
-        const name = el.getAttribute('data-token');
-        const val = getComputedStyle(root).getPropertyValue(name).trim();
-        el.textContent = val || '(unset)';
+      const STORE_KEY = 'sg-token-overrides';
+
+      // Manifest: token NAMES + control metadata only. Default *values* are always
+      // read from getComputedStyle, never hardcoded here.
+      const COLOR_TOKENS = [
+        '--color-primary', '--surface', '--surface-trans', '--ink',
+        '--grey-mid', '--grey-light', '--grey-bg', '--expand-tint',
+      ];
+      const SIZE_GROUPS = {
+        'Rules': [
+          { name: '--outline', min: 0, max: 8, step: 0.5 },
+          { name: '--hard-rule', min: 0, max: 24, step: 1 },
+        ],
+        'Layout': [
+          { name: '--layout-max-width-large', min: 600, max: 2000, step: 10 },
+          { name: '--layout-max-width-desktop', min: 600, max: 2000, step: 10 },
+          { name: '--layout-margin-tablet', min: 0, max: 120, step: 1 },
+          { name: '--layout-margin-mobile', min: 0, max: 120, step: 1 },
+        ],
+        'Typography (font sizes)': [
+          'h1-large', 'h1-desktop', 'h1-tablet', 'h1-mobile',
+          'h2-large', 'h2-desktop', 'h2-tablet', 'h2-mobile',
+          'h3-large', 'h3-desktop', 'h3-tablet', 'h3-mobile',
+          'body-large', 'body-desktop', 'body-tablet', 'body-mobile',
+        ].map((s) => ({ name: `--font-size-${s}`, min: 8, max: 120, step: 1 })),
+      };
+
+      const readVal = (name) => getComputedStyle(root).getPropertyValue(name).trim();
+
+      // Load + apply saved overrides BEFORE first readout, so the page reflects them.
+      let overrides = {};
+      try { overrides = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { overrides = {}; }
+      Object.entries(overrides).forEach(([k, v]) => root.style.setProperty(k, v));
+
+      const fillReadouts = (name) => {
+        const sel = name ? `.sg-val[data-token="${name}"]` : '.sg-val';
+        document.querySelectorAll(sel).forEach((el) => {
+          el.textContent = readVal(el.getAttribute('data-token')) || '(unset)';
+        });
+      };
+      fillReadouts();
+
+      function setToken(name, value) {
+        root.style.setProperty(name, value);
+        overrides[name] = value;
+        localStorage.setItem(STORE_KEY, JSON.stringify(overrides));
+        fillReadouts(name);
+      }
+
+      // ----- Build controls -----
+      const body = document.getElementById('sg-editor-body');
+      const isHex = (v) => /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v);
+
+      function colorRow(name) {
+        const row = document.createElement('div');
+        row.className = 'sg-ctl';
+        const val = readVal(name);
+
+        const text = document.createElement('input');
+        text.type = 'text';
+        text.value = val;
+
+        let picker;
+        if (isHex(val)) {
+          picker = document.createElement('input');
+          picker.type = 'color';
+          picker.value = val.length === 4
+            ? '#' + val.slice(1).split('').map((c) => c + c).join('') // #abc -> #aabbcc
+            : val;
+          picker.addEventListener('input', () => { text.value = picker.value; setToken(name, picker.value); });
+          row.appendChild(picker);
+        } else {
+          const sw = document.createElement('span');
+          sw.className = 'sg-ctl-swatch';
+          sw.style.background = val;
+          row.appendChild(sw);
+        }
+
+        text.addEventListener('input', () => {
+          setToken(name, text.value);
+          if (picker && isHex(text.value)) picker.value = text.value;
+        });
+
+        const label = document.createElement('label');
+        label.textContent = name;
+        row.append(text, label);
+        return row;
+      }
+
+      function sizeRow(t) {
+        const row = document.createElement('div');
+        row.className = 'sg-ctl';
+        const num = parseFloat(readVal(t.name)) || 0;
+
+        const range = document.createElement('input');
+        range.type = 'range';
+        range.min = t.min; range.max = t.max; range.step = t.step; range.value = num;
+
+        const number = document.createElement('input');
+        number.type = 'number';
+        number.min = t.min; number.max = t.max; number.step = t.step; number.value = num;
+
+        const apply = (v) => { range.value = v; number.value = v; setToken(t.name, v + 'px'); };
+        range.addEventListener('input', () => apply(range.value));
+        number.addEventListener('input', () => apply(number.value));
+
+        const label = document.createElement('label');
+        label.textContent = t.name;
+        row.append(range, number, label);
+        return row;
+      }
+
+      function buildEditor() {
+        body.innerHTML = '';
+        const colorHead = document.createElement('div');
+        colorHead.className = 'sg-editor-group';
+        colorHead.textContent = 'Color';
+        body.appendChild(colorHead);
+        COLOR_TOKENS.forEach((n) => body.appendChild(colorRow(n)));
+
+        Object.entries(SIZE_GROUPS).forEach(([group, tokens]) => {
+          const head = document.createElement('div');
+          head.className = 'sg-editor-group';
+          head.textContent = group;
+          body.appendChild(head);
+          tokens.forEach((t) => body.appendChild(sizeRow(t)));
+        });
+      }
+      buildEditor();
+
+      // ----- Export: regenerate the tokens.css :root block from current values -----
+      function exportCss() {
+        const g = (n) => readVal(n);
+        const fs = (k) => `  --font-size-${k}: ${g('--font-size-' + k)};`;
+        return `:root {
+  /* Color */
+  --color-primary: ${g('--color-primary')};
+
+  /* Surface + ink */
+  --surface: ${g('--surface')};
+  --surface-trans: ${g('--surface-trans')};
+  --ink: ${g('--ink')};
+
+  /* Greys */
+  --grey-mid: ${g('--grey-mid')};
+  --grey-light: ${g('--grey-light')};
+  --grey-bg: ${g('--grey-bg')};
+
+  /* Accent tint (expanded project panel) */
+  --expand-tint: ${g('--expand-tint')};
+
+  /* Rules */
+  --outline: ${g('--outline')};
+  --hard-rule: ${g('--hard-rule')};
+
+  /* Layout max-widths */
+  --layout-max-width-large: ${g('--layout-max-width-large')};
+  --layout-max-width-desktop: ${g('--layout-max-width-desktop')};
+
+  /* Layout margins */
+  --layout-margin-tablet: ${g('--layout-margin-tablet')};
+  --layout-margin-mobile: ${g('--layout-margin-mobile')};
+
+  /* Typography — font sizes per breakpoint. */
+${fs('h1-large')}
+${fs('h1-desktop')}
+${fs('h1-tablet')}
+${fs('h1-mobile')}
+
+${fs('h2-large')}
+${fs('h2-desktop')}
+${fs('h2-tablet')}
+${fs('h2-mobile')}
+
+${fs('h3-large')}
+${fs('h3-desktop')}
+${fs('h3-tablet')}
+${fs('h3-mobile')}
+
+${fs('body-large')}
+${fs('body-desktop')}
+${fs('body-tablet')}
+${fs('body-mobile')}
+}`;
+      }
+
+      // ----- Wiring -----
+      const editor = document.getElementById('sg-editor');
+      const toggle = document.getElementById('sg-edit-toggle');
+      const exportArea = document.getElementById('sg-export');
+      const copyBtn = document.getElementById('sg-copy');
+
+      toggle.addEventListener('click', () => { editor.hidden = false; });
+      document.getElementById('sg-editor-close').addEventListener('click', () => { editor.hidden = true; });
+
+      copyBtn.addEventListener('click', async () => {
+        const css = exportCss();
+        exportArea.value = css;
+        exportArea.hidden = false;
+        try {
+          await navigator.clipboard.writeText(css);
+          copyBtn.textContent = 'Copied ✓';
+        } catch {
+          exportArea.select();
+          copyBtn.textContent = 'Select + copy ↓';
+        }
+        setTimeout(() => { copyBtn.textContent = 'Copy tokens.css'; }, 1800);
+      });
+
+      document.getElementById('sg-reset').addEventListener('click', () => {
+        Object.keys(overrides).forEach((k) => root.style.removeProperty(k));
+        overrides = {};
+        localStorage.removeItem(STORE_KEY);
+        exportArea.hidden = true;
+        buildEditor();   // controls re-read tokens.css defaults
+        fillReadouts();
       });
     </script>
 
@@ -540,6 +773,57 @@ import '../styles/global.css';
         font-size: 11px; letter-spacing: 0.96px; text-transform: uppercase;
         color: var(--grey-light);
       }
+
+      /* ===== Token editor — literal colors only, so the panel stays usable
+         even while you're editing --ink / --surface to extremes. ===== */
+      .sg-edit-toggle {
+        position: fixed; bottom: 20px; right: 20px; z-index: 50;
+        background: #111; color: #fff; border: none; border-radius: 2px;
+        padding: 10px 16px; font-size: 13px; cursor: pointer;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+      }
+      .sg-editor {
+        position: fixed; top: 0; right: 0; bottom: 0; z-index: 60;
+        width: 360px; max-width: 92vw;
+        background: #fff; color: #111;
+        border-left: 1px solid #ddd;
+        box-shadow: -8px 0 28px rgba(0, 0, 0, 0.14);
+        display: flex; flex-direction: column;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      .sg-editor[hidden] { display: none; }
+      .sg-editor-head {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 14px 16px; border-bottom: 1px solid #eee; font-size: 13px;
+      }
+      .sg-editor-head button {
+        background: none; border: none; font-size: 22px; line-height: 1;
+        cursor: pointer; color: #111;
+      }
+      .sg-editor-actions { display: flex; gap: 8px; padding: 12px 16px 6px; }
+      .sg-editor-actions button {
+        flex: 1; padding: 8px; font-size: 12px; cursor: pointer;
+        border: 1px solid #111; background: #fff; color: #111; font-family: inherit;
+      }
+      .sg-editor-actions button#sg-copy { background: #111; color: #fff; }
+      .sg-editor-hint { padding: 0 16px 10px; font-size: 10px; line-height: 1.5; color: #888; }
+      .sg-editor-body { overflow-y: auto; padding: 0 16px 24px; flex: 1; }
+      .sg-editor-group {
+        font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+        color: #999; margin: 18px 0 8px;
+      }
+      .sg-ctl { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 11px; }
+      .sg-ctl label { flex: 1; color: #555; word-break: break-all; }
+      .sg-ctl-swatch { width: 28px; height: 24px; border: 1px solid #ccc; flex: 0 0 auto; }
+      .sg-ctl input[type="text"] { width: 96px; }
+      .sg-ctl input[type="color"] { width: 28px; height: 24px; padding: 0; border: 1px solid #ccc; cursor: pointer; flex: 0 0 auto; }
+      .sg-ctl input[type="range"] { width: 84px; flex: 0 0 auto; }
+      .sg-ctl input[type="number"] { width: 56px; }
+      .sg-ctl input[type="text"], .sg-ctl input[type="number"] {
+        font-family: inherit; font-size: 11px; padding: 3px 5px; border: 1px solid #ccc;
+      }
+      .sg-export { width: 100%; height: 180px; margin-top: 12px; font-family: inherit; font-size: 10px; }
     </style>
   </body>
 </html>
