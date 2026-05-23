@@ -1,0 +1,545 @@
+---
+// styleguide.astro — internal visual reference for the design system.
+//
+// Renders every value currently tokenized in src/styles/tokens.css as a live
+// visual, plus "Gap" sections surfacing where the system is still incomplete
+// (values hardcoded in component styles that aren't tokens yet).
+//
+// Rules of this page (Session 3):
+//   - Consumes tokens via var(--token) ONLY. Token values are never duplicated
+//     into markup — every value readout is read live from getComputedStyle at
+//     the bottom of this file, so editing tokens.css updates this page for free.
+//   - No new tokens are introduced here. Observation only.
+//   - Standalone: no site nav/footer (chrome would compete with the content),
+//     noindex, and not linked anywhere in the site.
+//
+// The Gap lists below are static text on purpose: they are an audit snapshot of
+// hardcoded values found in the codebase, not tokens. Re-run the audit when
+// component styles change.
+import '../styles/global.css';
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>styleguide — laurence-dawes.design</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="sg-corner">styleguide</div>
+
+    <main class="sg">
+      <!-- HEADER -->
+      <header class="sg-header">
+        <h1>Design tokens</h1>
+        <p>
+          This page is the source of truth for visual primitives — edit
+          <code>src/styles/tokens.css</code> to change anything here. Every value
+          shown is read live from the running stylesheet, so this page can never
+          drift from the tokens.
+        </p>
+      </header>
+
+      <!-- COLOR -->
+      <section class="sg-section">
+        <h2>Color</h2>
+        <div class="sg-swatches">
+          <div class="sg-swatch">
+            <div class="sg-chip" style="background: var(--color-primary)"></div>
+            <code class="sg-name">--color-primary</code>
+            <code class="sg-val" data-token="--color-primary"></code>
+          </div>
+          <div class="sg-swatch">
+            <div class="sg-chip sg-chip-bordered" style="background: var(--surface)"></div>
+            <code class="sg-name">--surface</code>
+            <code class="sg-val" data-token="--surface"></code>
+          </div>
+          <div class="sg-swatch">
+            <div class="sg-chip sg-chip-bordered sg-chip-checker" style="background: var(--surface-trans)"></div>
+            <code class="sg-name">--surface-trans</code>
+            <code class="sg-val" data-token="--surface-trans"></code>
+          </div>
+          <div class="sg-swatch">
+            <div class="sg-chip" style="background: var(--ink)"></div>
+            <code class="sg-name">--ink</code>
+            <code class="sg-val" data-token="--ink"></code>
+          </div>
+          <div class="sg-swatch">
+            <div class="sg-chip" style="background: var(--grey-mid)"></div>
+            <code class="sg-name">--grey-mid</code>
+            <code class="sg-val" data-token="--grey-mid"></code>
+          </div>
+          <div class="sg-swatch">
+            <div class="sg-chip" style="background: var(--grey-light)"></div>
+            <code class="sg-name">--grey-light</code>
+            <code class="sg-val" data-token="--grey-light"></code>
+          </div>
+          <div class="sg-swatch">
+            <div class="sg-chip sg-chip-bordered" style="background: var(--grey-bg)"></div>
+            <code class="sg-name">--grey-bg</code>
+            <code class="sg-val" data-token="--grey-bg"></code>
+          </div>
+          <div class="sg-swatch">
+            <div class="sg-chip sg-chip-bordered" style="background: var(--expand-tint)"></div>
+            <code class="sg-name">--expand-tint</code>
+            <code class="sg-val" data-token="--expand-tint"></code>
+          </div>
+        </div>
+      </section>
+
+      <!-- TYPOGRAPHY -->
+      <section class="sg-section">
+        <h2>Typography</h2>
+        <p class="sg-note">
+          Only font <em>sizes</em> are tokenized, one per breakpoint. The live
+          sample on the left applies the breakpoint-appropriate token — resize the
+          window to watch it shift across Large&nbsp;Desktop&nbsp;(1800+),
+          Desktop&nbsp;(≤1799), Tablet&nbsp;(≤1279) and Mobile&nbsp;(≤800).
+        </p>
+
+        <div class="sg-type-row">
+          <div class="sg-demo-h1">Heading one</div>
+          <div class="sg-type-tokens">
+            <div><code class="sg-name">--font-size-h1-large</code> <code class="sg-val" data-token="--font-size-h1-large"></code></div>
+            <div><code class="sg-name">--font-size-h1-desktop</code> <code class="sg-val" data-token="--font-size-h1-desktop"></code></div>
+            <div><code class="sg-name">--font-size-h1-tablet</code> <code class="sg-val" data-token="--font-size-h1-tablet"></code></div>
+            <div><code class="sg-name">--font-size-h1-mobile</code> <code class="sg-val" data-token="--font-size-h1-mobile"></code></div>
+          </div>
+        </div>
+
+        <div class="sg-type-row">
+          <div class="sg-demo-h2">Heading two</div>
+          <div class="sg-type-tokens">
+            <div><code class="sg-name">--font-size-h2-large</code> <code class="sg-val" data-token="--font-size-h2-large"></code></div>
+            <div><code class="sg-name">--font-size-h2-desktop</code> <code class="sg-val" data-token="--font-size-h2-desktop"></code></div>
+            <div><code class="sg-name">--font-size-h2-tablet</code> <code class="sg-val" data-token="--font-size-h2-tablet"></code></div>
+            <div><code class="sg-name">--font-size-h2-mobile</code> <code class="sg-val" data-token="--font-size-h2-mobile"></code></div>
+          </div>
+        </div>
+
+        <div class="sg-type-row">
+          <div class="sg-demo-h3">Heading three</div>
+          <div class="sg-type-tokens">
+            <div><code class="sg-name">--font-size-h3-large</code> <code class="sg-val" data-token="--font-size-h3-large"></code></div>
+            <div><code class="sg-name">--font-size-h3-desktop</code> <code class="sg-val" data-token="--font-size-h3-desktop"></code></div>
+            <div><code class="sg-name">--font-size-h3-tablet</code> <code class="sg-val" data-token="--font-size-h3-tablet"></code></div>
+            <div><code class="sg-name">--font-size-h3-mobile</code> <code class="sg-val" data-token="--font-size-h3-mobile"></code></div>
+          </div>
+        </div>
+
+        <div class="sg-type-row">
+          <div class="sg-demo-body">Body copy — the quick brown fox jumps over the lazy dog while reaching audiences in the millions.</div>
+          <div class="sg-type-tokens">
+            <div><code class="sg-name">--font-size-body-large</code> <code class="sg-val" data-token="--font-size-body-large"></code></div>
+            <div><code class="sg-name">--font-size-body-desktop</code> <code class="sg-val" data-token="--font-size-body-desktop"></code></div>
+            <div><code class="sg-name">--font-size-body-tablet</code> <code class="sg-val" data-token="--font-size-body-tablet"></code></div>
+            <div><code class="sg-name">--font-size-body-mobile</code> <code class="sg-val" data-token="--font-size-body-mobile"></code></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RULES -->
+      <section class="sg-section">
+        <h2>Rules</h2>
+        <div class="sg-rule-demo">
+          <div class="sg-rule-line" style="border-top: var(--outline) solid var(--color-primary)"></div>
+          <div class="sg-rule-label">
+            <code class="sg-name">--outline</code> <code class="sg-val" data-token="--outline"></code>
+            <span class="sg-muted">— hairline borders (sections, nav, footer)</span>
+          </div>
+        </div>
+        <div class="sg-rule-demo">
+          <div class="sg-rule-line" style="border-top: var(--hard-rule) solid var(--color-primary)"></div>
+          <div class="sg-rule-label">
+            <code class="sg-name">--hard-rule</code> <code class="sg-val" data-token="--hard-rule"></code>
+            <span class="sg-muted">— heavy divider between dossier and index</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- LAYOUT -->
+      <section class="sg-section">
+        <h2>Layout</h2>
+        <p class="sg-note">
+          Max-width containers center content on the two desktop tiers; on Tablet
+          and Mobile the max-width is dropped and replaced by side gutters. Boxes
+          below are outlined to show their extent (they cap at viewport width on
+          narrow screens).
+        </p>
+
+        <div class="sg-layout-box" style="width: var(--layout-max-width-large)">
+          <code class="sg-name">--layout-max-width-large</code>
+          <code class="sg-val" data-token="--layout-max-width-large"></code>
+          <span class="sg-muted">— Large Desktop, 1800px+</span>
+        </div>
+        <div class="sg-layout-box" style="width: var(--layout-max-width-desktop)">
+          <code class="sg-name">--layout-max-width-desktop</code>
+          <code class="sg-val" data-token="--layout-max-width-desktop"></code>
+          <span class="sg-muted">— Desktop, ≤1799px</span>
+        </div>
+
+        <div class="sg-gutter-demo" style="padding-left: var(--layout-margin-tablet); padding-right: var(--layout-margin-tablet)">
+          <div class="sg-gutter-inner">
+            <code class="sg-name">--layout-margin-tablet</code>
+            <code class="sg-val" data-token="--layout-margin-tablet"></code>
+            <span class="sg-muted">— Tablet gutter, ≤1279px (shown as side padding)</span>
+          </div>
+        </div>
+        <div class="sg-gutter-demo" style="padding-left: var(--layout-margin-mobile); padding-right: var(--layout-margin-mobile)">
+          <div class="sg-gutter-inner">
+            <code class="sg-name">--layout-margin-mobile</code>
+            <code class="sg-val" data-token="--layout-margin-mobile"></code>
+            <span class="sg-muted">— Mobile gutter, ≤800px (shown as side padding)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACCENT -->
+      <section class="sg-section">
+        <h2>Accent treatments</h2>
+        <p class="sg-note">
+          <code>--expand-tint</code> is the fill behind a project row when its panel
+          is expanded on /experience. Shown here in context.
+        </p>
+        <div class="sg-accent-panel" style="background: var(--expand-tint)">
+          <div class="sg-accent-row">Lorem Ipsum — expanded project row</div>
+          <div class="sg-accent-body">
+            Panel content sits on <code class="sg-name">--expand-tint</code>
+            (<code class="sg-val" data-token="--expand-tint"></code>) — a pale wash of
+            <code>--color-primary</code> that lifts the active row without competing
+            with the imagery.
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ GAP SECTIONS (audit snapshot) ============ -->
+
+      <!-- GAP: SPACING -->
+      <section class="sg-section sg-gap">
+        <h2>Gap — Spacing</h2>
+        <p class="sg-note">
+          No spacing scale is tokenized beyond layout-level widths/gutters. Below:
+          padding / margin / gap values currently hardcoded in component styles,
+          found by code audit (grouped by file).
+        </p>
+
+        <h3 class="sg-gap-file">experience.astro</h3>
+        <ul class="sg-gap-list">
+          <li><code>80px 0 70px</code> — <span class="sg-muted">.statement .wrap padding</span></li>
+          <li><code>24px</code> — <span class="sg-muted">.statement h1 margin-bottom</span></li>
+          <li><code>56px 0</code> — <span class="sg-muted">.section .wrap padding</span></li>
+          <li><code>64px 0</code> — <span class="sg-muted">.section.stats .wrap padding</span></li>
+          <li><code>56px 0 64px</code> — <span class="sg-muted">.section.clients .wrap padding</span></li>
+          <li><code>28px</code> — <span class="sg-muted">.section-label margin-bottom</span></li>
+          <li><code>24px</code> — <span class="sg-muted">.disciplines-row gap / .stats-row gap</span></li>
+          <li><code>16px</code> — <span class="sg-muted">.discipline padding-top</span></li>
+          <li><code>10px</code> — <span class="sg-muted">.discipline gap / .index-head gap</span></li>
+          <li><code>8px</code> — <span class="sg-muted">.stat gap</span></li>
+          <li><code>16px</code> — <span class="sg-muted">.logo-grid gap / .logo-row gap</span></li>
+          <li><code>64px 0 90px</code> — <span class="sg-muted">.index .wrap padding</span></li>
+          <li><code>18px</code> — <span class="sg-muted">.index-head padding-bottom / .index-col-head padding (18px 0)</span></li>
+          <li><code>64px 0</code> — <span class="sg-muted">.bottom-note .wrap padding</span></li>
+          <li><code>20px</code> / <code>14px</code> — <span class="sg-muted">.index-grid column-gap (desktop / ≤900px)</span></li>
+        </ul>
+
+        <h3 class="sg-gap-file">Navbar.astro</h3>
+        <ul class="sg-gap-list">
+          <li><code>16px 0</code> — <span class="sg-muted">.navbar padding</span></li>
+          <li><code>18px</code> — <span class="sg-muted">.nav-buttons gap</span></li>
+          <li><code>6px 14px</code> — <span class="sg-muted">.nav-btn padding</span></li>
+        </ul>
+
+        <h3 class="sg-gap-file">Footer.astro</h3>
+        <ul class="sg-gap-list">
+          <li><code>0 0 44px</code> — <span class="sg-muted">.footer padding</span></li>
+          <li><code>24px</code> — <span class="sg-muted">.footer-content padding</span></li>
+          <li><code>10px</code> — <span class="sg-muted">.footer-content gap</span></li>
+          <li><code>12px</code> — <span class="sg-muted">.footer-icons gap</span></li>
+        </ul>
+
+        <h3 class="sg-gap-file">ProjectRow.astro</h3>
+        <ul class="sg-gap-list">
+          <li><code>24px 0 40px 200px</code> — <span class="sg-muted">.panel-inner padding (150px left ≤900px)</span></li>
+          <li><code>18px</code> — <span class="sg-muted">.panel-text margin-bottom</span></li>
+          <li><code>32px</code> — <span class="sg-muted">.panel-meta gap</span></li>
+          <li><code>6px</code> — <span class="sg-muted">.panel-meta strong margin-left</span></li>
+          <li><code>4px</code> — <span class="sg-muted">.row-title margin-bottom</span></li>
+        </ul>
+
+        <h3 class="sg-gap-file">Slideshow.astro</h3>
+        <ul class="sg-gap-list">
+          <li><code>16px</code> — <span class="sg-muted">.panel-slideshow-track gap / .slideshow-controls gap / margin-top</span></li>
+          <li><code>28px</code> — <span class="sg-muted">.slideshow-controls margin-bottom</span></li>
+        </ul>
+      </section>
+
+      <!-- GAP: TYPOGRAPHY DETAILS -->
+      <section class="sg-section sg-gap">
+        <h2>Gap — Typography details</h2>
+        <p class="sg-note">
+          Only font sizes are tokenized. Line-height, letter-spacing and font-weight
+          are hardcoded per component. Note too that /experience does <em>not</em>
+          consume the font-size tokens — it hardcodes its own sizes (e.g. h1 70px,
+          statement p 32px, stat-num 86px), so the type-scale tokens above are
+          currently unused by real pages.
+        </p>
+
+        <h3 class="sg-gap-file">font-weight (values in use)</h3>
+        <ul class="sg-gap-list">
+          <li><code>400</code> / <code>500</code> / <code>600</code> / <code>700</code> — <span class="sg-muted">used ad-hoc across all components; no weight tokens</span></li>
+        </ul>
+
+        <h3 class="sg-gap-file">line-height (values in use)</h3>
+        <ul class="sg-gap-list">
+          <li><code>1</code> — <span class="sg-muted">.statement h1, .stat-num</span></li>
+          <li><code>1.3</code> — <span class="sg-muted">.row-title</span></li>
+          <li><code>1.4</code> — <span class="sg-muted">.statement p, .stat-label</span></li>
+          <li><code>1.5</code> — <span class="sg-muted">.discipline-desc, .row-desc, .index-head .sub</span></li>
+          <li><code>1.6</code> — <span class="sg-muted">.panel-text</span></li>
+          <li><code>22px</code> — <span class="sg-muted">.footer-content p (fixed px, not unitless)</span></li>
+        </ul>
+
+        <h3 class="sg-gap-file">letter-spacing (values in use)</h3>
+        <ul class="sg-gap-list">
+          <li><code>-0.02em</code> — <span class="sg-muted">.stat-num</span></li>
+          <li><code>0.24px</code> — <span class="sg-muted">.footer-content p</span></li>
+          <li><code>0.72px</code> — <span class="sg-muted">.row-discipline, .panel-meta, .slideshow-counter</span></li>
+          <li><code>0.8px</code> — <span class="sg-muted">.brand-text</span></li>
+          <li><code>0.96px</code> — <span class="sg-muted">.section-label, .index-col-head, .bottom-note, .slideshow-status</span></li>
+          <li><code>1px</code> — <span class="sg-muted">.logo-cell</span></li>
+          <li><code>4.32px</code> / <code>7.92px</code> — <span class="sg-muted">.logo / .logo .light</span></li>
+        </ul>
+      </section>
+
+      <!-- GAP: FONT FAMILY -->
+      <section class="sg-section sg-gap">
+        <h2>Gap — Font family</h2>
+        <p class="sg-note">
+          <code>'Space Grotesk'</code> is not tokenized. It is declared once and
+          loaded via Google Fonts; nothing references it through a variable.
+        </p>
+        <ul class="sg-gap-list">
+          <li><code>font-family: 'Space Grotesk', sans-serif</code> — <span class="sg-muted">global.css, on html/body</span></li>
+          <li><code>Space+Grotesk:wght@400;500;600;700</code> — <span class="sg-muted">BaseLayout.astro, Google Fonts &lt;link&gt; (weights 400/500/600/700)</span></li>
+        </ul>
+      </section>
+
+      <!-- GAP: ANIMATION -->
+      <section class="sg-section sg-gap">
+        <h2>Gap — Animation</h2>
+        <p class="sg-note">
+          No motion tokens. Transition durations and easing curves are hardcoded
+          per component; the slideshow also carries timing constants in JS.
+        </p>
+
+        <h3 class="sg-gap-file">CSS transitions</h3>
+        <ul class="sg-gap-list">
+          <li><code>0.15s ease</code> — <span class="sg-muted">Navbar .nav-btn (background/color); Slideshow .slideshow-btn</span></li>
+          <li><code>0.2s ease</code> — <span class="sg-muted">ProjectRow .project-row background; .brand-text / .brand-logo opacity</span></li>
+          <li><code>0.3s ease</code> — <span class="sg-muted">Slideshow .slideshow-status opacity</span></li>
+          <li><code>0.35s ease</code> — <span class="sg-muted">ProjectRow .row-thumb img filter</span></li>
+          <li><code>0.4s ease</code> — <span class="sg-muted">ProjectRow .project-panel grid-template-rows (expand)</span></li>
+          <li><code>0.45s cubic-bezier(0.4, 0, 0.2, 1)</code> — <span class="sg-muted">Slideshow .snapping transform — only non-ease curve in the codebase</span></li>
+        </ul>
+
+        <h3 class="sg-gap-file">JS timing constants (Slideshow.astro)</h3>
+        <ul class="sg-gap-list">
+          <li><code>AUTO_SCROLL_SPEED = 50</code> — <span class="sg-muted">px/sec auto-advance</span></li>
+          <li><code>BUTTON_PAUSE_MS = 2500</code> — <span class="sg-muted">pause after a button click</span></li>
+          <li><code>END_PAUSE_MS = 1500</code> — <span class="sg-muted">pause at end before looping</span></li>
+          <li><code>460</code> — <span class="sg-muted">setTimeout to clear .snapping (must track the 0.45s transition)</span></li>
+        </ul>
+      </section>
+
+      <!-- HARDCODED FALLBACKS -->
+      <section class="sg-section sg-gap">
+        <h2>Hardcoded fallbacks</h2>
+        <p class="sg-note">
+          Every <code>var(--token, fallback)</code> instance duplicates the token's
+          value as a fallback. All currently live in global.css; component styles use
+          bare <code>var(--token)</code> with no fallback. If a token is renamed, these
+          fallbacks silently take over instead of failing loudly.
+        </p>
+        <ul class="sg-gap-list">
+          <li><code>var(--surface, #F7F7F7)</code> — <span class="sg-muted">global.css:6, body background</span></li>
+          <li><code>var(--ink, #111)</code> — <span class="sg-muted">global.css:7, body color</span></li>
+          <li><code>var(--layout-max-width-desktop, 1000px)</code> — <span class="sg-muted">global.css:18, .wrap</span></li>
+          <li><code>var(--layout-max-width-large, 1200px)</code> — <span class="sg-muted">global.css:22, .wrap @1800+</span></li>
+          <li><code>var(--layout-margin-tablet, 20px)</code> — <span class="sg-muted">global.css:27–28, .wrap @≤1279</span></li>
+          <li><code>var(--layout-margin-mobile, 12px)</code> — <span class="sg-muted">global.css:33–34, .wrap @≤800</span></li>
+        </ul>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="sg-footer">
+        <p>This page is excluded from search engines and not linked in site nav.</p>
+      </footer>
+    </main>
+
+    <script>
+      // Populate every .sg-val with the live computed value of its token, so the
+      // readouts can never drift from tokens.css. Values are static across
+      // breakpoints (tokens.css has no media queries), so a single pass is enough.
+      const root = document.documentElement;
+      document.querySelectorAll('.sg-val').forEach((el) => {
+        const name = el.getAttribute('data-token');
+        const val = getComputedStyle(root).getPropertyValue(name).trim();
+        el.textContent = val || '(unset)';
+      });
+    </script>
+
+    <style>
+      /* ===== Styleguide chrome — intentionally distinct from site styles ===== */
+      .sg {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 64px 24px 120px;
+      }
+      .sg-corner {
+        position: fixed; top: 8px; right: 12px; z-index: 10;
+        font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+        color: var(--grey-light);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+
+      .sg-header { margin-bottom: 56px; }
+      .sg-header h1 { font-size: 40px; font-weight: 600; color: var(--color-primary); margin-bottom: 12px; }
+      .sg-header p { font-size: 16px; line-height: 1.6; color: var(--ink); max-width: 640px; }
+
+      .sg-section {
+        padding: 40px 0;
+        border-top: var(--outline) solid var(--color-primary);
+      }
+      .sg-section h2 {
+        font-size: 13px; font-weight: 600; letter-spacing: 1px;
+        text-transform: uppercase; color: var(--color-primary);
+        margin-bottom: 24px;
+      }
+      .sg-note {
+        font-size: 14px; line-height: 1.6; color: var(--grey-mid);
+        max-width: 640px; margin-bottom: 28px;
+      }
+      .sg-muted { color: var(--grey-light); }
+
+      /* Code-style text for token names + values */
+      code, .sg-name, .sg-val {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12px;
+      }
+      .sg-name { color: var(--color-primary); }
+      .sg-val { color: var(--ink); }
+      .sg-note code, .sg-gap-list code { background: var(--grey-bg); padding: 1px 5px; }
+
+      /* COLOR */
+      .sg-swatches {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 20px;
+      }
+      .sg-swatch { display: flex; flex-direction: column; gap: 6px; }
+      .sg-chip { height: 80px; width: 100%; }
+      .sg-chip-bordered { border: 1px solid var(--grey-light); }
+      /* checkerboard behind the translucent swatch so its alpha is visible */
+      .sg-chip-checker {
+        background-image:
+          linear-gradient(45deg, #ccc 25%, transparent 25%),
+          linear-gradient(-45deg, #ccc 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #ccc 75%),
+          linear-gradient(-45deg, transparent 75%, #ccc 75%);
+        background-size: 16px 16px;
+        background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+      }
+
+      /* TYPOGRAPHY — samples consume the font-size tokens, swapped per breakpoint
+         to mirror real usage so resizing demonstrates the scale. */
+      .sg-type-row {
+        display: flex; align-items: baseline; gap: 32px;
+        padding: 20px 0; border-bottom: 1px solid var(--grey-bg);
+        flex-wrap: wrap;
+      }
+      .sg-type-tokens { display: flex; flex-direction: column; gap: 3px; }
+      .sg-type-tokens div { display: flex; gap: 8px; }
+
+      .sg-demo-h1 { font-weight: 400; line-height: 1; flex: 1 1 240px; font-size: var(--font-size-h1-desktop); }
+      .sg-demo-h2 { font-weight: 500; line-height: 1.1; flex: 1 1 240px; font-size: var(--font-size-h2-desktop); }
+      .sg-demo-h3 { font-weight: 500; line-height: 1.2; flex: 1 1 240px; font-size: var(--font-size-h3-desktop); }
+      .sg-demo-body { font-weight: 400; line-height: 1.5; flex: 1 1 240px; font-size: var(--font-size-body-desktop); max-width: 480px; }
+
+      @media (min-width: 1800px) {
+        .sg-demo-h1 { font-size: var(--font-size-h1-large); }
+        .sg-demo-h2 { font-size: var(--font-size-h2-large); }
+        .sg-demo-h3 { font-size: var(--font-size-h3-large); }
+        .sg-demo-body { font-size: var(--font-size-body-large); }
+      }
+      @media (max-width: 1279px) {
+        .sg-demo-h1 { font-size: var(--font-size-h1-tablet); }
+        .sg-demo-h2 { font-size: var(--font-size-h2-tablet); }
+        .sg-demo-h3 { font-size: var(--font-size-h3-tablet); }
+        .sg-demo-body { font-size: var(--font-size-body-tablet); }
+      }
+      @media (max-width: 800px) {
+        .sg-demo-h1 { font-size: var(--font-size-h1-mobile); }
+        .sg-demo-h2 { font-size: var(--font-size-h2-mobile); }
+        .sg-demo-h3 { font-size: var(--font-size-h3-mobile); }
+        .sg-demo-body { font-size: var(--font-size-body-mobile); }
+      }
+
+      /* RULES */
+      .sg-rule-demo { margin-bottom: 24px; }
+      .sg-rule-line { width: 100%; margin-bottom: 8px; }
+      .sg-rule-label { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+
+      /* LAYOUT */
+      .sg-layout-box {
+        max-width: 100%;
+        border: 1px dashed var(--color-primary);
+        padding: 16px;
+        margin-bottom: 16px;
+        display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap;
+      }
+      .sg-gutter-demo {
+        background: var(--grey-bg);
+        margin-bottom: 16px;
+      }
+      .sg-gutter-inner {
+        background: var(--surface);
+        border: 1px solid var(--grey-light);
+        padding: 16px;
+        display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap;
+      }
+
+      /* ACCENT */
+      .sg-accent-panel { padding: 24px; }
+      .sg-accent-row { font-size: 20px; font-weight: 500; color: var(--ink); margin-bottom: 12px; }
+      .sg-accent-body { font-size: 15px; line-height: 1.6; color: var(--ink); max-width: 600px; }
+
+      /* GAP sections */
+      .sg-gap h2 { color: var(--ink); }
+      .sg-gap-file {
+        font-size: 12px; font-weight: 600; letter-spacing: 0.5px;
+        text-transform: uppercase; color: var(--grey-mid);
+        margin: 20px 0 8px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      .sg-gap-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+      .sg-gap-list li { font-size: 13px; line-height: 1.5; }
+
+      /* FOOTER */
+      .sg-footer {
+        margin-top: 56px; padding-top: 24px;
+        border-top: var(--hard-rule) solid var(--color-primary);
+      }
+      .sg-footer p {
+        font-size: 11px; letter-spacing: 0.96px; text-transform: uppercase;
+        color: var(--grey-light);
+      }
+    </style>
+  </body>
+</html>
