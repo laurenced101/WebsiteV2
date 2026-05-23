@@ -117,7 +117,7 @@
       observer.unobserve(el);
     });
   }, {
-    threshold:  0.05,
+    threshold:  0.25,
     rootMargin: "0px 0px -40px 0px"
   });
 
@@ -187,13 +187,13 @@
 (function () {
   "use strict";
 
-  const SCROLL_DURATION_MS = 1900;
+  const SCROLL_DURATION_MS = 1100;
   const BOUND_ATTR = "data-scroll-top-bound";
 
-  const easeInOutQuart = (t) =>
-    t < 0.5
-      ? 8 * t * t * t * t
-      : 1 - Math.pow(-2 * t + 2, 4) / 2;
+  // easeOutCubic — monotonic deceleration (fast start, gentle end).
+  // Replaces easeInOutQuart, whose S-curve produced a perceived "snap" at
+  // both ends because of the inflection in the middle.
+  const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
   const smoothScrollToTop = () => {
     const startY = window.scrollY;
@@ -202,7 +202,7 @@
 
     const step = (now) => {
       const t = Math.min((now - startTime) / SCROLL_DURATION_MS, 1);
-      window.scrollTo(0, startY * (1 - easeInOutQuart(t)));
+      window.scrollTo(0, startY * (1 - easeOutCubic(t)));
       if (t < 1) requestAnimationFrame(step);
     };
 
