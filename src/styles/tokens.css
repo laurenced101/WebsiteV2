@@ -72,15 +72,15 @@
      bottom of this file. line-height / letter-spacing are tokenized too — see
      the leading / tracking blocks below (Session 5). */
 
-  --font-size-display-large: 86px;
-  --font-size-display-desktop: 86px;
-  --font-size-display-tablet: 72px;
-  --font-size-display-mobile: 64px;
+  --font-size-display-large: 160px;
+  --font-size-display-desktop: 130px;
+  --font-size-display-tablet: 100px;
+  --font-size-display-mobile: 88px;
 
-  --font-size-h1-large: 64px;
-  --font-size-h1-desktop: 64px;
-  --font-size-h1-tablet: 56px;
-  --font-size-h1-mobile: 48px;
+  --font-size-h1-large: 120px;
+  --font-size-h1-desktop: 90px;
+  --font-size-h1-tablet: 60px;
+  --font-size-h1-mobile: 58px;
 
   --font-size-h2-large: 38px;
   --font-size-h2-desktop: 38px;
@@ -164,7 +164,7 @@
   --text-label:   var(--grey-light);
 
   /* Per-role font weight — alias into the weight scale, re-pointable in /styleguide. */
-  --weight-display: var(--font-weight-regular);
+  --weight-display: var(--font-weight-semibold);
   --weight-h1:      var(--font-weight-regular);
   --weight-h2:      var(--font-weight-medium);
   --weight-h3:      var(--font-weight-medium);
@@ -184,11 +184,11 @@
 
   /* Per-role measure — max line width for a text block, as a percentage of the
      container, so it scales with page width. Editable per role. */
-  --measure-display: 90%;
-  --measure-h1:      80%;
-  --measure-h2:      72%;
-  --measure-h3:      68%;
-  --measure-body:    60%;
+  --measure-display: 100%;
+  --measure-h1:      85%;
+  --measure-h2:      85%;
+  --measure-h3:      85%;
+  --measure-body:    100%;
   --measure-caption: 56%;
   --measure-label:   48%;
 
