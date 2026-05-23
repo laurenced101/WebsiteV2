@@ -34,7 +34,7 @@ const total = images.length;
   }
   .panel-slideshow-track {
     display: flex;
-    gap: 16px;
+    gap: var(--space-16);
     transform: translateX(0);
     will-change: transform;
     /* No transition by default — RAF drives the motion. */
@@ -59,8 +59,8 @@ const total = images.length;
   }
 
   .slideshow-controls {
-    display: flex; align-items: center; gap: 16px;
-    margin-top: 16px; margin-bottom: 28px;
+    display: flex; align-items: center; gap: var(--space-16);
+    margin-top: var(--space-16); margin-bottom: 28px;
   }
   .slideshow-btn {
     width: 36px; height: 36px;

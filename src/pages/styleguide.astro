@@ -17,6 +17,19 @@
 // hardcoded values found in the codebase, not tokens. Re-run the audit when
 // component styles change.
 import '../styles/global.css';
+
+// Type roles for the live "Type roles" section. Each sample paragraph consumes
+// the role's tokens (size + color + leading + tracking + paragraph spacing), so
+// editing any of them in the token editor updates the sample in place.
+const TYPE_ROLES = [
+  { role: 'display', a: 'Display', b: 'Hero numerals & statements' },
+  { role: 'h1', a: 'Heading one', b: 'Primary section title' },
+  { role: 'h2', a: 'Heading two', b: 'Statement line' },
+  { role: 'h3', a: 'Heading three', b: 'Subsection heading' },
+  { role: 'body', a: 'Body copy — the quick brown fox jumps over the lazy dog while reaching audiences in the millions.', b: 'A second paragraph follows, so the gap above it is the paragraph-spacing token for this role.' },
+  { role: 'caption', a: 'Caption — small secondary text: descriptions, sub-lines, button labels.', b: 'Second caption line, to show paragraph spacing.' },
+  { role: 'label', a: 'Label — micro text', b: 'Second label line' },
+];
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -35,12 +48,17 @@ import '../styles/global.css';
   <body>
     <div class="sg-corner">styleguide</div>
 
+    <!-- Live breakpoint indicator — which of the four tested tiers the viewport is
+         currently in, plus the exact width. Updated from JS on resize. -->
+    <div class="sg-breakpoint" id="sg-breakpoint" aria-live="polite"></div>
+
     <!-- Token editor — live-tweak every token, persist to localStorage, export tokens.css.
          Controls are built by JS from a name-only manifest; values come from getComputedStyle
          so nothing is duplicated. Panel chrome uses literal colors (not tokens) so it stays
          legible even while you're editing --ink / --surface. -->
     <button id="sg-edit-toggle" class="sg-edit-toggle" type="button">✎ Edit tokens</button>
     <aside id="sg-editor" class="sg-editor" hidden aria-label="Token editor">
+      <div class="sg-editor-resize" id="sg-resize" aria-hidden="true" title="Drag to resize"></div>
       <div class="sg-editor-head">
         <strong>Token editor</strong>
         <button id="sg-editor-close" type="button" aria-label="Close">×</button>
@@ -113,87 +131,26 @@ import '../styles/global.css';
         </div>
       </section>
 
-      <!-- TYPOGRAPHY: SIZE SCALE -->
+      <!-- TYPOGRAPHY: TYPE ROLES -->
       <section class="sg-section">
-        <h2>Type scale</h2>
+        <h2>Type roles</h2>
         <p class="sg-note">
-          Seven roles, each with four breakpoint values. Components consume a
-          resolved alias (<code>var(--font-size-h1)</code>) that picks the right
-          breakpoint automatically — the live samples below use those aliases, so
-          resize the window to watch them shift across Large&nbsp;Desktop&nbsp;(1800+),
-          Desktop&nbsp;(≤1799), Tablet&nbsp;(≤1279) and Mobile&nbsp;(≤800). The four
-          readouts per role are the underlying granular tokens (editable at right).
+          Seven roles. Each sample consumes <em>all</em> of its role's tokens — font
+          size (per-breakpoint, so resize to watch it shift across Large&nbsp;1800+,
+          Desktop&nbsp;≤1799, Tablet&nbsp;≤1279, Mobile&nbsp;≤800), colour, weight,
+          line-height, letter-spacing, paragraph spacing and measure — so editing any
+          of them in the token editor updates the sample in place. The gap between each
+          role's two paragraphs is its <code>--paragraph-*</code> token.
         </p>
 
-        <div class="sg-type-row">
-          <div class="sg-demo-display">Display</div>
-          <div class="sg-type-tokens">
-            <div><code class="sg-name">--font-size-display-large</code> <code class="sg-val" data-token="--font-size-display-large"></code></div>
-            <div><code class="sg-name">--font-size-display-desktop</code> <code class="sg-val" data-token="--font-size-display-desktop"></code></div>
-            <div><code class="sg-name">--font-size-display-tablet</code> <code class="sg-val" data-token="--font-size-display-tablet"></code></div>
-            <div><code class="sg-name">--font-size-display-mobile</code> <code class="sg-val" data-token="--font-size-display-mobile"></code></div>
+        {TYPE_ROLES.map((r) => (
+          <div class="sg-type-row">
+            <div class={`sg-sample sg-sample-${r.role}`}>
+              <p>{r.a}</p>
+              <p>{r.b}</p>
+            </div>
           </div>
-        </div>
-
-        <div class="sg-type-row">
-          <div class="sg-demo-h1">Heading one</div>
-          <div class="sg-type-tokens">
-            <div><code class="sg-name">--font-size-h1-large</code> <code class="sg-val" data-token="--font-size-h1-large"></code></div>
-            <div><code class="sg-name">--font-size-h1-desktop</code> <code class="sg-val" data-token="--font-size-h1-desktop"></code></div>
-            <div><code class="sg-name">--font-size-h1-tablet</code> <code class="sg-val" data-token="--font-size-h1-tablet"></code></div>
-            <div><code class="sg-name">--font-size-h1-mobile</code> <code class="sg-val" data-token="--font-size-h1-mobile"></code></div>
-          </div>
-        </div>
-
-        <div class="sg-type-row">
-          <div class="sg-demo-h2">Heading two</div>
-          <div class="sg-type-tokens">
-            <div><code class="sg-name">--font-size-h2-large</code> <code class="sg-val" data-token="--font-size-h2-large"></code></div>
-            <div><code class="sg-name">--font-size-h2-desktop</code> <code class="sg-val" data-token="--font-size-h2-desktop"></code></div>
-            <div><code class="sg-name">--font-size-h2-tablet</code> <code class="sg-val" data-token="--font-size-h2-tablet"></code></div>
-            <div><code class="sg-name">--font-size-h2-mobile</code> <code class="sg-val" data-token="--font-size-h2-mobile"></code></div>
-          </div>
-        </div>
-
-        <div class="sg-type-row">
-          <div class="sg-demo-h3">Heading three</div>
-          <div class="sg-type-tokens">
-            <div><code class="sg-name">--font-size-h3-large</code> <code class="sg-val" data-token="--font-size-h3-large"></code></div>
-            <div><code class="sg-name">--font-size-h3-desktop</code> <code class="sg-val" data-token="--font-size-h3-desktop"></code></div>
-            <div><code class="sg-name">--font-size-h3-tablet</code> <code class="sg-val" data-token="--font-size-h3-tablet"></code></div>
-            <div><code class="sg-name">--font-size-h3-mobile</code> <code class="sg-val" data-token="--font-size-h3-mobile"></code></div>
-          </div>
-        </div>
-
-        <div class="sg-type-row">
-          <div class="sg-demo-body">Body copy — the quick brown fox jumps over the lazy dog while reaching audiences in the millions.</div>
-          <div class="sg-type-tokens">
-            <div><code class="sg-name">--font-size-body-large</code> <code class="sg-val" data-token="--font-size-body-large"></code></div>
-            <div><code class="sg-name">--font-size-body-desktop</code> <code class="sg-val" data-token="--font-size-body-desktop"></code></div>
-            <div><code class="sg-name">--font-size-body-tablet</code> <code class="sg-val" data-token="--font-size-body-tablet"></code></div>
-            <div><code class="sg-name">--font-size-body-mobile</code> <code class="sg-val" data-token="--font-size-body-mobile"></code></div>
-          </div>
-        </div>
-
-        <div class="sg-type-row">
-          <div class="sg-demo-caption">Caption — small secondary text: descriptions, sub-lines, button labels.</div>
-          <div class="sg-type-tokens">
-            <div><code class="sg-name">--font-size-caption-large</code> <code class="sg-val" data-token="--font-size-caption-large"></code></div>
-            <div><code class="sg-name">--font-size-caption-desktop</code> <code class="sg-val" data-token="--font-size-caption-desktop"></code></div>
-            <div><code class="sg-name">--font-size-caption-tablet</code> <code class="sg-val" data-token="--font-size-caption-tablet"></code></div>
-            <div><code class="sg-name">--font-size-caption-mobile</code> <code class="sg-val" data-token="--font-size-caption-mobile"></code></div>
-          </div>
-        </div>
-
-        <div class="sg-type-row">
-          <div class="sg-demo-label">Label — micro text</div>
-          <div class="sg-type-tokens">
-            <div><code class="sg-name">--font-size-label-large</code> <code class="sg-val" data-token="--font-size-label-large"></code></div>
-            <div><code class="sg-name">--font-size-label-desktop</code> <code class="sg-val" data-token="--font-size-label-desktop"></code></div>
-            <div><code class="sg-name">--font-size-label-tablet</code> <code class="sg-val" data-token="--font-size-label-tablet"></code></div>
-            <div><code class="sg-name">--font-size-label-mobile</code> <code class="sg-val" data-token="--font-size-label-mobile"></code></div>
-          </div>
-        </div>
+        ))}
       </section>
 
       <!-- TYPOGRAPHY: FONT FAMILY -->
@@ -300,35 +257,39 @@ import '../styles/global.css';
       <section class="sg-section">
         <h2>Layout</h2>
         <p class="sg-note">
-          Max-width containers center content on the two desktop tiers; on Tablet
-          and Mobile the max-width is dropped and replaced by side gutters. Boxes
-          below are outlined to show their extent (they cap at viewport width on
-          narrow screens).
+          The two blocks below are <strong>real-scale</strong> and centered exactly
+          like the site's content container, each capped by its max-width token — so
+          editing a token re-widths its block just like the live site. They break out
+          to the full viewport width; on a viewport narrower than the token value, a
+          block fills the width and caps (the real responsive behaviour). The gutter
+          rows show the Tablet/Mobile side margins at real size.
         </p>
 
-        <div class="sg-layout-box" style="width: var(--layout-max-width-large)">
-          <code class="sg-name">--layout-max-width-large</code>
-          <code class="sg-val" data-token="--layout-max-width-large"></code>
-          <span class="sg-muted">— Large Desktop, 1800px+</span>
-        </div>
-        <div class="sg-layout-box" style="width: var(--layout-max-width-desktop)">
-          <code class="sg-name">--layout-max-width-desktop</code>
-          <code class="sg-val" data-token="--layout-max-width-desktop"></code>
-          <span class="sg-muted">— Desktop, ≤1799px</span>
-        </div>
-
-        <div class="sg-gutter-demo" style="padding-left: var(--layout-margin-tablet); padding-right: var(--layout-margin-tablet)">
-          <div class="sg-gutter-inner">
-            <code class="sg-name">--layout-margin-tablet</code>
-            <code class="sg-val" data-token="--layout-margin-tablet"></code>
-            <span class="sg-muted">— Tablet gutter, ≤1279px (shown as side padding)</span>
+        <div class="sg-layout-preview">
+          <div class="sg-wrap-sim sg-wrap-sim--large">
+            <code class="sg-name">--layout-max-width-large</code>
+            <code class="sg-val" data-token="--layout-max-width-large"></code>
+            <span class="sg-muted">— Large Desktop, 1800px+</span>
           </div>
-        </div>
-        <div class="sg-gutter-demo" style="padding-left: var(--layout-margin-mobile); padding-right: var(--layout-margin-mobile)">
-          <div class="sg-gutter-inner">
-            <code class="sg-name">--layout-margin-mobile</code>
-            <code class="sg-val" data-token="--layout-margin-mobile"></code>
-            <span class="sg-muted">— Mobile gutter, ≤800px (shown as side padding)</span>
+          <div class="sg-wrap-sim sg-wrap-sim--desktop">
+            <code class="sg-name">--layout-max-width-desktop</code>
+            <code class="sg-val" data-token="--layout-max-width-desktop"></code>
+            <span class="sg-muted">— Desktop, ≤1799px</span>
+          </div>
+
+          <div class="sg-gutter-demo sg-gutter-demo--tablet">
+            <div class="sg-gutter-inner">
+              <code class="sg-name">--layout-margin-tablet</code>
+              <code class="sg-val" data-token="--layout-margin-tablet"></code>
+              <span class="sg-muted">— Tablet gutter, ≤1279px (side padding)</span>
+            </div>
+          </div>
+          <div class="sg-gutter-demo sg-gutter-demo--mobile">
+            <div class="sg-gutter-inner">
+              <code class="sg-name">--layout-margin-mobile</code>
+              <code class="sg-val" data-token="--layout-margin-mobile"></code>
+              <span class="sg-muted">— Mobile gutter, ≤800px (side padding)</span>
+            </div>
           </div>
         </div>
       </section>
@@ -351,95 +312,104 @@ import '../styles/global.css';
         </div>
       </section>
 
-      <!-- ============ GAP SECTIONS (audit snapshot) ============ -->
-
-      <!-- GAP: SPACING -->
-      <section class="sg-section sg-gap">
-        <h2>Gap — Spacing</h2>
+      <!-- SPACING (Session 5) -->
+      <section class="sg-section">
+        <h2>Spacing scale</h2>
         <p class="sg-note">
-          No spacing scale is tokenized beyond layout-level widths/gutters. Below:
-          padding / margin / gap values currently hardcoded in component styles,
-          found by code audit (grouped by file).
+          Ten primitives, consumed directly (<code>var(--space-16)</code>) — spacing
+          applies across too many components for a clean per-role mapping, so unlike
+          type there are no role aliases. Bars are drawn at each token's actual width.
+          Applies to padding / margin / gap; off-scale values found in the audit are
+          left as raw px and listed in <code>notes/session5-mismatches.md</code>.
+        </p>
+        <div class="sg-space-scale">
+          {[4, 8, 12, 16, 24, 32, 48, 64, 96, 128].map((n) => (
+            <div class="sg-space-item">
+              <div class="sg-space-bar" style={`width: var(--space-${n})`}></div>
+              <code class="sg-name">{`--space-${n}`}</code>
+              <code class="sg-val" data-token={`--space-${n}`}></code>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- LINE-HEIGHT (Session 5) -->
+      <section class="sg-section">
+        <h2>Line-height</h2>
+        <p class="sg-note">
+          Four unitless primitives, plus seven role aliases that map onto the type
+          roles. Components consume the alias (<code>var(--leading-h1)</code>), never
+          the primitive — so an alias can be re-pointed at a different primitive in
+          the editor without touching markup. Ratios scale with font-size, so no
+          per-breakpoint variants are needed.
         </p>
 
-        <h3 class="sg-gap-file">experience.astro</h3>
-        <ul class="sg-gap-list">
-          <li><code>80px 0 70px</code> — <span class="sg-muted">.statement .wrap padding</span></li>
-          <li><code>24px</code> — <span class="sg-muted">.statement h1 margin-bottom</span></li>
-          <li><code>56px 0</code> — <span class="sg-muted">.section .wrap padding</span></li>
-          <li><code>64px 0</code> — <span class="sg-muted">.section.stats .wrap padding</span></li>
-          <li><code>56px 0 64px</code> — <span class="sg-muted">.section.clients .wrap padding</span></li>
-          <li><code>28px</code> — <span class="sg-muted">.section-label margin-bottom</span></li>
-          <li><code>24px</code> — <span class="sg-muted">.disciplines-row gap / .stats-row gap</span></li>
-          <li><code>16px</code> — <span class="sg-muted">.discipline padding-top</span></li>
-          <li><code>10px</code> — <span class="sg-muted">.discipline gap / .index-head gap</span></li>
-          <li><code>8px</code> — <span class="sg-muted">.stat gap</span></li>
-          <li><code>16px</code> — <span class="sg-muted">.logo-grid gap / .logo-row gap</span></li>
-          <li><code>64px 0 90px</code> — <span class="sg-muted">.index .wrap padding</span></li>
-          <li><code>18px</code> — <span class="sg-muted">.index-head padding-bottom / .index-col-head padding (18px 0)</span></li>
-          <li><code>64px 0</code> — <span class="sg-muted">.bottom-note .wrap padding</span></li>
-          <li><code>20px</code> / <code>14px</code> — <span class="sg-muted">.index-grid column-gap (desktop / ≤900px)</span></li>
-        </ul>
+        <h3 class="sg-subhead">Primitives</h3>
+        <div class="sg-lh-row">
+          <p class="sg-lh-sample" style="line-height: var(--leading-tight)">Tight — the quick brown fox jumps over the lazy dog and keeps on running across two full lines of measure.</p>
+          <div class="sg-type-tokens"><div><code class="sg-name">--leading-tight</code> <code class="sg-val" data-token="--leading-tight"></code></div></div>
+        </div>
+        <div class="sg-lh-row">
+          <p class="sg-lh-sample" style="line-height: var(--leading-snug)">Snug — the quick brown fox jumps over the lazy dog and keeps on running across two full lines of measure.</p>
+          <div class="sg-type-tokens"><div><code class="sg-name">--leading-snug</code> <code class="sg-val" data-token="--leading-snug"></code></div></div>
+        </div>
+        <div class="sg-lh-row">
+          <p class="sg-lh-sample" style="line-height: var(--leading-normal)">Normal — the quick brown fox jumps over the lazy dog and keeps on running across two full lines of measure.</p>
+          <div class="sg-type-tokens"><div><code class="sg-name">--leading-normal</code> <code class="sg-val" data-token="--leading-normal"></code></div></div>
+        </div>
+        <div class="sg-lh-row">
+          <p class="sg-lh-sample" style="line-height: var(--leading-loose)">Loose — the quick brown fox jumps over the lazy dog and keeps on running across two full lines of measure.</p>
+          <div class="sg-type-tokens"><div><code class="sg-name">--leading-loose</code> <code class="sg-val" data-token="--leading-loose"></code></div></div>
+        </div>
 
-        <h3 class="sg-gap-file">Navbar.astro</h3>
-        <ul class="sg-gap-list">
-          <li><code>16px 0</code> — <span class="sg-muted">.navbar padding</span></li>
-          <li><code>18px</code> — <span class="sg-muted">.nav-buttons gap</span></li>
-          <li><code>6px 14px</code> — <span class="sg-muted">.nav-btn padding</span></li>
-        </ul>
-
-        <h3 class="sg-gap-file">Footer.astro</h3>
-        <ul class="sg-gap-list">
-          <li><code>0 0 44px</code> — <span class="sg-muted">.footer padding</span></li>
-          <li><code>24px</code> — <span class="sg-muted">.footer-content padding</span></li>
-          <li><code>10px</code> — <span class="sg-muted">.footer-content gap</span></li>
-          <li><code>12px</code> — <span class="sg-muted">.footer-icons gap</span></li>
-        </ul>
-
-        <h3 class="sg-gap-file">ProjectRow.astro</h3>
-        <ul class="sg-gap-list">
-          <li><code>24px 0 40px 200px</code> — <span class="sg-muted">.panel-inner padding (150px left ≤900px)</span></li>
-          <li><code>18px</code> — <span class="sg-muted">.panel-text margin-bottom</span></li>
-          <li><code>32px</code> — <span class="sg-muted">.panel-meta gap</span></li>
-          <li><code>6px</code> — <span class="sg-muted">.panel-meta strong margin-left</span></li>
-          <li><code>4px</code> — <span class="sg-muted">.row-title margin-bottom</span></li>
-        </ul>
-
-        <h3 class="sg-gap-file">Slideshow.astro</h3>
-        <ul class="sg-gap-list">
-          <li><code>16px</code> — <span class="sg-muted">.panel-slideshow-track gap / .slideshow-controls gap / margin-top</span></li>
-          <li><code>28px</code> — <span class="sg-muted">.slideshow-controls margin-bottom</span></li>
+        <h3 class="sg-subhead">Role aliases</h3>
+        <p class="sg-note">Each alias currently points at the primitive shown — re-map in the editor.</p>
+        <ul class="sg-alias-list">
+          {['--leading-display', '--leading-h1', '--leading-h2', '--leading-h3', '--leading-body', '--leading-caption', '--leading-label'].map((a) => (
+            <li class="sg-alias-item">
+              <code class="sg-name">{a}</code>
+              <span class="sg-alias-arrow">→</span>
+              <code class="sg-alias-map" data-alias={a}></code>
+            </li>
+          ))}
         </ul>
       </section>
 
-      <!-- GAP: TYPOGRAPHY DETAILS -->
-      <section class="sg-section sg-gap">
-        <h2>Gap — Typography details</h2>
+      <!-- LETTER-SPACING (Session 5) -->
+      <section class="sg-section">
+        <h2>Letter-spacing</h2>
         <p class="sg-note">
-          Font size, family and weight are now tokenized, and /experience consumes
-          them. Still hardcoded per component: <strong>line-height</strong> and
-          <strong>letter-spacing</strong> (Session 5).
+          Three em-based primitives, plus seven role aliases — same alias pattern as
+          line-height. <code>em</code> values scale with font-size, so no
+          per-breakpoint variants. Most label-style text on the live site uses small
+          px tracking that doesn't match these primitives yet; those are recorded in
+          the mismatch report for follow-up.
         </p>
 
-        <h3 class="sg-gap-file">line-height (values in use)</h3>
-        <ul class="sg-gap-list">
-          <li><code>1</code> — <span class="sg-muted">.statement h1, .stat-num</span></li>
-          <li><code>1.3</code> — <span class="sg-muted">.row-title</span></li>
-          <li><code>1.4</code> — <span class="sg-muted">.statement p, .stat-label</span></li>
-          <li><code>1.5</code> — <span class="sg-muted">.discipline-desc, .row-desc, .index-head .sub</span></li>
-          <li><code>1.6</code> — <span class="sg-muted">.panel-text</span></li>
-          <li><code>22px</code> — <span class="sg-muted">.footer-content p (fixed px, not unitless)</span></li>
-        </ul>
+        <h3 class="sg-subhead">Primitives</h3>
+        <div class="sg-ls-row">
+          <p class="sg-ls-sample" style="letter-spacing: var(--tracking-tight)">Tight tracking — headline measure</p>
+          <div class="sg-type-tokens"><div><code class="sg-name">--tracking-tight</code> <code class="sg-val" data-token="--tracking-tight"></code></div></div>
+        </div>
+        <div class="sg-ls-row">
+          <p class="sg-ls-sample" style="letter-spacing: var(--tracking-normal)">Normal tracking — body measure</p>
+          <div class="sg-type-tokens"><div><code class="sg-name">--tracking-normal</code> <code class="sg-val" data-token="--tracking-normal"></code></div></div>
+        </div>
+        <div class="sg-ls-row">
+          <p class="sg-ls-sample" style="letter-spacing: var(--tracking-wide); text-transform: uppercase">Wide tracking — micro label</p>
+          <div class="sg-type-tokens"><div><code class="sg-name">--tracking-wide</code> <code class="sg-val" data-token="--tracking-wide"></code></div></div>
+        </div>
 
-        <h3 class="sg-gap-file">letter-spacing (values in use)</h3>
-        <ul class="sg-gap-list">
-          <li><code>-0.02em</code> — <span class="sg-muted">.stat-num</span></li>
-          <li><code>0.24px</code> — <span class="sg-muted">.footer-content p</span></li>
-          <li><code>0.72px</code> — <span class="sg-muted">.row-discipline, .panel-meta, .slideshow-counter</span></li>
-          <li><code>0.8px</code> — <span class="sg-muted">.brand-text</span></li>
-          <li><code>0.96px</code> — <span class="sg-muted">.section-label, .index-col-head, .bottom-note, .slideshow-status</span></li>
-          <li><code>1px</code> — <span class="sg-muted">.logo-cell</span></li>
-          <li><code>4.32px</code> / <code>7.92px</code> — <span class="sg-muted">.logo / .logo .light</span></li>
+        <h3 class="sg-subhead">Role aliases</h3>
+        <p class="sg-note">Each alias currently points at the primitive shown — re-map in the editor.</p>
+        <ul class="sg-alias-list">
+          {['--tracking-display', '--tracking-h1', '--tracking-h2', '--tracking-h3', '--tracking-body', '--tracking-caption', '--tracking-label'].map((a) => (
+            <li class="sg-alias-item">
+              <code class="sg-name">{a}</code>
+              <span class="sg-alias-arrow">→</span>
+              <code class="sg-alias-map" data-alias={a}></code>
+            </li>
+          ))}
         </ul>
       </section>
 
@@ -477,46 +447,94 @@ import '../styles/global.css';
       const STORE_KEY = 'sg-token-overrides';
 
       // Manifest: token NAMES + control metadata only. Default *values* are always
-      // read from getComputedStyle, never hardcoded here.
-      const COLOR_TOKENS = [
-        '--color-primary', '--surface', '--surface-trans', '--ink',
-        '--grey-mid', '--grey-light', '--grey-bg', '--expand-tint',
-      ];
-      const SIZE_GROUPS = {
-        'Rules': [
-          { name: '--outline', min: 0, max: 8, step: 0.5 },
-          { name: '--hard-rule', min: 0, max: 24, step: 0.5 },
-        ],
-        'Layout': [
-          { name: '--layout-max-width-large', min: 600, max: 2000, step: 10 },
-          { name: '--layout-max-width-desktop', min: 600, max: 2000, step: 10 },
-          { name: '--layout-margin-tablet', min: 0, max: 120, step: 1 },
-          { name: '--layout-margin-mobile', min: 0, max: 120, step: 1 },
-        ],
-        'Typography (font sizes)': [
-          'display-large', 'display-desktop', 'display-tablet', 'display-mobile',
-          'h1-large', 'h1-desktop', 'h1-tablet', 'h1-mobile',
-          'h2-large', 'h2-desktop', 'h2-tablet', 'h2-mobile',
-          'h3-large', 'h3-desktop', 'h3-tablet', 'h3-mobile',
-          'body-large', 'body-desktop', 'body-tablet', 'body-mobile',
-          'caption-large', 'caption-desktop', 'caption-tablet', 'caption-mobile',
-          'label-large', 'label-desktop', 'label-tablet', 'label-mobile',
-        ].map((s) => ({ name: `--font-size-${s}`, min: 8, max: 120, step: 1 })),
-        'Typography (font weights)': [
-          'light', 'regular', 'medium', 'semibold', 'bold',
-        ].map((w) => ({ name: `--font-weight-${w}`, min: 100, max: 900, step: 100, unit: '' })),
-        'Motion (durations)': [
-          { name: '--duration-fast', min: 0, max: 1, step: 0.05, unit: 's' },
-          { name: '--duration-standard', min: 0, max: 1, step: 0.05, unit: 's' },
-          { name: '--duration-slow', min: 0, max: 1, step: 0.05, unit: 's' },
-        ],
-      };
+      // read from getComputedStyle, never hardcoded here. Each control declares a
+      // `kind` so one builder can render the whole panel:
+      //   color | size (slider+number) | text | alias (dropdown re-pointing a var())
+      const color = (name) => ({ kind: 'color', name });
+      const size = (name, min, max, step, unit) => ({ kind: 'size', name, min, max, step, unit });
+      const text = (name) => ({ kind: 'text', name });
+      const alias = (name, prims) => ({ kind: 'alias', name, prims });
 
-      // Text-valued tokens (no slider) — edited via a plain text input.
-      const TEXT_GROUPS = {
-        'Typography (font family)': ['--font-family-primary', '--font-family-mono'],
-        'Motion (easing)': ['--ease-standard'],
-      };
+      // Primitive option-lists the per-role aliases point at.
+      const ROLES = ['display', 'h1', 'h2', 'h3', 'body', 'caption', 'label'];
+      const LEADING_PRIMS = ['--leading-tight', '--leading-snug', '--leading-normal', '--leading-loose'];
+      const TRACKING_PRIMS = ['--tracking-tight', '--tracking-normal', '--tracking-wide'];
+      const COLOR_PRIMS = ['--color-primary', '--ink', '--grey-mid', '--grey-light', '--surface'];
+      const WEIGHT_PRIMS = ['--font-weight-light', '--font-weight-regular', '--font-weight-medium', '--font-weight-semibold', '--font-weight-bold'];
+      const LEADING_ALIASES = ROLES.map((r) => `--leading-${r}`);
+      const TRACKING_ALIASES = ROLES.map((r) => `--tracking-${r}`);
+      const TEXT_ALIASES = ROLES.map((r) => `--text-${r}`);
+      const WEIGHT_ALIASES = ROLES.map((r) => `--weight-${r}`);
+      // Used by fillAliasMaps + exportCss (which alias set maps onto which primitives).
+      const ALIAS_SETS = [
+        { aliases: LEADING_ALIASES, prims: LEADING_PRIMS },
+        { aliases: TRACKING_ALIASES, prims: TRACKING_PRIMS },
+        { aliases: TEXT_ALIASES, prims: COLOR_PRIMS },
+        { aliases: WEIGHT_ALIASES, prims: WEIGHT_PRIMS },
+      ];
+
+      // One type-role group = its four font-size breakpoints + everything else that
+      // shapes the role: text color, weight, line-height, letter-spacing, paragraph.
+      const roleGroup = (role, title) => ({
+        title,
+        controls: [
+          ...['large', 'desktop', 'tablet', 'mobile'].map((t) => size(`--font-size-${role}-${t}`, 8, 120, 1)),
+          alias(`--text-${role}`, COLOR_PRIMS),
+          alias(`--weight-${role}`, WEIGHT_PRIMS),
+          alias(`--leading-${role}`, LEADING_PRIMS),
+          alias(`--tracking-${role}`, TRACKING_PRIMS),
+          size(`--paragraph-${role}`, 0, 96, 1),
+          // Measure is a % of container (scales with page width) for every role.
+          size(`--measure-${role}`, 20, 100, 1, '%'),
+        ],
+      });
+
+      // Ordered panel: foundations, then one group per type role, then the shared
+      // type knobs the role aliases point at, then spacing / structure / motion.
+      const CONTROL_GROUPS = [
+        { title: 'Color', controls: [
+          '--color-primary', '--surface', '--surface-trans', '--ink',
+          '--grey-mid', '--grey-light', '--grey-bg', '--expand-tint',
+        ].map(color) },
+        roleGroup('display', 'Display'),
+        roleGroup('h1', 'H1'),
+        roleGroup('h2', 'H2'),
+        roleGroup('h3', 'H3'),
+        roleGroup('body', 'Body'),
+        roleGroup('caption', 'Caption'),
+        roleGroup('label', 'Label'),
+        { title: 'Typography — shared', controls: [
+          text('--font-family-primary'),
+          text('--font-family-mono'),
+          ...['light', 'regular', 'medium', 'semibold', 'bold'].map((w) => size(`--font-weight-${w}`, 100, 900, 100, '')),
+          ...LEADING_PRIMS.map((n) => size(n, 1, 2, 0.05, '')),
+          ...TRACKING_PRIMS.map((n) => size(n, -0.1, 0.3, 0.005, 'em')),
+        ] },
+        { title: 'Spacing scale', controls: [4, 8, 12, 16, 24, 32, 48, 64, 96, 128].map((n) => size(`--space-${n}`, 0, 160, 1)) },
+        { title: 'Rules', controls: [size('--outline', 0, 8, 0.5), size('--hard-rule', 0, 24, 0.5)] },
+        { title: 'Layout', controls: [
+          size('--layout-max-width-large', 600, 2000, 10),
+          size('--layout-max-width-desktop', 600, 2000, 10),
+          size('--layout-margin-tablet', 0, 120, 1),
+          size('--layout-margin-mobile', 0, 120, 1),
+        ] },
+        { title: 'Motion', controls: [
+          size('--duration-fast', 0, 1, 0.05, 's'),
+          size('--duration-standard', 0, 1, 0.05, 's'),
+          size('--duration-slow', 0, 1, 0.05, 's'),
+          text('--ease-standard'),
+        ] },
+      ];
+
+      // Which primitive an alias currently points at. Robust to either getComputedStyle
+      // behavior: a custom property reading back as "var(--x)" (literal) or as the
+      // resolved value of --x. Tries the literal name first, then matches by value.
+      function aliasTarget(aliasName, prims) {
+        const raw = readVal(aliasName);
+        const m = raw.match(/var\(\s*(--[\w-]+)\s*\)/);
+        if (m) return m[1];                                  // literal "var(--x)"
+        return prims.find((p) => readVal(p) === raw) || prims[0];  // matched by value
+      }
 
       const readVal = (name) => getComputedStyle(root).getPropertyValue(name).trim();
 
@@ -524,6 +542,49 @@ import '../styles/global.css';
       let overrides = {};
       try { overrides = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { overrides = {}; }
       Object.entries(overrides).forEach(([k, v]) => root.style.setProperty(k, v));
+
+      // ----- Undo / redo (Cmd/Ctrl+Z, add Shift to redo) -----
+      // Consecutive edits to the SAME token coalesce into one step, so a slider drag
+      // is a single undo (not one per pixel). Entries: { kind:'single', name, prev, next }
+      // or { kind:'bulk', before, after } for Reset-all.
+      const undoStack = [], redoStack = [];
+      let lastEditName = null;
+      const controlSyncs = {};   // token name -> fn that re-reads its control's value
+
+      function recordSingle(name, next) {
+        const top = undoStack[undoStack.length - 1];
+        if (lastEditName === name && top && top.kind === 'single' && top.name === name) {
+          top.next = next;                       // coalesce consecutive edits
+        } else {
+          undoStack.push({ kind: 'single', name, prev: overrides[name], next });
+          lastEditName = name;
+        }
+        redoStack.length = 0;
+      }
+      function applySingle(name, v) {
+        if (v === undefined) { delete overrides[name]; root.style.removeProperty(name); }
+        else { overrides[name] = v; root.style.setProperty(name, v); }
+        localStorage.setItem(STORE_KEY, JSON.stringify(overrides));
+        if (controlSyncs[name]) controlSyncs[name]();
+        fillReadouts(name); fillAliasMaps(); refreshOverrideStates();
+      }
+      function applyBulk(snap) {
+        Object.keys(overrides).forEach((k) => root.style.removeProperty(k));
+        overrides = { ...snap };
+        Object.entries(overrides).forEach(([k, v]) => root.style.setProperty(k, v));
+        localStorage.setItem(STORE_KEY, JSON.stringify(overrides));
+        buildEditor(); fillReadouts(); fillAliasMaps();   // buildEditor re-runs refreshOverrideStates
+      }
+      function undo() {
+        const e = undoStack.pop(); if (!e) return;
+        lastEditName = null; redoStack.push(e);
+        if (e.kind === 'bulk') applyBulk(e.before); else applySingle(e.name, e.prev);
+      }
+      function redo() {
+        const e = redoStack.pop(); if (!e) return;
+        lastEditName = null; undoStack.push(e);
+        if (e.kind === 'bulk') applyBulk(e.after); else applySingle(e.name, e.next);
+      }
 
       const fillReadouts = (name) => {
         const sel = name ? `.sg-val[data-token="${name}"]` : '.sg-val';
@@ -534,39 +595,87 @@ import '../styles/global.css';
       fillReadouts();
 
       function setToken(name, value) {
+        recordSingle(name, value);   // capture prev before mutating
         root.style.setProperty(name, value);
         overrides[name] = value;
         localStorage.setItem(STORE_KEY, JSON.stringify(overrides));
         fillReadouts(name);
+        fillAliasMaps();   // primitive edits change what aliases resolve to
+        refreshOverrideStates();
+      }
+
+      // Per-parameter reset: drop just this token's override and fall back to the
+      // committed tokens.css value. syncFn re-reads the control so its slider/input/
+      // dropdown snaps to the restored value without rebuilding the whole panel.
+      function resetToken(name, syncFn) {
+        recordSingle(name, undefined);   // undo can restore the prior value
+        delete overrides[name];
+        localStorage.setItem(STORE_KEY, JSON.stringify(overrides));
+        root.style.removeProperty(name);
+        if (syncFn) syncFn();
+        fillReadouts(name);
+        fillAliasMaps();
+        refreshOverrideStates();
+      }
+
+      // Highlight every row whose token is currently overridden (so it's obvious what
+      // diverges from tokens.css, and the ↺ on those rows is the meaningful one).
+      function refreshOverrideStates() {
+        document.querySelectorAll('.sg-ctl[data-token]').forEach((r) => {
+          r.classList.toggle('is-overridden', Object.prototype.hasOwnProperty.call(overrides, r.dataset.token));
+        });
       }
 
       // ----- Build controls -----
       const body = document.getElementById('sg-editor-body');
       const isHex = (v) => /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v);
 
-      function colorRow(name) {
+      // Every control is built as a label stacked ABOVE its inputs (ctlRow), with a
+      // per-parameter ↺ reset. Long token names share the narrow panel with sliders,
+      // so an inline label wraps and visually drifts onto the neighbouring control —
+      // label-on-top keeps each name unambiguously tied to its own control.
+      // `inputEls` is the array of inputs; `syncFn` re-reads them after a reset.
+      function ctlRow(name, inputEls, syncFn) {
+        if (syncFn) controlSyncs[name] = syncFn;   // used by undo/redo to re-sync this control
         const row = document.createElement('div');
         row.className = 'sg-ctl';
-        const val = readVal(name);
+        row.dataset.token = name;
 
+        const labelRow = document.createElement('div');
+        labelRow.className = 'sg-ctl-labelrow';
+        const label = document.createElement('label');
+        label.className = 'sg-ctl-label';
+        label.textContent = name;
+        const reset = document.createElement('button');
+        reset.type = 'button';
+        reset.className = 'sg-ctl-reset';
+        reset.textContent = '↺';
+        reset.title = 'Reset to tokens.css default';
+        reset.addEventListener('click', () => resetToken(name, syncFn));
+        labelRow.append(label, reset);
+
+        const inputs = document.createElement('div');
+        inputs.className = 'sg-ctl-inputs';
+        inputs.append(...inputEls);
+
+        row.append(labelRow, inputs);
+        return row;
+      }
+
+      function colorRow(name) {
         const text = document.createElement('input');
         text.type = 'text';
-        text.value = val;
+        text.value = readVal(name);
 
-        let picker;
-        if (isHex(val)) {
+        let picker, swatch;
+        const isHexVal = isHex(readVal(name));
+        if (isHexVal) {
           picker = document.createElement('input');
           picker.type = 'color';
-          picker.value = val.length === 4
-            ? '#' + val.slice(1).split('').map((c) => c + c).join('') // #abc -> #aabbcc
-            : val;
           picker.addEventListener('input', () => { text.value = picker.value; setToken(name, picker.value); });
-          row.appendChild(picker);
         } else {
-          const sw = document.createElement('span');
-          sw.className = 'sg-ctl-swatch';
-          sw.style.background = val;
-          row.appendChild(sw);
+          swatch = document.createElement('span');
+          swatch.className = 'sg-ctl-swatch';
         }
 
         text.addEventListener('input', () => {
@@ -574,26 +683,30 @@ import '../styles/global.css';
           if (picker && isHex(text.value)) picker.value = text.value;
         });
 
-        const label = document.createElement('label');
-        label.textContent = name;
-        row.append(text, label);
-        return row;
+        const sync = () => {
+          const val = readVal(name);
+          text.value = val;
+          if (picker && isHex(val)) {
+            picker.value = val.length === 4
+              ? '#' + val.slice(1).split('').map((c) => c + c).join('') // #abc -> #aabbcc
+              : val;
+          }
+          if (swatch) swatch.style.background = val;
+        };
+        sync();
+        return ctlRow(name, [picker || swatch, text], sync);
       }
 
       function sizeRow(t) {
-        const row = document.createElement('div');
-        row.className = 'sg-ctl';
-        const num = parseFloat(readVal(t.name)) || 0;
-
         const range = document.createElement('input');
         range.type = 'range';
-        range.min = t.min; range.max = t.max; range.step = t.step; range.value = num;
+        range.min = t.min; range.max = t.max; range.step = t.step;
 
         const number = document.createElement('input');
         number.type = 'number';
         // step="any" so decimals (e.g. 0.5 for a hairline) are always accepted by
         // typing, even where the slider uses a coarser step for easy dragging.
-        number.min = t.min; number.max = t.max; number.step = 'any'; number.value = num;
+        number.min = t.min; number.max = t.max; number.step = 'any';
 
         // unit defaults to 'px'; weights pass '' (unitless), durations pass 's'.
         const unit = t.unit ?? 'px';
@@ -601,52 +714,76 @@ import '../styles/global.css';
         range.addEventListener('input', () => apply(range.value));
         number.addEventListener('input', () => apply(number.value));
 
-        const label = document.createElement('label');
-        label.textContent = t.name;
-        row.append(range, number, label);
-        return row;
+        const sync = () => { const v = parseFloat(readVal(t.name)) || 0; range.value = v; number.value = v; };
+        sync();
+        return ctlRow(t.name, [range, number], sync);
       }
 
       // Plain text input for non-numeric tokens (font families, easing curve).
       function textRow(name) {
-        const row = document.createElement('div');
-        row.className = 'sg-ctl';
-        const text = document.createElement('input');
-        text.type = 'text';
-        text.className = 'sg-ctl-text-wide';
-        text.value = readVal(name);
-        text.addEventListener('input', () => setToken(name, text.value));
-        const label = document.createElement('label');
-        label.textContent = name;
-        row.append(text, label);
-        return row;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'sg-ctl-text-wide';
+        input.value = readVal(name);
+        input.addEventListener('input', () => setToken(name, input.value));
+        const sync = () => { input.value = readVal(name); };
+        return ctlRow(name, [input], sync);
+      }
+
+      // Dropdown re-pointing an alias at one of its primitives. Writes the literal
+      // var() so the indirection survives; refreshes the on-page "maps to" readouts.
+      // Friendly option label: drop the family prefix (--leading-/--tracking-/--color-)
+      // or just the leading -- so e.g. --leading-tight → "tight", --ink → "ink".
+      const shortName = (p) => p.replace(/^--(leading-|tracking-|color-|font-weight-)?/, '');
+
+      function aliasRow(name, prims) {
+        const select = document.createElement('select');
+        prims.forEach((p) => {
+          const opt = document.createElement('option');
+          opt.value = p;
+          opt.textContent = shortName(p);
+          select.appendChild(opt);
+        });
+        const sync = () => { select.value = aliasTarget(name, prims); };
+        sync();
+        select.addEventListener('change', () => { setToken(name, `var(${select.value})`); fillAliasMaps(); });
+        return ctlRow(name, [select], sync);
+      }
+
+      // Fill the page's "alias → primitive" readouts (so re-mapping is visible).
+      function fillAliasMaps() {
+        ALIAS_SETS.forEach(({ prims, aliases }) => {
+          aliases.forEach((name) => {
+            const target = aliasTarget(name, prims);
+            const txt = `${shortName(target)} (${readVal(target)})`;
+            // querySelectorAll: an alias can be shown in more than one place (role row
+            // + its primitive section), so fill every matching readout.
+            document.querySelectorAll(`.sg-alias-map[data-alias="${name}"]`).forEach((el) => { el.textContent = txt; });
+          });
+        });
+      }
+
+      // Dispatch one control descriptor to the right builder.
+      function buildControl(c) {
+        if (c.kind === 'color') return colorRow(c.name);
+        if (c.kind === 'alias') return aliasRow(c.name, c.prims);
+        if (c.kind === 'text') return textRow(c.name);
+        return sizeRow(c); // 'size'
       }
 
       function buildEditor() {
         body.innerHTML = '';
-        const colorHead = document.createElement('div');
-        colorHead.className = 'sg-editor-group';
-        colorHead.textContent = 'Color';
-        body.appendChild(colorHead);
-        COLOR_TOKENS.forEach((n) => body.appendChild(colorRow(n)));
-
-        Object.entries(SIZE_GROUPS).forEach(([group, tokens]) => {
+        CONTROL_GROUPS.forEach((group) => {
           const head = document.createElement('div');
           head.className = 'sg-editor-group';
-          head.textContent = group;
+          head.textContent = group.title;
           body.appendChild(head);
-          tokens.forEach((t) => body.appendChild(sizeRow(t)));
+          group.controls.forEach((c) => body.appendChild(buildControl(c)));
         });
-
-        Object.entries(TEXT_GROUPS).forEach(([group, names]) => {
-          const head = document.createElement('div');
-          head.className = 'sg-editor-group';
-          head.textContent = group;
-          body.appendChild(head);
-          names.forEach((n) => body.appendChild(textRow(n)));
-        });
+        refreshOverrideStates();
       }
       buildEditor();
+      fillAliasMaps();
 
       // ----- Export: regenerate the tokens.css :root block from current values -----
       function exportCss() {
@@ -685,6 +822,9 @@ import '../styles/global.css';
   --layout-margin-tablet: ${g('--layout-margin-tablet')};
   --layout-margin-mobile: ${g('--layout-margin-mobile')};
 
+  /* Spacing scale — primitives, no role aliases */
+${[4, 8, 12, 16, 24, 32, 48, 64, 96, 128].map((n) => `  --space-${n}: ${g('--space-' + n)};`).join('\n')}
+
   /* Typography — font family */
   --font-family-primary: ${g('--font-family-primary')};
   --font-family-mono: ${g('--font-family-mono')};
@@ -713,6 +853,35 @@ ${fsGroup('label')}
 
   /* Resolved per-role aliases — default to the Desktop tier. */
 ${roles.map((r) => `  --font-size-${r}: var(--font-size-${r}-desktop);`).join('\n')}
+
+  /* Line-height primitives */
+  --leading-tight: ${g('--leading-tight')};
+  --leading-snug: ${g('--leading-snug')};
+  --leading-normal: ${g('--leading-normal')};
+  --leading-loose: ${g('--leading-loose')};
+
+  /* Line-height role aliases */
+${LEADING_ALIASES.map((a) => `  ${a}: var(${aliasTarget(a, LEADING_PRIMS)});`).join('\n')}
+
+  /* Letter-spacing primitives */
+  --tracking-tight: ${g('--tracking-tight')};
+  --tracking-normal: ${g('--tracking-normal')};
+  --tracking-wide: ${g('--tracking-wide')};
+
+  /* Letter-spacing role aliases */
+${TRACKING_ALIASES.map((a) => `  ${a}: var(${aliasTarget(a, TRACKING_PRIMS)});`).join('\n')}
+
+  /* Per-role text color (palette aliases) */
+${TEXT_ALIASES.map((a) => `  ${a}: var(${aliasTarget(a, COLOR_PRIMS)});`).join('\n')}
+
+  /* Per-role font weight (weight-scale aliases) */
+${WEIGHT_ALIASES.map((a) => `  ${a}: var(${aliasTarget(a, WEIGHT_PRIMS)});`).join('\n')}
+
+  /* Per-role paragraph spacing */
+${roles.map((r) => `  --paragraph-${r}: ${g('--paragraph-' + r)};`).join('\n')}
+
+  /* Per-role measure (max line width) */
+${roles.map((r) => `  --measure-${r}: ${g('--measure-' + r)};`).join('\n')}
 
   /* Motion */
   --duration-fast: ${g('--duration-fast')};
@@ -756,21 +925,120 @@ ${aliasBlock('mobile')}
       });
 
       document.getElementById('sg-reset').addEventListener('click', () => {
+        const before = { ...overrides };
         Object.keys(overrides).forEach((k) => root.style.removeProperty(k));
         overrides = {};
         localStorage.removeItem(STORE_KEY);
         exportArea.hidden = true;
         buildEditor();   // controls re-read tokens.css defaults
         fillReadouts();
+        fillAliasMaps();
+        // Make the bulk reset undoable too.
+        if (Object.keys(before).length) { undoStack.push({ kind: 'bulk', before, after: {} }); redoStack.length = 0; lastEditName = null; }
       });
+
+      // Cmd/Ctrl+Z to undo a token change, +Shift to redo. Skipped while typing in a
+      // text field so the browser's native text undo still works there.
+      document.addEventListener('keydown', (e) => {
+        if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== 'z') return;
+        const t = e.target;
+        if (t && (t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && t.type === 'text'))) return;
+        e.preventDefault();
+        if (e.shiftKey) redo(); else undo();
+      });
+
+      // ----- Resizable panel -----
+      // Side panel (≥1280px) resizes by width via a left-edge handle; the bottom
+      // sheet (≤1279px) resizes by height via a top-edge handle. Same handle element,
+      // axis chosen by viewport. Size is clamped to the viewport and persisted.
+      const resizeHandle = document.getElementById('sg-resize');
+      const mqSide = window.matchMedia('(min-width: 1280px)');
+      const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
+
+      function applyEditorSize() {
+        if (mqSide.matches) {
+          editor.style.height = ''; editor.style.maxHeight = '';
+          const w = parseFloat(localStorage.getItem('sg-editor-w'));
+          editor.style.width = w ? clamp(w, 280, window.innerWidth - 40) + 'px' : '';
+        } else {
+          editor.style.width = '';
+          const h = parseFloat(localStorage.getItem('sg-editor-h'));
+          if (h) { editor.style.height = clamp(h, 200, window.innerHeight - 40) + 'px'; editor.style.maxHeight = 'none'; }
+          else { editor.style.height = ''; editor.style.maxHeight = ''; }
+        }
+      }
+      mqSide.addEventListener('change', applyEditorSize);
+      window.addEventListener('resize', applyEditorSize);
+      applyEditorSize();
+
+      let dragging = false;
+      resizeHandle.addEventListener('pointerdown', (e) => {
+        dragging = true;
+        resizeHandle.setPointerCapture(e.pointerId);
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+      });
+      resizeHandle.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        if (mqSide.matches) {
+          const w = clamp(window.innerWidth - e.clientX, 280, window.innerWidth - 40);
+          editor.style.width = w + 'px';
+          localStorage.setItem('sg-editor-w', w);
+        } else {
+          const h = clamp(window.innerHeight - e.clientY, 200, window.innerHeight - 40);
+          editor.style.height = h + 'px';
+          editor.style.maxHeight = 'none';
+          localStorage.setItem('sg-editor-h', h);
+        }
+      });
+      const endDrag = () => { dragging = false; document.body.style.userSelect = ''; };
+      resizeHandle.addEventListener('pointerup', endDrag);
+      resizeHandle.addEventListener('pointercancel', endDrag);
+
+      // ----- Breakpoint indicator -----
+      // Mirrors the four tested tiers (Large 1800+, Desktop ≤1799, Tablet ≤1279,
+      // Mobile ≤800) and shows the live viewport width.
+      const bpEl = document.getElementById('sg-breakpoint');
+      function updateBreakpoint() {
+        const w = window.innerWidth;
+        let key, name;
+        if (w >= 1800) { key = 'large'; name = 'Large Desktop'; }
+        else if (w >= 1280) { key = 'desktop'; name = 'Desktop'; }
+        else if (w >= 801) { key = 'tablet'; name = 'Tablet'; }
+        else { key = 'mobile'; name = 'Mobile'; }
+        bpEl.dataset.bp = key;
+        bpEl.innerHTML = `${name} <span class="sg-bp-w">${w}px</span>`;
+      }
+      window.addEventListener('resize', updateBreakpoint);
+      updateBreakpoint();
     </script>
 
     <style>
       /* ===== Styleguide chrome — intentionally distinct from site styles ===== */
+      /* The page column maps to the real layout tokens — same rules as the site's
+         .wrap (global.css): max-width per desktop tier, side gutters on Tablet/Mobile.
+         So editing --layout-max-width-* / --layout-margin-* reflows the whole page,
+         not just the Layout-section preview. Vertical padding is the page's own. */
       .sg {
-        max-width: 920px;
+        max-width: var(--layout-max-width-desktop);
         margin: 0 auto;
-        padding: 64px 24px 120px;
+        padding: 64px 0 120px;
+      }
+      @media (min-width: 1800px) {
+        .sg { max-width: var(--layout-max-width-large); }
+      }
+      @media (max-width: 1279px) {
+        .sg {
+          max-width: none;
+          padding-left: var(--layout-margin-tablet);
+          padding-right: var(--layout-margin-tablet);
+        }
+      }
+      @media (max-width: 800px) {
+        .sg {
+          padding-left: var(--layout-margin-mobile);
+          padding-right: var(--layout-margin-mobile);
+        }
       }
       .sg-corner {
         position: fixed; top: 8px; right: 12px; z-index: 10;
@@ -778,6 +1046,27 @@ ${aliasBlock('mobile')}
         color: var(--grey-light);
         font-family: var(--font-family-mono);
       }
+      /* Breakpoint indicator — fixed to the top, centered. Color-coded per tier so
+         the active breakpoint is readable at a glance while resizing. */
+      .sg-breakpoint {
+        position: fixed; top: 8px; left: 50%; transform: translateX(-50%); z-index: 55;
+        display: flex; align-items: center; gap: 8px;
+        padding: 5px 12px; border-radius: 999px;
+        background: #111; color: #fff;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 11px; letter-spacing: 0.5px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+        pointer-events: none;
+      }
+      .sg-breakpoint::before {
+        content: ''; width: 8px; height: 8px; border-radius: 50%;
+        background: var(--bp-dot, #888);
+      }
+      .sg-breakpoint .sg-bp-w { color: #bbb; }
+      .sg-breakpoint[data-bp="large"]  { --bp-dot: #34d399; }
+      .sg-breakpoint[data-bp="desktop"] { --bp-dot: #60a5fa; }
+      .sg-breakpoint[data-bp="tablet"] { --bp-dot: #fbbf24; }
+      .sg-breakpoint[data-bp="mobile"] { --bp-dot: #f87171; }
 
       .sg-header { margin-bottom: 56px; }
       .sg-header h1 { font-size: 40px; font-weight: 600; color: var(--color-primary); margin-bottom: 12px; }
@@ -830,24 +1119,43 @@ ${aliasBlock('mobile')}
 
       /* TYPOGRAPHY — samples consume the font-size tokens, swapped per breakpoint
          to mirror real usage so resizing demonstrates the scale. */
+      /* Sample stacks above its readouts so it can span up to its measure (per-role
+         max line width) rather than sharing the row at ~half width. */
       .sg-type-row {
-        display: flex; align-items: baseline; gap: 32px;
-        padding: 20px 0; border-bottom: 1px solid var(--grey-bg);
-        flex-wrap: wrap;
+        display: flex; flex-direction: column; align-items: stretch; gap: 14px;
+        padding: 22px 0; border-bottom: 1px solid var(--grey-bg);
       }
-      .sg-type-tokens { display: flex; flex-direction: column; gap: 3px; }
+      .sg-type-tokens { display: flex; flex-flow: row wrap; gap: 3px 16px; }
       .sg-type-tokens div { display: flex; gap: 8px; }
 
-      /* These four read the granular -desktop token + swap via the media queries
-         below (the original Session-3 pattern). The newer demos (display/caption/
-         label/family) read the resolved alias instead, so they resize for free. */
-      .sg-demo-h1 { font-weight: 400; line-height: 1; flex: 1 1 240px; font-size: var(--font-size-h1-desktop); }
-      .sg-demo-h2 { font-weight: 500; line-height: 1.1; flex: 1 1 240px; font-size: var(--font-size-h2-desktop); }
-      .sg-demo-h3 { font-weight: 500; line-height: 1.2; flex: 1 1 240px; font-size: var(--font-size-h3-desktop); }
-      .sg-demo-body { font-weight: 400; line-height: 1.5; flex: 1 1 240px; font-size: var(--font-size-body-desktop); max-width: 480px; }
-      .sg-demo-display { font-weight: 400; line-height: 1; flex: 1 1 240px; font-size: var(--font-size-display); }
-      .sg-demo-caption { font-weight: 400; line-height: 1.5; flex: 1 1 240px; font-size: var(--font-size-caption); max-width: 480px; }
-      .sg-demo-label { font-weight: 500; line-height: 1.4; flex: 1 1 240px; font-size: var(--font-size-label); text-transform: uppercase; letter-spacing: 0.96px; }
+      /* Role samples consume ALL of the role's tokens (size + colour + leading +
+         tracking + paragraph spacing), so editing any token updates the sample live.
+         font-size uses the resolved alias, which already resizes per breakpoint —
+         no per-breakpoint media queries needed here. */
+      /* Each sample is capped at its role's measure token (max line width). */
+      .sg-sample { max-width: 100%; }
+      .sg-sample p { margin: 0; }
+      .sg-sample-display { max-width: var(--measure-display); }
+      .sg-sample-h1 { max-width: var(--measure-h1); }
+      .sg-sample-h2 { max-width: var(--measure-h2); }
+      .sg-sample-h3 { max-width: var(--measure-h3); }
+      .sg-sample-body { max-width: var(--measure-body); }
+      .sg-sample-caption { max-width: var(--measure-caption); }
+      .sg-sample-label { max-width: var(--measure-label); }
+      .sg-sample-display p { font-size: var(--font-size-display); line-height: var(--leading-display); letter-spacing: var(--tracking-display); color: var(--text-display); font-weight: var(--weight-display); }
+      .sg-sample-display p:not(:last-child) { margin-bottom: var(--paragraph-display); }
+      .sg-sample-h1 p { font-size: var(--font-size-h1); line-height: var(--leading-h1); letter-spacing: var(--tracking-h1); color: var(--text-h1); font-weight: var(--weight-h1); }
+      .sg-sample-h1 p:not(:last-child) { margin-bottom: var(--paragraph-h1); }
+      .sg-sample-h2 p { font-size: var(--font-size-h2); line-height: var(--leading-h2); letter-spacing: var(--tracking-h2); color: var(--text-h2); font-weight: var(--weight-h2); }
+      .sg-sample-h2 p:not(:last-child) { margin-bottom: var(--paragraph-h2); }
+      .sg-sample-h3 p { font-size: var(--font-size-h3); line-height: var(--leading-h3); letter-spacing: var(--tracking-h3); color: var(--text-h3); font-weight: var(--weight-h3); }
+      .sg-sample-h3 p:not(:last-child) { margin-bottom: var(--paragraph-h3); }
+      .sg-sample-body p { font-size: var(--font-size-body); line-height: var(--leading-body); letter-spacing: var(--tracking-body); color: var(--text-body); font-weight: var(--weight-body); }
+      .sg-sample-body p:not(:last-child) { margin-bottom: var(--paragraph-body); }
+      .sg-sample-caption p { font-size: var(--font-size-caption); line-height: var(--leading-caption); letter-spacing: var(--tracking-caption); color: var(--text-caption); font-weight: var(--weight-caption); }
+      .sg-sample-caption p:not(:last-child) { margin-bottom: var(--paragraph-caption); }
+      .sg-sample-label p { font-size: var(--font-size-label); line-height: var(--leading-label); letter-spacing: var(--tracking-label); color: var(--text-label); font-weight: var(--weight-label); text-transform: uppercase; }
+      .sg-sample-label p:not(:last-child) { margin-bottom: var(--paragraph-label); }
       .sg-demo-family { font-size: 26px; flex: 1 1 240px; }
 
       /* Font-weight samples */
@@ -863,46 +1171,38 @@ ${aliasBlock('mobile')}
       .sg-motion-swatch { width: 80px; height: 80px; background: var(--color-primary); }
       .sg-motion-cell:hover .sg-motion-swatch { transform: translateX(48px); }
 
-      @media (min-width: 1800px) {
-        .sg-demo-h1 { font-size: var(--font-size-h1-large); }
-        .sg-demo-h2 { font-size: var(--font-size-h2-large); }
-        .sg-demo-h3 { font-size: var(--font-size-h3-large); }
-        .sg-demo-body { font-size: var(--font-size-body-large); }
-      }
-      @media (max-width: 1279px) {
-        .sg-demo-h1 { font-size: var(--font-size-h1-tablet); }
-        .sg-demo-h2 { font-size: var(--font-size-h2-tablet); }
-        .sg-demo-h3 { font-size: var(--font-size-h3-tablet); }
-        .sg-demo-body { font-size: var(--font-size-body-tablet); }
-      }
-      @media (max-width: 800px) {
-        .sg-demo-h1 { font-size: var(--font-size-h1-mobile); }
-        .sg-demo-h2 { font-size: var(--font-size-h2-mobile); }
-        .sg-demo-h3 { font-size: var(--font-size-h3-mobile); }
-        .sg-demo-body { font-size: var(--font-size-body-mobile); }
-      }
-
       /* RULES */
       .sg-rule-demo { margin-bottom: 24px; }
       .sg-rule-line { width: 100%; margin-bottom: 8px; }
       .sg-rule-label { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
 
-      /* LAYOUT */
-      .sg-layout-box {
-        max-width: 100%;
-        border: 1px dashed var(--color-primary);
-        padding: 16px;
-        margin-bottom: 16px;
+      /* LAYOUT — real-scale preview. The band breaks out of the 920px styleguide
+         column to the full viewport; each sim block is centered and capped by its
+         max-width token exactly like the site's .wrap, so editing a token re-widths
+         the block for real (and it caps at the viewport when the token is larger). */
+      .sg-layout-preview {
+        width: 100vw; margin-left: 50%; transform: translateX(-50%);
+        background: var(--grey-bg); padding: 20px 16px; overflow: hidden;
+      }
+      .sg-wrap-sim {
+        margin: 0 auto 14px; background: var(--surface);
+        border: 1px dashed var(--color-primary); padding: 16px;
         display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap;
       }
+      .sg-wrap-sim--large { max-width: var(--layout-max-width-large); }
+      .sg-wrap-sim--desktop { max-width: var(--layout-max-width-desktop); }
+      /* Gutter rows fill the band; side padding = the margin token, indenting the
+         inner box (mirrors Tablet/Mobile gutters on a full-width page). */
       .sg-gutter-demo {
-        background: var(--grey-bg);
-        margin-bottom: 16px;
+        background: var(--surface); border: 1px solid var(--grey-light);
+        margin-bottom: 14px;
       }
+      .sg-gutter-demo:last-child { margin-bottom: 0; }
+      .sg-gutter-demo--tablet { padding-left: var(--layout-margin-tablet); padding-right: var(--layout-margin-tablet); }
+      .sg-gutter-demo--mobile { padding-left: var(--layout-margin-mobile); padding-right: var(--layout-margin-mobile); }
       .sg-gutter-inner {
-        background: var(--surface);
-        border: 1px solid var(--grey-light);
-        padding: 16px;
+        background: var(--grey-bg);
+        padding: 12px;
         display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap;
       }
 
@@ -910,6 +1210,30 @@ ${aliasBlock('mobile')}
       .sg-accent-panel { padding: 24px; }
       .sg-accent-row { font-size: 20px; font-weight: 500; color: var(--ink); margin-bottom: 12px; }
       .sg-accent-body { font-size: 15px; line-height: 1.6; color: var(--ink); max-width: 600px; }
+
+      /* SPACING scale — bars drawn at each token's real width */
+      .sg-space-scale { display: flex; flex-direction: column; gap: 14px; }
+      .sg-space-item { display: flex; align-items: center; gap: 16px; }
+      .sg-space-bar { height: 20px; background: var(--color-primary); flex: 0 0 auto; }
+      .sg-space-item .sg-name { flex: 0 0 90px; }
+
+      /* LINE-HEIGHT + LETTER-SPACING samples */
+      .sg-subhead {
+        font-size: 12px; font-weight: 600; letter-spacing: 0.5px;
+        text-transform: uppercase; color: var(--grey-mid);
+        margin: 24px 0 12px; font-family: var(--font-family-mono);
+      }
+      .sg-lh-row, .sg-ls-row {
+        display: flex; align-items: baseline; gap: 32px; flex-wrap: wrap;
+        padding: 14px 0; border-bottom: 1px solid var(--grey-bg);
+      }
+      .sg-lh-sample { flex: 1 1 360px; max-width: 520px; font-size: var(--font-size-body); color: var(--ink); }
+      .sg-ls-sample { flex: 1 1 360px; font-size: var(--font-size-h3); color: var(--ink); }
+
+      .sg-alias-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+      .sg-alias-item { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+      .sg-alias-arrow { color: var(--grey-light); }
+      .sg-alias-map { color: var(--ink); }
 
       /* GAP sections */
       .sg-gap h2 { color: var(--ink); }
@@ -966,24 +1290,24 @@ ${aliasBlock('mobile')}
       }
       .sg-editor-actions button#sg-copy { background: #111; color: #fff; }
       .sg-editor-hint { padding: 0 16px 10px; font-size: 10px; line-height: 1.5; color: #888; }
+      /* Single column always — resizing the panel widens the controls (each row
+         stretches), it does NOT add columns. */
       .sg-editor-body { overflow-y: auto; padding: 0 16px 24px; flex: 1; }
-      .sg-editor-group {
-        font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
-        color: #999; margin: 18px 0 8px;
+      /* NOTE: the editor's group headers + control rows are built in JS, so their
+         styles live in the is:global block below — Astro-scoped selectors can't
+         match dynamically-created elements (they lack the scope attribute). */
+      /* Drag-to-resize handle: left edge on the side panel, retargeted to the top
+         edge for the bottom sheet (below). touch-action:none so pointer drag works. */
+      .sg-editor-resize {
+        position: absolute; top: 0; left: 0; bottom: 0; width: 7px; z-index: 2;
+        cursor: ew-resize; touch-action: none; background: transparent;
       }
-      .sg-ctl { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 11px; }
-      .sg-ctl label { flex: 1; color: #555; word-break: break-all; }
-      .sg-ctl-swatch { width: 28px; height: 24px; border: 1px solid #ccc; flex: 0 0 auto; }
-      .sg-ctl input[type="text"] { width: 96px; }
-      .sg-ctl input[type="color"] { width: 28px; height: 24px; padding: 0; border: 1px solid #ccc; cursor: pointer; flex: 0 0 auto; }
-      .sg-ctl input[type="range"] { width: 84px; flex: 0 0 auto; }
-      .sg-ctl input[type="number"] { width: 56px; }
-      .sg-ctl input[type="text"], .sg-ctl input[type="number"] {
-        font-family: inherit; font-size: 11px; padding: 3px 5px; border: 1px solid #ccc;
+      .sg-editor-resize::before {
+        content: ''; position: absolute; top: 50%; left: 2px;
+        width: 3px; height: 36px; transform: translateY(-50%);
+        background: #ccc; border-radius: 2px;
       }
-      /* Wide text inputs for family/easing values (longer than a color/size value) */
-      .sg-ctl input[type="text"].sg-ctl-text-wide { width: auto; flex: 2 1 120px; min-width: 0; }
-      .sg-ctl input.sg-ctl-text-wide + label { flex: 1 1 80px; }
+      .sg-editor-resize:hover::before { background: #888; }
       .sg-export { width: 100%; height: 180px; margin-top: 12px; font-family: inherit; font-size: 10px; }
 
       /* On tablet/mobile the side panel would cover the page, so dock it as a
@@ -996,17 +1320,69 @@ ${aliasBlock('mobile')}
           border-left: none; border-top: 2px solid #111;
           box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.18);
         }
-        /* two columns of controls so the sheet needs less height */
-        .sg-editor-body {
-          display: grid; grid-template-columns: 1fr 1fr;
-          column-gap: 16px; align-content: start;
+        /* Handle moves to the top edge — drag changes sheet height, not width. */
+        .sg-editor-resize {
+          top: 0; left: 0; right: 0; bottom: auto;
+          width: auto; height: 9px; cursor: ns-resize;
         }
-        .sg-editor-group { grid-column: 1 / -1; }
+        .sg-editor-resize::before {
+          top: 3px; left: 50%; transform: translateX(-50%);
+          width: 36px; height: 3px;
+        }
       }
       @media (max-width: 800px) {
         .sg-editor { max-height: 60vh; }
-        .sg-editor-body { grid-template-columns: 1fr; }
-        .sg-ctl label { font-size: 10px; }
+      }
+    </style>
+
+    <!-- The editor's group headers + control rows are created in JS, so Astro's
+         scoped <style> can't target them (scoping keys off an attribute the dynamic
+         nodes never get). These rules must be global. Class names are unique to this
+         standalone page, so global scope is safe. -->
+    <style is:global>
+      /* Full-bleed layout preview uses 100vw; clip the resulting overflow so it
+         doesn't add a horizontal scrollbar to the page. */
+      body { overflow-x: hidden; }
+
+      /* Generous separation between logical sections, with a rule above each. */
+      .sg-editor-group {
+        font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px;
+        color: #999; margin: 34px 0 12px; padding-top: 18px;
+        border-top: 1px solid #e6e6e6;
+      }
+      .sg-editor-group:first-child { margin-top: 6px; padding-top: 0; border-top: none; }
+
+      /* Label stacked above its inputs — keeps long token names tied to the right
+         control instead of wrapping onto a neighbour. */
+      .sg-ctl { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; font-size: 11px; }
+      .sg-ctl-labelrow { display: flex; align-items: baseline; gap: 6px; }
+      .sg-ctl-label { color: #555; word-break: break-all; flex: 1; font-size: 11px; }
+      /* Per-parameter reset — faint until the token is actually overridden. */
+      .sg-ctl-reset {
+        flex: 0 0 auto; border: none; background: none; cursor: pointer;
+        font-size: 15px; line-height: 1; padding: 0 2px; color: #ccc;
+      }
+      .sg-ctl-reset:hover { color: #111; }
+      .sg-ctl.is-overridden .sg-ctl-label { color: #111; font-weight: 600; }
+      .sg-ctl.is-overridden .sg-ctl-reset { color: #c026d3; }
+      .sg-ctl-inputs { display: flex; align-items: center; gap: 8px; }
+      .sg-ctl-swatch { width: 30px; height: 28px; border: 1px solid #ccc; flex: 0 0 auto; }
+      .sg-ctl input[type="text"] { flex: 1 1 auto; min-width: 60px; }
+      .sg-ctl input[type="color"] { width: 30px; height: 28px; padding: 0; border: 1px solid #ccc; cursor: pointer; flex: 0 0 auto; }
+      .sg-ctl input[type="range"] { flex: 1 1 auto; min-width: 60px; }
+      .sg-ctl input[type="number"] { width: 64px; flex: 0 0 auto; }
+      .sg-ctl input[type="text"], .sg-ctl input[type="number"] {
+        font-family: inherit; font-size: 13px; padding: 5px 7px; border: 1px solid #ccc;
+      }
+      .sg-ctl select {
+        font-family: inherit; font-size: 13px; padding: 5px 7px;
+        border: 1px solid #ccc; background: #fff; flex: 1 1 auto; min-width: 96px;
+      }
+      /* Wide text inputs for family/easing values — fill the inputs row. */
+      .sg-ctl input[type="text"].sg-ctl-text-wide { width: auto; flex: 1 1 auto; min-width: 0; }
+
+      @media (max-width: 800px) {
+        .sg-ctl-label { font-size: 10.5px; }
       }
     </style>
   </body>

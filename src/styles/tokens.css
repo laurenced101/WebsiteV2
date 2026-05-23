@@ -37,6 +37,23 @@
   --layout-margin-tablet: 20px;         /* Tablet, max 1279px */
   --layout-margin-mobile: 12px;         /* Mobile, max 800px */
 
+  /* Spacing scale — primitives, no role aliases (Session 5).
+     Spacing applies contextually to many components, so a "role" doesn't map
+     cleanly: components consume these directly (e.g. var(--space-16)). Covers
+     padding / margin / gap only — positioning (top/left/inset) is out of scope.
+     Refactor on exact match only; non-matching raw px are tracked in
+     notes/session5-mismatches.md, not auto-conformed. */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-48: 48px;
+  --space-64: 64px;
+  --space-96: 96px;
+  --space-128: 128px;
+
   /* Typography — font family */
   --font-family-primary: 'Space Grotesk', sans-serif;
   --font-family-mono: 'Space Mono', monospace;
@@ -52,8 +69,8 @@
      Seven roles × four breakpoints. Components never read these directly:
      they read the resolved per-role alias below (e.g. var(--font-size-h1)),
      which selects the right breakpoint value via the media queries at the
-     bottom of this file. line-height / letter-spacing stay element-specific
-     (Session 5). */
+     bottom of this file. line-height / letter-spacing are tokenized too — see
+     the leading / tracking blocks below (Session 5). */
 
   --font-size-display-large: 86px;
   --font-size-display-desktop: 86px;
@@ -99,6 +116,81 @@
   --font-size-body: var(--font-size-body-desktop);
   --font-size-caption: var(--font-size-caption-desktop);
   --font-size-label: var(--font-size-label-desktop);
+
+  /* Line-height + letter-spacing (Session 5). Unitless ratios / em values that
+     scale with font-size, so — unlike font-size — they need no per-breakpoint
+     variants. Components consume the per-role aliases (var(--leading-h1)), never
+     the primitives directly, mirroring the font-size alias pattern: the aliases
+     are the editor knobs and can be re-pointed at different primitives as the
+     design tunes. */
+
+  /* Line-height primitives */
+  --leading-tight: 1.05;
+  --leading-snug: 1.2;
+  --leading-normal: 1.5;
+  --leading-loose: 1.7;
+
+  /* Line-height role aliases */
+  --leading-display: var(--leading-tight);
+  --leading-h1:      var(--leading-tight);
+  --leading-h2:      var(--leading-snug);
+  --leading-h3:      var(--leading-snug);
+  --leading-body:    var(--leading-normal);
+  --leading-caption: var(--leading-normal);
+  --leading-label:   var(--leading-tight);
+
+  /* Letter-spacing primitives */
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.08em;
+
+  /* Letter-spacing role aliases */
+  --tracking-display: var(--tracking-tight);
+  --tracking-h1:      var(--tracking-tight);
+  --tracking-h2:      var(--tracking-normal);
+  --tracking-h3:      var(--tracking-normal);
+  --tracking-body:    var(--tracking-normal);
+  --tracking-caption: var(--tracking-normal);
+  --tracking-label:   var(--tracking-wide);
+
+  /* Per-role text color — alias into the palette, re-pointable in /styleguide.
+     Headings default to brand blue; supporting roles to ink / grey. */
+  --text-display: var(--color-primary);
+  --text-h1:      var(--color-primary);
+  --text-h2:      var(--color-primary);
+  --text-h3:      var(--ink);
+  --text-body:    var(--ink);
+  --text-caption: var(--grey-mid);
+  --text-label:   var(--grey-light);
+
+  /* Per-role font weight — alias into the weight scale, re-pointable in /styleguide. */
+  --weight-display: var(--font-weight-regular);
+  --weight-h1:      var(--font-weight-regular);
+  --weight-h2:      var(--font-weight-medium);
+  --weight-h3:      var(--font-weight-medium);
+  --weight-body:    var(--font-weight-regular);
+  --weight-caption: var(--font-weight-regular);
+  --weight-label:   var(--font-weight-medium);
+
+  /* Per-role paragraph spacing — gap after a paragraph block. On-scale defaults;
+     editable per role in /styleguide. */
+  --paragraph-display: 24px;
+  --paragraph-h1:      24px;
+  --paragraph-h2:      24px;
+  --paragraph-h3:      16px;
+  --paragraph-body:    16px;
+  --paragraph-caption: 12px;
+  --paragraph-label:   8px;
+
+  /* Per-role measure — max line width for a text block, as a percentage of the
+     container, so it scales with page width. Editable per role. */
+  --measure-display: 90%;
+  --measure-h1:      80%;
+  --measure-h2:      72%;
+  --measure-h3:      68%;
+  --measure-body:    60%;
+  --measure-caption: 56%;
+  --measure-label:   48%;
 
   /* Motion — durations + easing. --ease-standard is `ease` to match the
      site's existing transition curve (adopting the token changes nothing

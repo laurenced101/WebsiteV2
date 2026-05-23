@@ -1,15 +1,17 @@
 # WebsiteV2 — laurence-dawes.design rebuild
 
-Fresh rebuild of the personal portfolio at laurence-dawes.design. Runs on **Super.so** with **Notion** as the CMS. The old site (separate Super project + `laurenced101/Website` repo) stays live untouched while this new stack is built in parallel.
+Fresh rebuild of the personal portfolio at laurence-dawes.design. Built with **Astro** and deployed on **Vercel**; project data is pulled from **Notion** at build time (see `scripts/fetch-projects.mjs`). The old Super-based site (separate Super project + `laurenced101/Website` repo) stays live untouched until cutover.
+
+> **Migration note:** this repo began as a Super.so + GitHub Pages stack and is mid-migration to Astro + Vercel (branch `astro-migration`; old Super CSS/JS parked in `legacy-super/`). Some sections below still describe the Super-era file layout (`css/`, `js/`, "Super wiring split") and have not been rewritten yet — treat the Astro source under `src/` as authoritative.
 
 ## Working agreement
 
 - **Source of truth:** all code lives in `laurenced101/WebsiteV2` on GitHub.
 - **Where work happens:** Claude Code.
 - **Branches:**
-  - `main` is stable/live. Super pulls stylesheet `<link>` tags from GitHub Pages off `main`.
-  - `dev` is for active work. Merged into `main` when ready to ship.
-- **Distribution:** GitHub Pages serves files from `main` / repo root. Super loads them via `<link>` tags in its code injection.
+  - `astro-migration` is the active branch for the rebuild.
+  - `main` is the eventual ship target; merged in at cutover.
+- **Distribution:** Vercel builds and serves the site directly from the repo. Every push gets a preview deploy; the production branch goes live automatically. Astro fingerprints its own asset filenames, so there's no manual `<link>` wiring or cache-busting to manage.
 
 ## File structure
 
@@ -77,7 +79,7 @@ Run through these in order **only when Laurence explicitly says "wrap up"** (or 
 
 1. **Uncommitted work** — Run `git status`. If there are changes, summarize what changed and ask whether to commit. Wait for explicit approval before staging or committing — never commit unprompted. If approved, draft the commit message at that point. Group commits logically (don't lump unrelated changes into one).
 
-2. **Cache buster** — For each file family changed this session (CSS pair `tokens.css` + `base.css` lockstep / JS `site.js` standalone), ask Laurence for the current `?v=N` in Super and tell him the new N to set. **Never recall N from memory** — it lives in Super's code injection (out of repo scope) and goes stale.
+2. **Deploy** — No cache-buster step on the Astro stack: Astro fingerprints asset filenames and Vercel rebuilds on push, so a commit + deploy is the whole loop. Just confirm the change is committed/pushed and note that the Vercel preview (or production, post-merge) will pick it up. _(Legacy: the old Super stack needed a manual `?v=N` bump on `tokens.css`/`base.css`/`site.js` — only relevant if touching files under `legacy-super/`.)_
 
 3. **Notion ticket** — For any ticket moved to `In progress` this session: confirm the code is ready, then flip Status to `For Review` and fill "Review Notes (Claude)" with what changed and any caveats Laurence should watch for during testing. Never set `Done` — that's Laurence's call.
 
@@ -89,4 +91,4 @@ Run through these in order **only when Laurence explicitly says "wrap up"** (or 
 
    Save anything durable; skip ephemeral task state.
 
-5. **Hand-off summary** — One short paragraph: what changed, what's pending Laurence's action (testing, Super wiring, ticket review), and what the next session should pick up.
+5. **Hand-off summary** — One short paragraph: what changed, what's pending Laurence's action (testing, deploy verification, ticket review), and what the next session should pick up.
