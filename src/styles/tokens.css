@@ -37,10 +37,28 @@
   --layout-margin-tablet: 20px;         /* Tablet, max 1279px */
   --layout-margin-mobile: 12px;         /* Mobile, max 800px */
 
-  /* Typography — font sizes per breakpoint.
-     Only font-sizes are tokenized; line-height, letter-spacing, and
-     padding/margin stay element-specific in component styles. Kept for
-     the HOME / ABOUT / PROCESS ports in later sessions. */
+  /* Typography — font family */
+  --font-family-primary: 'Space Grotesk', sans-serif;
+  --font-family-mono: 'Space Mono', monospace;
+
+  /* Typography — font weights */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Type scale — granular per-breakpoint values (edited in /styleguide).
+     Seven roles × four breakpoints. Components never read these directly:
+     they read the resolved per-role alias below (e.g. var(--font-size-h1)),
+     which selects the right breakpoint value via the media queries at the
+     bottom of this file. line-height / letter-spacing stay element-specific
+     (Session 5). */
+
+  --font-size-display-large: 86px;
+  --font-size-display-desktop: 86px;
+  --font-size-display-tablet: 72px;
+  --font-size-display-mobile: 64px;
 
   --font-size-h1-large: 64px;
   --font-size-h1-desktop: 64px;
@@ -61,4 +79,68 @@
   --font-size-body-desktop: 18px;
   --font-size-body-tablet: 17px;
   --font-size-body-mobile: 16px;
+
+  --font-size-caption-large: 15px;
+  --font-size-caption-desktop: 14px;
+  --font-size-caption-tablet: 14px;
+  --font-size-caption-mobile: 13px;
+
+  --font-size-label-large: 12px;
+  --font-size-label-desktop: 11px;
+  --font-size-label-tablet: 11px;
+  --font-size-label-mobile: 10px;
+
+  /* Resolved per-role aliases — what components consume. Default to the
+     Desktop tier (≤1799); overridden per breakpoint at the bottom of the file. */
+  --font-size-display: var(--font-size-display-desktop);
+  --font-size-h1: var(--font-size-h1-desktop);
+  --font-size-h2: var(--font-size-h2-desktop);
+  --font-size-h3: var(--font-size-h3-desktop);
+  --font-size-body: var(--font-size-body-desktop);
+  --font-size-caption: var(--font-size-caption-desktop);
+  --font-size-label: var(--font-size-label-desktop);
+
+  /* Motion — durations + easing. --ease-standard is `ease` to match the
+     site's existing transition curve (adopting the token changes nothing
+     visually); the slideshow keeps its own cubic-bezier snap curve. */
+  --duration-fast: 0.15s;
+  --duration-standard: 0.25s;
+  --duration-slow: 0.4s;
+  --ease-standard: ease;
+}
+
+/* Type scale — breakpoint resolution for the per-role aliases.
+   Large Desktop 1800+, Tablet ≤1279, Mobile ≤800 (base above = Desktop ≤1799). */
+@media (min-width: 1800px) {
+  :root {
+    --font-size-display: var(--font-size-display-large);
+    --font-size-h1: var(--font-size-h1-large);
+    --font-size-h2: var(--font-size-h2-large);
+    --font-size-h3: var(--font-size-h3-large);
+    --font-size-body: var(--font-size-body-large);
+    --font-size-caption: var(--font-size-caption-large);
+    --font-size-label: var(--font-size-label-large);
+  }
+}
+@media (max-width: 1279px) {
+  :root {
+    --font-size-display: var(--font-size-display-tablet);
+    --font-size-h1: var(--font-size-h1-tablet);
+    --font-size-h2: var(--font-size-h2-tablet);
+    --font-size-h3: var(--font-size-h3-tablet);
+    --font-size-body: var(--font-size-body-tablet);
+    --font-size-caption: var(--font-size-caption-tablet);
+    --font-size-label: var(--font-size-label-tablet);
+  }
+}
+@media (max-width: 800px) {
+  :root {
+    --font-size-display: var(--font-size-display-mobile);
+    --font-size-h1: var(--font-size-h1-mobile);
+    --font-size-h2: var(--font-size-h2-mobile);
+    --font-size-h3: var(--font-size-h3-mobile);
+    --font-size-body: var(--font-size-body-mobile);
+    --font-size-caption: var(--font-size-caption-mobile);
+    --font-size-label: var(--font-size-label-mobile);
+  }
 }

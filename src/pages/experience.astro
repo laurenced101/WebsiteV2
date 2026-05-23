@@ -104,8 +104,8 @@ import { projects } from '../data/projects.generated.js';
     padding: 80px 0 70px;
     border-bottom: 2.5px solid var(--color-primary);
   }
-  .statement h1 { font-size: 70px; font-weight: 400; color: var(--color-primary); line-height: 1; margin-bottom: 24px; }
-  .statement p { font-size: 32px; font-weight: 500; line-height: 1.4; }
+  .statement h1 { font-size: var(--font-size-h1); font-weight: var(--font-weight-regular); color: var(--color-primary); line-height: 1; margin-bottom: 24px; }
+  .statement p { font-size: var(--font-size-h2); font-weight: var(--font-weight-medium); line-height: 1.4; }
   .statement .accent { color: var(--color-primary); }
 
   /* SECTIONS */
@@ -113,7 +113,7 @@ import { projects } from '../data/projects.generated.js';
   .section.stats .wrap { padding: 64px 0; }
   .section.clients .wrap { padding: 56px 0 64px; border-bottom: 0; }
   .section-label {
-    font-size: 13px; font-weight: 500;
+    font-size: var(--font-size-label); font-weight: var(--font-weight-medium);
     letter-spacing: 0.96px; text-transform: uppercase;
     color: var(--grey-light); margin-bottom: 28px;
   }
@@ -124,15 +124,15 @@ import { projects } from '../data/projects.generated.js';
     flex: 1; border-top: var(--outline) solid var(--color-primary);
     padding-top: 16px; display: flex; flex-direction: column; gap: 10px;
   }
-  .discipline-num { font-size: 15px; color: var(--color-primary); }
-  .discipline-title { font-size: 19px; font-weight: 500; color: var(--ink); }
-  .discipline-desc { font-size: 13px; color: var(--grey-mid); line-height: 1.5; }
+  .discipline-num { font-size: var(--font-size-caption); color: var(--color-primary); }
+  .discipline-title { font-size: var(--font-size-h3); font-weight: var(--font-weight-medium); color: var(--ink); }
+  .discipline-desc { font-size: var(--font-size-caption); color: var(--grey-mid); line-height: 1.5; }
 
   /* STATS */
   .stats-row { display: flex; gap: 24px; }
   .stat { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-  .stat-num { font-size: 86px; font-weight: 500; color: var(--color-primary); line-height: 1; letter-spacing: -0.02em; }
-  .stat-label { font-size: 14px; color: var(--grey-mid); line-height: 1.4; }
+  .stat-num { font-size: var(--font-size-display); font-weight: var(--font-weight-medium); color: var(--color-primary); line-height: 1; letter-spacing: -0.02em; }
+  .stat-label { font-size: var(--font-size-caption); color: var(--grey-mid); line-height: 1.4; }
 
   /* CLIENT WALL */
   .logo-grid { display: flex; flex-direction: column; gap: 16px; }
@@ -140,7 +140,7 @@ import { projects } from '../data/projects.generated.js';
   .logo-cell {
     flex: 1; height: 94px; background: var(--grey-bg);
     display: flex; align-items: center; justify-content: center;
-    color: #adadad; font-size: 11px; font-weight: 500;
+    color: #adadad; font-size: var(--font-size-label); font-weight: var(--font-weight-medium);
     letter-spacing: 1px; text-transform: uppercase;
   }
 
@@ -154,13 +154,13 @@ import { projects } from '../data/projects.generated.js';
     border-bottom: var(--outline) solid var(--color-primary);
     display: flex; flex-direction: column; gap: 10px;
   }
-  .index-head h2 { font-size: 24px; font-weight: 500; }
-  .index-head .sub { font-size: 15px; color: var(--grey-mid); line-height: 1.5; }
+  .index-head h2 { font-size: var(--font-size-h3); font-weight: var(--font-weight-medium); }
+  .index-head .sub { font-size: var(--font-size-caption); color: var(--grey-mid); line-height: 1.5; }
 
   .index-col-head {
     padding: 18px 0;
     border-bottom: 1px solid var(--color-primary);
-    font-size: 11px; font-weight: 500;
+    font-size: var(--font-size-label); font-weight: var(--font-weight-medium);
     letter-spacing: 0.96px; text-transform: uppercase;
     color: var(--grey-light);
   }
@@ -168,16 +168,13 @@ import { projects } from '../data/projects.generated.js';
   /* BOTTOM */
   .bottom-note .wrap {
     padding: 64px 0; text-align: center;
-    font-size: 12px; letter-spacing: 0.96px;
+    font-size: var(--font-size-label); letter-spacing: 0.96px;
     text-transform: uppercase; color: var(--grey-light);
   }
 
-  /* TABLET fallback */
-  @media (max-width: 900px) {
-    .statement h1 { font-size: 56px; }
-    .statement p { font-size: 24px; }
-    .stat-num { font-size: 64px; }
-  }
+  /* Display/heading sizes now resize via the font-size token aliases
+     (Large 1800+, Tablet ≤1279, Mobile ≤800), so the old ≤900 font-size
+     overrides for .statement h1/p and .stat-num are gone. */
 </style>
 
 <script>

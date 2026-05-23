@@ -28,7 +28,7 @@ import '../styles/global.css';
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
       rel="stylesheet"
     />
   </head>
@@ -113,15 +113,27 @@ import '../styles/global.css';
         </div>
       </section>
 
-      <!-- TYPOGRAPHY -->
+      <!-- TYPOGRAPHY: SIZE SCALE -->
       <section class="sg-section">
-        <h2>Typography</h2>
+        <h2>Type scale</h2>
         <p class="sg-note">
-          Only font <em>sizes</em> are tokenized, one per breakpoint. The live
-          sample on the left applies the breakpoint-appropriate token — resize the
-          window to watch it shift across Large&nbsp;Desktop&nbsp;(1800+),
-          Desktop&nbsp;(≤1799), Tablet&nbsp;(≤1279) and Mobile&nbsp;(≤800).
+          Seven roles, each with four breakpoint values. Components consume a
+          resolved alias (<code>var(--font-size-h1)</code>) that picks the right
+          breakpoint automatically — the live samples below use those aliases, so
+          resize the window to watch them shift across Large&nbsp;Desktop&nbsp;(1800+),
+          Desktop&nbsp;(≤1799), Tablet&nbsp;(≤1279) and Mobile&nbsp;(≤800). The four
+          readouts per role are the underlying granular tokens (editable at right).
         </p>
+
+        <div class="sg-type-row">
+          <div class="sg-demo-display">Display</div>
+          <div class="sg-type-tokens">
+            <div><code class="sg-name">--font-size-display-large</code> <code class="sg-val" data-token="--font-size-display-large"></code></div>
+            <div><code class="sg-name">--font-size-display-desktop</code> <code class="sg-val" data-token="--font-size-display-desktop"></code></div>
+            <div><code class="sg-name">--font-size-display-tablet</code> <code class="sg-val" data-token="--font-size-display-tablet"></code></div>
+            <div><code class="sg-name">--font-size-display-mobile</code> <code class="sg-val" data-token="--font-size-display-mobile"></code></div>
+          </div>
+        </div>
 
         <div class="sg-type-row">
           <div class="sg-demo-h1">Heading one</div>
@@ -161,6 +173,107 @@ import '../styles/global.css';
             <div><code class="sg-name">--font-size-body-tablet</code> <code class="sg-val" data-token="--font-size-body-tablet"></code></div>
             <div><code class="sg-name">--font-size-body-mobile</code> <code class="sg-val" data-token="--font-size-body-mobile"></code></div>
           </div>
+        </div>
+
+        <div class="sg-type-row">
+          <div class="sg-demo-caption">Caption — small secondary text: descriptions, sub-lines, button labels.</div>
+          <div class="sg-type-tokens">
+            <div><code class="sg-name">--font-size-caption-large</code> <code class="sg-val" data-token="--font-size-caption-large"></code></div>
+            <div><code class="sg-name">--font-size-caption-desktop</code> <code class="sg-val" data-token="--font-size-caption-desktop"></code></div>
+            <div><code class="sg-name">--font-size-caption-tablet</code> <code class="sg-val" data-token="--font-size-caption-tablet"></code></div>
+            <div><code class="sg-name">--font-size-caption-mobile</code> <code class="sg-val" data-token="--font-size-caption-mobile"></code></div>
+          </div>
+        </div>
+
+        <div class="sg-type-row">
+          <div class="sg-demo-label">Label — micro text</div>
+          <div class="sg-type-tokens">
+            <div><code class="sg-name">--font-size-label-large</code> <code class="sg-val" data-token="--font-size-label-large"></code></div>
+            <div><code class="sg-name">--font-size-label-desktop</code> <code class="sg-val" data-token="--font-size-label-desktop"></code></div>
+            <div><code class="sg-name">--font-size-label-tablet</code> <code class="sg-val" data-token="--font-size-label-tablet"></code></div>
+            <div><code class="sg-name">--font-size-label-mobile</code> <code class="sg-val" data-token="--font-size-label-mobile"></code></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TYPOGRAPHY: FONT FAMILY -->
+      <section class="sg-section">
+        <h2>Font family</h2>
+        <p class="sg-note">
+          Two families. <code>--font-family-primary</code> (Space Grotesk) is the
+          site default, applied on <code>body</code>; <code>--font-family-mono</code>
+          (Space Mono) is used for code-style text — every token name and value on
+          this page is set in it.
+        </p>
+        <div class="sg-type-row">
+          <div class="sg-demo-family" style="font-family: var(--font-family-primary)">Space Grotesk — primary</div>
+          <div class="sg-type-tokens">
+            <div><code class="sg-name">--font-family-primary</code> <code class="sg-val" data-token="--font-family-primary"></code></div>
+          </div>
+        </div>
+        <div class="sg-type-row">
+          <div class="sg-demo-family" style="font-family: var(--font-family-mono)">Space Mono — mono</div>
+          <div class="sg-type-tokens">
+            <div><code class="sg-name">--font-family-mono</code> <code class="sg-val" data-token="--font-family-mono"></code></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TYPOGRAPHY: FONT WEIGHT -->
+      <section class="sg-section">
+        <h2>Font weight</h2>
+        <p class="sg-note">
+          Five weights of Space Grotesk. Semibold (600) was added this session for
+          the nav buttons and project brand labels.
+        </p>
+        <div class="sg-weight-row" style="font-weight: var(--font-weight-light)">
+          <span class="sg-demo-weight">Light</span>
+          <code class="sg-name">--font-weight-light</code> <code class="sg-val" data-token="--font-weight-light"></code>
+        </div>
+        <div class="sg-weight-row" style="font-weight: var(--font-weight-regular)">
+          <span class="sg-demo-weight">Regular</span>
+          <code class="sg-name">--font-weight-regular</code> <code class="sg-val" data-token="--font-weight-regular"></code>
+        </div>
+        <div class="sg-weight-row" style="font-weight: var(--font-weight-medium)">
+          <span class="sg-demo-weight">Medium</span>
+          <code class="sg-name">--font-weight-medium</code> <code class="sg-val" data-token="--font-weight-medium"></code>
+        </div>
+        <div class="sg-weight-row" style="font-weight: var(--font-weight-semibold)">
+          <span class="sg-demo-weight">Semibold</span>
+          <code class="sg-name">--font-weight-semibold</code> <code class="sg-val" data-token="--font-weight-semibold"></code>
+        </div>
+        <div class="sg-weight-row" style="font-weight: var(--font-weight-bold)">
+          <span class="sg-demo-weight">Bold</span>
+          <code class="sg-name">--font-weight-bold</code> <code class="sg-val" data-token="--font-weight-bold"></code>
+        </div>
+      </section>
+
+      <!-- MOTION -->
+      <section class="sg-section">
+        <h2>Motion</h2>
+        <p class="sg-note">
+          Three durations and one easing curve. Hover a swatch to play its
+          transition. <code>--ease-standard</code> is <code>ease</code> — the site's
+          existing curve — so adopting the tokens changed no motion. The slideshow
+          keeps a separate cubic-bezier snap curve (not tokenized).
+        </p>
+        <div class="sg-motion-grid">
+          <div class="sg-motion-cell">
+            <div class="sg-motion-swatch" style="transition: transform var(--duration-fast) var(--ease-standard)"></div>
+            <code class="sg-name">--duration-fast</code> <code class="sg-val" data-token="--duration-fast"></code>
+          </div>
+          <div class="sg-motion-cell">
+            <div class="sg-motion-swatch" style="transition: transform var(--duration-standard) var(--ease-standard)"></div>
+            <code class="sg-name">--duration-standard</code> <code class="sg-val" data-token="--duration-standard"></code>
+          </div>
+          <div class="sg-motion-cell">
+            <div class="sg-motion-swatch" style="transition: transform var(--duration-slow) var(--ease-standard)"></div>
+            <code class="sg-name">--duration-slow</code> <code class="sg-val" data-token="--duration-slow"></code>
+          </div>
+        </div>
+        <div class="sg-rule-label" style="margin-top: 16px;">
+          <code class="sg-name">--ease-standard</code> <code class="sg-val" data-token="--ease-standard"></code>
+          <span class="sg-muted">— shared easing curve for all tokenized transitions</span>
         </div>
       </section>
 
@@ -303,17 +416,10 @@ import '../styles/global.css';
       <section class="sg-section sg-gap">
         <h2>Gap — Typography details</h2>
         <p class="sg-note">
-          Only font sizes are tokenized. Line-height, letter-spacing and font-weight
-          are hardcoded per component. Note too that /experience does <em>not</em>
-          consume the font-size tokens — it hardcodes its own sizes (e.g. h1 70px,
-          statement p 32px, stat-num 86px), so the type-scale tokens above are
-          currently unused by real pages.
+          Font size, family and weight are now tokenized, and /experience consumes
+          them. Still hardcoded per component: <strong>line-height</strong> and
+          <strong>letter-spacing</strong> (Session 5).
         </p>
-
-        <h3 class="sg-gap-file">font-weight (values in use)</h3>
-        <ul class="sg-gap-list">
-          <li><code>400</code> / <code>500</code> / <code>600</code> / <code>700</code> — <span class="sg-muted">used ad-hoc across all components; no weight tokens</span></li>
-        </ul>
 
         <h3 class="sg-gap-file">line-height (values in use)</h3>
         <ul class="sg-gap-list">
@@ -337,62 +443,21 @@ import '../styles/global.css';
         </ul>
       </section>
 
-      <!-- GAP: FONT FAMILY -->
+      <!-- GAP: ANIMATION (JS only) -->
       <section class="sg-section sg-gap">
-        <h2>Gap — Font family</h2>
+        <h2>Gap — Animation (JS timing)</h2>
         <p class="sg-note">
-          <code>'Space Grotesk'</code> is not tokenized. It is declared once and
-          loaded via Google Fonts; nothing references it through a variable.
+          CSS transition durations and easing are now tokenized (see Motion above).
+          What remains hardcoded is JS timing in the slideshow plus its bespoke snap
+          curve — left as-is on purpose (the snap duration and its setTimeout must
+          stay coupled).
         </p>
         <ul class="sg-gap-list">
-          <li><code>font-family: 'Space Grotesk', sans-serif</code> — <span class="sg-muted">global.css, on html/body</span></li>
-          <li><code>Space+Grotesk:wght@400;500;600;700</code> — <span class="sg-muted">BaseLayout.astro, Google Fonts &lt;link&gt; (weights 400/500/600/700)</span></li>
-        </ul>
-      </section>
-
-      <!-- GAP: ANIMATION -->
-      <section class="sg-section sg-gap">
-        <h2>Gap — Animation</h2>
-        <p class="sg-note">
-          No motion tokens. Transition durations and easing curves are hardcoded
-          per component; the slideshow also carries timing constants in JS.
-        </p>
-
-        <h3 class="sg-gap-file">CSS transitions</h3>
-        <ul class="sg-gap-list">
-          <li><code>0.15s ease</code> — <span class="sg-muted">Navbar .nav-btn (background/color); Slideshow .slideshow-btn</span></li>
-          <li><code>0.2s ease</code> — <span class="sg-muted">ProjectRow .project-row background; .brand-text / .brand-logo opacity</span></li>
-          <li><code>0.3s ease</code> — <span class="sg-muted">Slideshow .slideshow-status opacity</span></li>
-          <li><code>0.35s ease</code> — <span class="sg-muted">ProjectRow .row-thumb img filter</span></li>
-          <li><code>0.4s ease</code> — <span class="sg-muted">ProjectRow .project-panel grid-template-rows (expand)</span></li>
-          <li><code>0.45s cubic-bezier(0.4, 0, 0.2, 1)</code> — <span class="sg-muted">Slideshow .snapping transform — only non-ease curve in the codebase</span></li>
-        </ul>
-
-        <h3 class="sg-gap-file">JS timing constants (Slideshow.astro)</h3>
-        <ul class="sg-gap-list">
+          <li><code>0.45s cubic-bezier(0.4, 0, 0.2, 1)</code> — <span class="sg-muted">Slideshow .snapping transform — custom snap curve, not a token</span></li>
           <li><code>AUTO_SCROLL_SPEED = 50</code> — <span class="sg-muted">px/sec auto-advance</span></li>
           <li><code>BUTTON_PAUSE_MS = 2500</code> — <span class="sg-muted">pause after a button click</span></li>
           <li><code>END_PAUSE_MS = 1500</code> — <span class="sg-muted">pause at end before looping</span></li>
-          <li><code>460</code> — <span class="sg-muted">setTimeout to clear .snapping (must track the 0.45s transition)</span></li>
-        </ul>
-      </section>
-
-      <!-- HARDCODED FALLBACKS -->
-      <section class="sg-section sg-gap">
-        <h2>Hardcoded fallbacks</h2>
-        <p class="sg-note">
-          Every <code>var(--token, fallback)</code> instance duplicates the token's
-          value as a fallback. All currently live in global.css; component styles use
-          bare <code>var(--token)</code> with no fallback. If a token is renamed, these
-          fallbacks silently take over instead of failing loudly.
-        </p>
-        <ul class="sg-gap-list">
-          <li><code>var(--surface, #F7F7F7)</code> — <span class="sg-muted">global.css:6, body background</span></li>
-          <li><code>var(--ink, #111)</code> — <span class="sg-muted">global.css:7, body color</span></li>
-          <li><code>var(--layout-max-width-desktop, 1000px)</code> — <span class="sg-muted">global.css:18, .wrap</span></li>
-          <li><code>var(--layout-max-width-large, 1200px)</code> — <span class="sg-muted">global.css:22, .wrap @1800+</span></li>
-          <li><code>var(--layout-margin-tablet, 20px)</code> — <span class="sg-muted">global.css:27–28, .wrap @≤1279</span></li>
-          <li><code>var(--layout-margin-mobile, 12px)</code> — <span class="sg-muted">global.css:33–34, .wrap @≤800</span></li>
+          <li><code>460</code> — <span class="sg-muted">setTimeout to clear .snapping (tracks the 0.45s transition)</span></li>
         </ul>
       </section>
 
@@ -429,11 +494,28 @@ import '../styles/global.css';
           { name: '--layout-margin-mobile', min: 0, max: 120, step: 1 },
         ],
         'Typography (font sizes)': [
+          'display-large', 'display-desktop', 'display-tablet', 'display-mobile',
           'h1-large', 'h1-desktop', 'h1-tablet', 'h1-mobile',
           'h2-large', 'h2-desktop', 'h2-tablet', 'h2-mobile',
           'h3-large', 'h3-desktop', 'h3-tablet', 'h3-mobile',
           'body-large', 'body-desktop', 'body-tablet', 'body-mobile',
+          'caption-large', 'caption-desktop', 'caption-tablet', 'caption-mobile',
+          'label-large', 'label-desktop', 'label-tablet', 'label-mobile',
         ].map((s) => ({ name: `--font-size-${s}`, min: 8, max: 120, step: 1 })),
+        'Typography (font weights)': [
+          'light', 'regular', 'medium', 'semibold', 'bold',
+        ].map((w) => ({ name: `--font-weight-${w}`, min: 100, max: 900, step: 100, unit: '' })),
+        'Motion (durations)': [
+          { name: '--duration-fast', min: 0, max: 1, step: 0.05, unit: 's' },
+          { name: '--duration-standard', min: 0, max: 1, step: 0.05, unit: 's' },
+          { name: '--duration-slow', min: 0, max: 1, step: 0.05, unit: 's' },
+        ],
+      };
+
+      // Text-valued tokens (no slider) — edited via a plain text input.
+      const TEXT_GROUPS = {
+        'Typography (font family)': ['--font-family-primary', '--font-family-mono'],
+        'Motion (easing)': ['--ease-standard'],
       };
 
       const readVal = (name) => getComputedStyle(root).getPropertyValue(name).trim();
@@ -513,13 +595,30 @@ import '../styles/global.css';
         // typing, even where the slider uses a coarser step for easy dragging.
         number.min = t.min; number.max = t.max; number.step = 'any'; number.value = num;
 
-        const apply = (v) => { range.value = v; number.value = v; setToken(t.name, v + 'px'); };
+        // unit defaults to 'px'; weights pass '' (unitless), durations pass 's'.
+        const unit = t.unit ?? 'px';
+        const apply = (v) => { range.value = v; number.value = v; setToken(t.name, v + unit); };
         range.addEventListener('input', () => apply(range.value));
         number.addEventListener('input', () => apply(number.value));
 
         const label = document.createElement('label');
         label.textContent = t.name;
         row.append(range, number, label);
+        return row;
+      }
+
+      // Plain text input for non-numeric tokens (font families, easing curve).
+      function textRow(name) {
+        const row = document.createElement('div');
+        row.className = 'sg-ctl';
+        const text = document.createElement('input');
+        text.type = 'text';
+        text.className = 'sg-ctl-text-wide';
+        text.value = readVal(name);
+        text.addEventListener('input', () => setToken(name, text.value));
+        const label = document.createElement('label');
+        label.textContent = name;
+        row.append(text, label);
         return row;
       }
 
@@ -538,6 +637,14 @@ import '../styles/global.css';
           body.appendChild(head);
           tokens.forEach((t) => body.appendChild(sizeRow(t)));
         });
+
+        Object.entries(TEXT_GROUPS).forEach(([group, names]) => {
+          const head = document.createElement('div');
+          head.className = 'sg-editor-group';
+          head.textContent = group;
+          body.appendChild(head);
+          names.forEach((n) => body.appendChild(textRow(n)));
+        });
       }
       buildEditor();
 
@@ -545,6 +652,10 @@ import '../styles/global.css';
       function exportCss() {
         const g = (n) => readVal(n);
         const fs = (k) => `  --font-size-${k}: ${g('--font-size-' + k)};`;
+        const fsGroup = (role) => [`${role}-large`, `${role}-desktop`, `${role}-tablet`, `${role}-mobile`].map(fs).join('\n');
+        const roles = ['display', 'h1', 'h2', 'h3', 'body', 'caption', 'label'];
+        const aliases = roles.map((r) => `    --font-size-${r}: var(--font-size-${r}-TIER);`).join('\n');
+        const aliasBlock = (tier) => `  :root {\n${aliases.replace(/TIER/g, tier)}\n  }`;
         return `:root {
   /* Color */
   --color-primary: ${g('--color-primary')};
@@ -574,26 +685,50 @@ import '../styles/global.css';
   --layout-margin-tablet: ${g('--layout-margin-tablet')};
   --layout-margin-mobile: ${g('--layout-margin-mobile')};
 
-  /* Typography — font sizes per breakpoint. */
-${fs('h1-large')}
-${fs('h1-desktop')}
-${fs('h1-tablet')}
-${fs('h1-mobile')}
+  /* Typography — font family */
+  --font-family-primary: ${g('--font-family-primary')};
+  --font-family-mono: ${g('--font-family-mono')};
 
-${fs('h2-large')}
-${fs('h2-desktop')}
-${fs('h2-tablet')}
-${fs('h2-mobile')}
+  /* Typography — font weights */
+  --font-weight-light: ${g('--font-weight-light')};
+  --font-weight-regular: ${g('--font-weight-regular')};
+  --font-weight-medium: ${g('--font-weight-medium')};
+  --font-weight-semibold: ${g('--font-weight-semibold')};
+  --font-weight-bold: ${g('--font-weight-bold')};
 
-${fs('h3-large')}
-${fs('h3-desktop')}
-${fs('h3-tablet')}
-${fs('h3-mobile')}
+  /* Type scale — granular per-breakpoint values. */
+${fsGroup('display')}
 
-${fs('body-large')}
-${fs('body-desktop')}
-${fs('body-tablet')}
-${fs('body-mobile')}
+${fsGroup('h1')}
+
+${fsGroup('h2')}
+
+${fsGroup('h3')}
+
+${fsGroup('body')}
+
+${fsGroup('caption')}
+
+${fsGroup('label')}
+
+  /* Resolved per-role aliases — default to the Desktop tier. */
+${roles.map((r) => `  --font-size-${r}: var(--font-size-${r}-desktop);`).join('\n')}
+
+  /* Motion */
+  --duration-fast: ${g('--duration-fast')};
+  --duration-standard: ${g('--duration-standard')};
+  --duration-slow: ${g('--duration-slow')};
+  --ease-standard: ${g('--ease-standard')};
+}
+
+@media (min-width: 1800px) {
+${aliasBlock('large')}
+}
+@media (max-width: 1279px) {
+${aliasBlock('tablet')}
+}
+@media (max-width: 800px) {
+${aliasBlock('mobile')}
 }`;
       }
 
@@ -641,7 +776,7 @@ ${fs('body-mobile')}
         position: fixed; top: 8px; right: 12px; z-index: 10;
         font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
         color: var(--grey-light);
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-family: var(--font-family-mono);
       }
 
       .sg-header { margin-bottom: 56px; }
@@ -663,9 +798,10 @@ ${fs('body-mobile')}
       }
       .sg-muted { color: var(--grey-light); }
 
-      /* Code-style text for token names + values */
+      /* Code-style text for token names + values — first concrete use of the
+         mono family token on the site. */
       code, .sg-name, .sg-val {
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-family: var(--font-family-mono);
         font-size: 12px;
       }
       .sg-name { color: var(--color-primary); }
@@ -702,10 +838,30 @@ ${fs('body-mobile')}
       .sg-type-tokens { display: flex; flex-direction: column; gap: 3px; }
       .sg-type-tokens div { display: flex; gap: 8px; }
 
+      /* These four read the granular -desktop token + swap via the media queries
+         below (the original Session-3 pattern). The newer demos (display/caption/
+         label/family) read the resolved alias instead, so they resize for free. */
       .sg-demo-h1 { font-weight: 400; line-height: 1; flex: 1 1 240px; font-size: var(--font-size-h1-desktop); }
       .sg-demo-h2 { font-weight: 500; line-height: 1.1; flex: 1 1 240px; font-size: var(--font-size-h2-desktop); }
       .sg-demo-h3 { font-weight: 500; line-height: 1.2; flex: 1 1 240px; font-size: var(--font-size-h3-desktop); }
       .sg-demo-body { font-weight: 400; line-height: 1.5; flex: 1 1 240px; font-size: var(--font-size-body-desktop); max-width: 480px; }
+      .sg-demo-display { font-weight: 400; line-height: 1; flex: 1 1 240px; font-size: var(--font-size-display); }
+      .sg-demo-caption { font-weight: 400; line-height: 1.5; flex: 1 1 240px; font-size: var(--font-size-caption); max-width: 480px; }
+      .sg-demo-label { font-weight: 500; line-height: 1.4; flex: 1 1 240px; font-size: var(--font-size-label); text-transform: uppercase; letter-spacing: 0.96px; }
+      .sg-demo-family { font-size: 26px; flex: 1 1 240px; }
+
+      /* Font-weight samples */
+      .sg-weight-row {
+        display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;
+        padding: 10px 0; border-bottom: 1px solid var(--grey-bg);
+      }
+      .sg-demo-weight { font-size: 26px; flex: 0 0 150px; }
+
+      /* Motion swatches — hover to play the transition at each duration */
+      .sg-motion-grid { display: flex; gap: 24px; flex-wrap: wrap; }
+      .sg-motion-cell { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+      .sg-motion-swatch { width: 80px; height: 80px; background: var(--color-primary); }
+      .sg-motion-cell:hover .sg-motion-swatch { transform: translateX(48px); }
 
       @media (min-width: 1800px) {
         .sg-demo-h1 { font-size: var(--font-size-h1-large); }
@@ -761,7 +917,7 @@ ${fs('body-mobile')}
         font-size: 12px; font-weight: 600; letter-spacing: 0.5px;
         text-transform: uppercase; color: var(--grey-mid);
         margin: 20px 0 8px;
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-family: var(--font-family-mono);
       }
       .sg-gap-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
       .sg-gap-list li { font-size: 13px; line-height: 1.5; }
@@ -825,6 +981,9 @@ ${fs('body-mobile')}
       .sg-ctl input[type="text"], .sg-ctl input[type="number"] {
         font-family: inherit; font-size: 11px; padding: 3px 5px; border: 1px solid #ccc;
       }
+      /* Wide text inputs for family/easing values (longer than a color/size value) */
+      .sg-ctl input[type="text"].sg-ctl-text-wide { width: auto; flex: 2 1 120px; min-width: 0; }
+      .sg-ctl input.sg-ctl-text-wide + label { flex: 1 1 80px; }
       .sg-export { width: 100%; height: 180px; margin-top: 12px; font-family: inherit; font-size: 10px; }
 
       /* On tablet/mobile the side panel would cover the page, so dock it as a
