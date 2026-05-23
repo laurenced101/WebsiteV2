@@ -41,6 +41,10 @@
   const REVEAL_DISTANCE_PX = 28;
   const STAGGER_H1_MS      = 100;
   const STAGGER_BUTTON_MS  = 120;
+  // Above-the-fold reveals wait this long after page load before
+  // animating, so the page has a beat to settle. Reveals triggered later
+  // by scroll get no extra delay.
+  const INITIAL_DELAY_MS   = 600;
 
   // === Hover tuning (blue buttons only) ===
   const HOVER_SCALE        = 1.03;
@@ -52,6 +56,13 @@
 
   const REGISTERED_ATTR   = "data-reveal-registered";
   const BLUE_BUTTON_CLASS = "ln-blue-button";
+
+  // Marker for "is this reveal triggering during the initial page-load
+  // window?" — if yes, add INITIAL_DELAY_MS to the delay so it doesn't
+  // animate the instant the page paints.
+  const pageLoadEpoch = performance.now();
+  const initialDelayRemaining = () =>
+    Math.max(INITIAL_DELAY_MS - (performance.now() - pageLoadEpoch), 0);
 
   const setHidden = (el) => {
     el.style.opacity   = "0";
@@ -108,16 +119,17 @@
       if (entry.target.tagName === "H1") enteringH1s.push(entry.target);
       else enteringButtons.push(entry.target);
     });
+    const baseDelay = initialDelayRemaining();
     enteringH1s.forEach((el, i) => {
-      animateIn(el, i * STAGGER_H1_MS);
+      animateIn(el, baseDelay + i * STAGGER_H1_MS);
       observer.unobserve(el);
     });
     enteringButtons.forEach((el, i) => {
-      animateIn(el, i * STAGGER_BUTTON_MS);
+      animateIn(el, baseDelay + i * STAGGER_BUTTON_MS);
       observer.unobserve(el);
     });
   }, {
-    threshold:  0.25,
+    threshold:  0.4,
     rootMargin: "0px 0px -40px 0px"
   });
 
@@ -172,9 +184,14 @@
    2. Smooth scroll-to-top
    Pink buttons (.notion-button__content.bg-pink-light) intercept their
    click and animate the page scroll from current Y to 0 over
-   SCROLL_DURATION_MS using easeInOutQuart. Color-as-behavior: every pink
+   SCROLL_DURATION_MS using easeOutCubic. Color-as-behavior: every pink
    button is a scroll-to-top trigger by design, consistent with the
    button color/style preset system from session #6.
+
+   CSS `scroll-behavior: smooth` is disabled on <html> for the duration
+   of the animation so the browser's native smooth-scroll engine doesn't
+   fight our per-frame scrollTo calls (root cause of Safari snap-to-end
+   and Chrome lag-then-snap behavior with our previous implementation).
 
    In Notion the button content is rendered as an <a>; the handler binds
    to that (or falls back to the .notion-button wrapper if Notion changes
@@ -198,12 +215,29 @@
   const smoothScrollToTop = () => {
     const startY = window.scrollY;
     if (startY === 0) return;
+
+    // Disable CSS scroll-behavior: smooth on <html> for the duration of
+    // the animation. Without this, every per-frame window.scrollTo gets
+    // processed through the browser's smooth-scroll engine, which behaves
+    // very differently in Safari (snaps near target) vs Chrome (queues
+    // smooth scrolls that pile up and stall). Killing the rule during
+    // the animation makes the JS the sole scroll authority and produces
+    // consistent behavior across browsers. Restored on finish so anchor
+    // navigation and other smooth-scroll uses keep working.
+    const html = document.documentElement;
+    const prevScrollBehavior = html.style.scrollBehavior;
+    html.style.scrollBehavior = "auto";
+
     const startTime = performance.now();
 
     const step = (now) => {
       const t = Math.min((now - startTime) / SCROLL_DURATION_MS, 1);
       window.scrollTo(0, startY * (1 - easeOutCubic(t)));
-      if (t < 1) requestAnimationFrame(step);
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else {
+        html.style.scrollBehavior = prevScrollBehavior;
+      }
     };
 
     requestAnimationFrame(step);
