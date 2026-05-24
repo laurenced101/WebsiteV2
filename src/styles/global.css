@@ -17,6 +17,24 @@ button { font-family: inherit; }
    from the navbar to the first element is set once here and is identical site-wide. */
 .page-main { padding-top: var(--page-top-gap); }
 
+/* Duotone image treatment. Wrap an <img> in a `.duo` element to drive the brand
+   blue in CSS rather than relying on a baked-in tone: (1) a saturation filter
+   neutralises the image to luminance, (2) a blend-mode overlay re-applies the
+   blue. Knobs live in tokens.css (--duo-color / --duo-saturation / --duo-blend).
+   `isolation: isolate` scopes the blend so it can't bleed onto the page behind.
+   Image sizing (cover vs natural) is left to the consumer to override. */
+.duo { position: relative; isolation: isolate; overflow: hidden; }
+.duo img {
+  display: block; width: 100%; height: auto;
+  filter: saturate(var(--duo-saturation, 0));
+}
+.duo::after {
+  content: ""; position: absolute; inset: 0;
+  background: var(--duo-color, var(--color-primary));
+  mix-blend-mode: var(--duo-blend, color);
+  pointer-events: none;
+}
+
 /* Wrap pattern — centered max-width with breakpoint gutters */
 .wrap {
   max-width: var(--layout-max-width-desktop);

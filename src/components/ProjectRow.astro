@@ -32,7 +32,7 @@ const logo = resolveImage(brandLogoPath);
     </div>
     <div class="row-discipline">{discipline}</div>
     <div class="row-year">{year}</div>
-    <div class="row-thumb">{cover && (
+    <div class="row-thumb duo">{cover && (
       <Image
         src={cover}
         widths={[160, 220, 330, 440, 750]}
@@ -93,31 +93,36 @@ const logo = resolveImage(brandLogoPath);
   .project.expanded .brand-logo { opacity: 1; }
 
   .row-project { min-width: 0; }
-  .row-title { font-size: var(--font-size-h3); font-weight: var(--weight-h3); color: var(--text-h3); margin-bottom: var(--space-4); line-height: var(--leading-h3); }
-  /* Clamp the description to 3 lines, truncating with an ellipsis past that. */
+  /* Title bumped one role up (h3 → h2): the desktop/tablet table row now shows
+     just the title (description removed below), so it carries more weight. */
+  .row-title { font-size: var(--font-size-h2); font-weight: var(--weight-h3); color: var(--text-h3); line-height: var(--leading-h3); }
+  /* Description is hidden in the desktop/tablet table (collapsed rows show title
+     only); the mobile card layout re-enables it below (clamped to 3 lines). */
   .row-desc {
     font-size: var(--font-size-caption); color: var(--text-caption); line-height: var(--leading-caption);
-    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden;
+    display: none;
   }
   .row-discipline { font-size: var(--font-size-label); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--grey-mid); }
   .row-year { font-size: var(--font-size-caption); color: var(--text-caption); }
 
-  /* THUMB */
+  /* THUMB — blue duotone at rest (shared `.duo` utility), reveals to full colour
+     on hover / when expanded. Reveal = restore the saturation knob to 1 AND fade
+     the blend overlay out; both transition. (Was a flat grayscale filter before.) */
   .row-thumb {
     align-self: stretch;
-    background: var(--grey-bg);
-    overflow: hidden;
     justify-self: end;
     width: 100%;
   }
   .row-thumb img {
-    width: 100%; height: 100%;
+    height: 100%;
     object-fit: cover;
-    filter: grayscale(100%) contrast(0.9) brightness(0.95);
     transition: filter var(--duration-slow) var(--ease-standard);
   }
-  .project:hover .row-thumb img,
-  .project.expanded .row-thumb img { filter: none; }
+  .row-thumb::after { transition: opacity var(--duration-slow) var(--ease-standard); }
+  .project:hover .row-thumb,
+  .project.expanded .row-thumb { --duo-saturation: 1; }
+  .project:hover .row-thumb::after,
+  .project.expanded .row-thumb::after { opacity: 0; }
 
   /* EXPANDED PANEL */
   .project-panel {
@@ -128,13 +133,16 @@ const logo = resolveImage(brandLogoPath);
   }
   .project.expanded .project-panel { grid-template-rows: 1fr; }
   .panel-clip { overflow: hidden; }
-  .panel-inner { padding: var(--space-24) 0 40px 200px; }
+  /* Bottom padding 40→48: slightly bigger gap before the next row (Figma). */
+  .panel-inner { padding: var(--space-24) 0 var(--space-48) 200px; }
 
   .panel-text {
     max-width: var(--measure-body);
     font-size: var(--font-size-body); line-height: var(--leading-body);
     color: var(--text-body);
-    margin-bottom: var(--space-16);
+    /* Bigger gap between the slideshow deck and the body copy (Figma). */
+    margin-top: var(--space-32);
+    margin-bottom: var(--space-24);
   }
   .panel-meta {
     display: flex; gap: var(--space-32); flex-wrap: wrap;
@@ -185,6 +193,8 @@ const logo = resolveImage(brandLogoPath);
 
     .row-year { grid-area: year; justify-self: end; padding: 20px 20px 0 0; }
     .row-project { grid-area: title; padding: var(--space-8) 20px 0; }
+    /* Mobile cards re-show the description (hidden in the desktop table). */
+    .row-desc { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; margin-top: var(--space-4); }
     .row-discipline { grid-area: disc; padding: var(--space-8) 20px 20px; }
 
     /* Expanded reveal: drop the 200px desktop indent; pad to the card gutter */

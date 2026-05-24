@@ -71,9 +71,6 @@ const clientLogos = clients
     </div>
   </section>
 
-  <!-- Hard rule -->
-  <div class="hard-rule-wrap"><div class="wrap"></div></div>
-
   <!-- Index -->
   <section class="index">
     <div class="wrap">
@@ -120,10 +117,12 @@ const clientLogos = clients
   /* STATEMENT */
   /* Top gap comes from `.page-main` (global, same on every page); only bottom
      padding here. Vertical padding only — side gutters come from `.wrap` margins. */
+  /* Bottom gap = padding-bottom (48) + Disciplines section padding-top (48) = 96,
+     made symmetric with the title→lead gap (h1 margin-bottom 96) per the Figma. */
   .statement .wrap {
-    padding-bottom: var(--space-64);
+    padding-bottom: var(--space-48);
   }
-  .statement h1 { font-size: var(--font-size-h1); font-weight: var(--weight-h1); color: var(--text-h1); line-height: var(--leading-h1); margin-bottom: var(--space-32); }
+  .statement h1 { font-size: var(--font-size-h1); font-weight: var(--weight-h1); color: var(--text-h1); line-height: var(--leading-h1); margin-bottom: var(--space-96); }
   .statement p { font-size: var(--font-size-h2); font-weight: var(--weight-h2); line-height: 1.4; letter-spacing: var(--tracking-h2); max-width: var(--measure-h2); }
   .statement .accent { color: var(--color-primary); }
 
@@ -176,9 +175,6 @@ const clientLogos = clients
     object-fit: contain;
   }
 
-  /* HARD RULE */
-  .hard-rule-wrap .wrap { height: var(--hard-rule); background: var(--color-primary); }
-
   /* INDEX */
   /* No bottom padding: the bottom-note's symmetric padding-block below is the sole
      spacer between the last project and the footer, so the note sits centered in it. */
@@ -188,7 +184,7 @@ const clientLogos = clients
     border-bottom: var(--outline) solid var(--color-primary);
     display: flex; flex-direction: column; gap: var(--space-12);
   }
-  .index-head h2 { font-size: var(--font-size-h3); font-weight: var(--weight-h3); color: var(--text-h3); }
+  .index-head h2 { font-size: var(--font-size-h2); font-weight: var(--weight-h3); color: var(--text-h3); }
   .index-head .sub { font-size: var(--font-size-caption); color: var(--text-caption); line-height: var(--leading-caption); }
 
   .index-col-head {

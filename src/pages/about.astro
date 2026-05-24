@@ -107,35 +107,8 @@ const clients = [
 </BaseLayout>
 
 <style>
-  /* ===== Duotone treatment (the `.duo` class) =====
-     Drives the brand-blue look in CSS rather than relying on the baked-in blue
-     of the source files: (1) a saturation filter neutralises the image to
-     luminance, (2) a blend-mode overlay re-applies the brand blue. `color`
-     blend keeps the image's luminance and takes the overlay's hue → highlights
-     stay light, shadows stay deep, all in blue. `isolation: isolate` scopes the
-     blend to the figure so it can't bleed onto the page behind it.
-     TODO: tokenise (blend mode / saturation amount) — Session 4 motion/type pass. */
-  .duo {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    background: var(--color-primary);
-    margin: 0;
-  }
-  .duo img {
-    display: block;
-    width: 100%;
-    height: auto;
-    filter: saturate(0);            /* saturation knob */
-  }
-  .duo::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: var(--color-primary);
-    mix-blend-mode: color;          /* blend layer drives the blue */
-    pointer-events: none;
-  }
+  /* The `.duo` duotone treatment on the hero + section photos is the shared
+     utility in global.css (knobs in tokens.css). Figures just add the class. */
 
   /* ===== HERO ===== */
   .about-hero {

@@ -214,6 +214,15 @@
   --duration-standard: 0.25s;
   --duration-slow: 0.4s;
   --ease-standard: ease;
+
+  /* Duotone image treatment — knobs for the `.duo` utility (global.css), which
+     desaturates a photo and re-applies a brand-blue blend layer. Used by ABOUT
+     section photos and the /experience project thumbnails. `color` blend keeps
+     the image's luminance and takes the overlay's hue (light stays light, dark
+     stays deep, all in blue); --duo-saturation 0 fully neutralises the source. */
+  --duo-color: var(--color-primary);
+  --duo-saturation: 0;
+  --duo-blend: color;
 }
 
 /* Type scale — breakpoint resolution for the per-role aliases.
