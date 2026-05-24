@@ -64,9 +64,9 @@ const logo = resolveImage(brandLogoPath);
   .brand-text {
     position: absolute; top: 50%; left: 0;
     transform: translateY(-50%);
-    font-size: var(--font-size-label); font-weight: var(--weight-label);
+    font-size: var(--font-size-label); font-weight: var(--font-weight-semibold);
     letter-spacing: var(--tracking-label); text-transform: uppercase;
-    color: var(--text-label);
+    color: var(--ink);
     transition: opacity var(--duration-fast) var(--ease-standard);
     white-space: nowrap;
   }
@@ -90,7 +90,7 @@ const logo = resolveImage(brandLogoPath);
     font-size: var(--font-size-caption); color: var(--text-caption); line-height: var(--leading-caption);
     display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden;
   }
-  .row-discipline { font-size: var(--font-size-label); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--text-label); }
+  .row-discipline { font-size: var(--font-size-label); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--grey-mid); }
   .row-year { font-size: var(--font-size-caption); color: var(--text-caption); }
 
   /* THUMB */
@@ -130,7 +130,7 @@ const logo = resolveImage(brandLogoPath);
   .panel-meta {
     display: flex; gap: var(--space-32); flex-wrap: wrap;
     font-size: var(--font-size-label); letter-spacing: var(--tracking-label);
-    text-transform: uppercase; color: var(--text-label);
+    text-transform: uppercase; color: var(--grey-mid);
   }
   /* `strong` keeps `--ink` (emphasis/value) so it stays distinct from the
      greyed `.panel-meta` label it sits inside — not conformed to a role colour. */
