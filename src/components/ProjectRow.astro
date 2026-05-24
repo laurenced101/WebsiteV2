@@ -35,8 +35,8 @@ const logo = resolveImage(brandLogoPath);
     <div class="row-thumb">{cover && (
       <Image
         src={cover}
-        widths={[160, 220, 330, 440]}
-        sizes="(max-width: 900px) 160px, 220px"
+        widths={[160, 220, 330, 440, 750]}
+        sizes="(max-width: 800px) 100vw, (max-width: 900px) 160px, 220px"
         alt=""
         loading="lazy"
         decoding="async"
@@ -149,5 +149,50 @@ const logo = resolveImage(brandLogoPath);
     .brand-logo { max-width: 120px; }
     /* .row-thumb width is 100% of its (narrower) grid column at this breakpoint. */
     .panel-inner { padding-left: 150px; }
+  }
+
+  /* ===== MOBILE (≤800): image-led card (Figma node 101:846) =====
+     The desktop table row reflows into a stacked card: full-bleed thumbnail on
+     top, then a meta block (brand+year row, title, description, discipline).
+     Items are placed by grid-area, so their desktop DOM order doesn't matter.
+     20px is the card's inner gutter and 250px the thumb height — both taken
+     straight from the Figma frame; deliberate non-token values, like the
+     desktop panel's 200px indent. */
+  @media (max-width: 800px) {
+    .project { border-bottom: 1px solid var(--color-primary); }
+    .project-row {
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        "thumb thumb"
+        "brand year"
+        "title title"
+        "disc  disc";
+      column-gap: var(--space-12);
+      row-gap: 0;
+      min-height: 0;
+      align-items: start;
+    }
+    .row-thumb { grid-area: thumb; width: 100%; height: 250px; align-self: start; }
+
+    /* Brand: plain static text — no absolute centring, no hover logo on touch */
+    .row-brand { grid-area: brand; position: static; padding: 20px 0 0 20px; }
+    .brand-text { position: static; transform: none; }
+    .brand-logo { display: none; }
+    /* Keep the wordmark visible when expanded (desktop hides it for the logo,
+       which we've removed on mobile). */
+    .project:hover .brand-text,
+    .project.expanded .brand-text { opacity: 1; }
+
+    .row-year { grid-area: year; justify-self: end; padding: 20px 20px 0 0; }
+    .row-project { grid-area: title; padding: var(--space-8) 20px 0; }
+    .row-discipline { grid-area: disc; padding: var(--space-8) 20px 20px; }
+
+    /* Expanded reveal: drop the 200px desktop indent; pad to the card gutter */
+    .panel-inner { padding: var(--space-16) 20px var(--space-24); }
+
+    /* Metadata block → 2×2 grid, label stacked over value */
+    .panel-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 20px var(--space-16); }
+    .panel-meta span { display: flex; flex-direction: column; gap: var(--space-4); }
+    .panel-meta span strong { margin-left: 0; }
   }
 </style>

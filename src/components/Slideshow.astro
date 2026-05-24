@@ -122,6 +122,23 @@ const frames = await Promise.all(
   @media (max-width: 900px) {
     .slideshow-image { width: 360px; height: 240px; }
   }
+
+  /* ===== MOBILE (≤800): vertical image stack, no carousel =====
+     Per the mobile design the deck isn't a horizontal auto-advancing slideshow
+     — the frames stack vertically and the controls drop away. The auto-advance
+     RAF is disabled on mobile in the script below, and transform is forced off
+     so any stale translate from a resize can't shift the stack. */
+  @media (max-width: 800px) {
+    .panel-slideshow { overflow: visible; }
+    .panel-slideshow-track {
+      flex-direction: column;
+      gap: var(--space-12);
+      transform: none !important;
+      will-change: auto;
+    }
+    .slideshow-image { width: 100%; height: auto; aspect-ratio: 4 / 3; }
+    .slideshow-controls { display: none; }
+  }
 </style>
 
 <script>
@@ -130,6 +147,8 @@ const frames = await Promise.all(
   const BUTTON_PAUSE_MS   = 2500;
   const END_PAUSE_MS      = 1500;
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Mobile (≤800) renders the deck as a static vertical stack — no auto-advance.
+  const mobileMq = window.matchMedia('(max-width: 800px)');
 
   document.querySelectorAll('.panel-slideshow-wrapper').forEach((wrapper) => {
     const viewport = wrapper.querySelector('.panel-slideshow');
@@ -224,6 +243,7 @@ const frames = await Promise.all(
       const dt = lastTime ? Math.min((time - lastTime) / 1000, 0.1) : 0;
       lastTime = time;
 
+      if (mobileMq.matches) return; // vertical stack on mobile — nothing to advance
       document.querySelectorAll('.project.expanded .panel-slideshow-track').forEach((track) => {
         const state = track._state;
         if (!state || state.paused) return;

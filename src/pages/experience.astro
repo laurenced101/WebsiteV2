@@ -4,9 +4,19 @@
 // with the /projects -> /experience rename applied. Dossier above, project index
 // below. Project data is hardcoded for now (Session 1); Session 2 swaps it for a
 // build-time Notion fetch with no template changes.
+import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectRow from '../components/ProjectRow.astro';
 import { projects } from '../data/projects.generated.js';
+import { clients } from '../data/clients.js';
+
+// Resolve each curated client logo (src/assets/clients/) to its build-optimized
+// asset, in manifest order. Files missing on disk are dropped (filter), so a
+// stale manifest entry can't break the build.
+const clientLogoFiles = import.meta.glob('../assets/clients/*.webp', { eager: true, import: 'default' });
+const clientLogos = clients
+  .map((c) => ({ name: c.name, img: clientLogoFiles[`../assets/clients/${c.file}`] }))
+  .filter((c) => c.img);
 ---
 <BaseLayout title="/experience" active="experience">
   <!-- Statement -->
@@ -47,8 +57,9 @@ import { projects } from '../data/projects.generated.js';
     <div class="wrap">
       <div class="section-label">Selected partners &amp; clients</div>
       <div class="logo-grid">
-        <div class="logo-row"><div class="logo-cell">LOGO</div><div class="logo-cell">LOGO</div><div class="logo-cell">LOGO</div><div class="logo-cell">LOGO</div><div class="logo-cell">LOGO</div></div>
-        <div class="logo-row"><div class="logo-cell">LOGO</div><div class="logo-cell">LOGO</div><div class="logo-cell">LOGO</div><div class="logo-cell">LOGO</div><div class="logo-cell">LOGO</div></div>
+        {clientLogos.map((c) => (
+          <div class="logo-cell"><Image src={c.img} width={320} alt={c.name} loading="lazy" /></div>
+        ))}
       </div>
     </div>
   </section>
@@ -137,14 +148,25 @@ import { projects } from '../data/projects.generated.js';
   .stat-num { font-size: var(--font-size-display); font-weight: var(--weight-display); color: var(--text-display); line-height: var(--leading-display); letter-spacing: var(--tracking-display); }
   .stat-label { font-size: var(--font-size-caption); color: var(--text-caption); line-height: var(--leading-caption); }
 
-  /* CLIENT WALL */
-  .logo-grid { display: flex; flex-direction: column; gap: var(--space-16); }
-  .logo-row { display: flex; gap: var(--space-16); }
+  /* CLIENT WALL — data-driven from src/data/clients.js (curated logos).
+     One CSS grid (5-up desktop, 3-up mobile). Logos are tight-cropped at varied
+     aspect ratios, so we optically balance in-cell rather than forcing equal
+     heights: contain within a capped height + width so wide wordmarks and square
+     marks read at similar visual weight. (Caps are eyeballed against a render.) */
+  .logo-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-16); }
+  /* White tiles (not the grey placeholder fill): ~6 of the supplied logos carry
+     a baked-in white background, so white cells let those blend seamlessly while
+     the transparent ones + LEGO's blue tile still sit cleanly. Literal #fff —
+     there's no white token, and this is the one surface that needs true white. */
   .logo-cell {
-    flex: 1; height: 94px; background: var(--grey-bg);
+    height: 94px; background: #fff;
     display: flex; align-items: center; justify-content: center;
-    color: var(--text-label); font-size: var(--font-size-label); font-weight: var(--weight-label);
-    letter-spacing: var(--tracking-label); text-transform: uppercase;
+    padding: var(--space-16);
+  }
+  .logo-cell :global(img) {
+    width: auto; height: auto;
+    max-width: 78%; max-height: 38px;
+    object-fit: contain;
   }
 
   /* HARD RULE */
@@ -180,6 +202,33 @@ import { projects } from '../data/projects.generated.js';
   /* Display/heading sizes now resize via the font-size token aliases
      (Large 1800+, Tablet ≤1279, Mobile ≤800), so the old ≤900 font-size
      overrides for .statement h1/p and .stat-num are gone. */
+
+  /* ===== MOBILE (≤800): single-column dossier + full-bleed card index =====
+     (Figma node 101:846). Type sizes already shrink via tokens; this is layout
+     reflow only. Card-level changes live in ProjectRow.astro / Slideshow.astro. */
+  @media (max-width: 800px) {
+    /* Dossier rows stack. Disciplines keep their per-cell top border, so stacked
+       they read as the divider-separated list the mobile design shows. */
+    .disciplines-row { flex-direction: column; gap: var(--space-24); }
+    .stats-row { flex-direction: column; gap: var(--space-32); }
+    /* Client wall → 3-up on mobile (5-up on desktop) */
+    .logo-grid { grid-template-columns: repeat(3, 1fr); }
+
+    /* Mobile reintroduces dividers between dossier sections (desktop omits them);
+       skip the clients section since the thick hard rule follows it. */
+    .statement .wrap,
+    .section .wrap { border-bottom: 1px solid var(--color-primary); }
+    .section.clients .wrap { border-bottom: none; }
+
+    /* Index: drop the table column header (cards have no columns) and let the
+       card list run full-bleed past the 12px wrap gutter, while the index head
+       and bottom note stay inset. */
+    .index-col-head { display: none; }
+    #project-list {
+      margin-left: calc(-1 * var(--layout-margin-mobile));
+      margin-right: calc(-1 * var(--layout-margin-mobile));
+    }
+  }
 </style>
 
 <script>
