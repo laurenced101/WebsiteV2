@@ -32,6 +32,7 @@ const TYPE_ROLES = [
   { role: 'body', a: 'Body copy — the quick brown fox jumps over the lazy dog while reaching audiences in the millions.', b: 'A second paragraph follows, so the gap above it is the paragraph-spacing token for this role.' },
   { role: 'caption', a: 'Caption — small secondary text: descriptions, sub-lines, button labels.', b: 'Second caption line, to show paragraph spacing.' },
   { role: 'label', a: 'Label — micro text', b: 'Second label line' },
+  { role: 'button-large', a: '/about', b: '/experience' },
 ];
 ---
 <!DOCTYPE html>
@@ -135,7 +136,8 @@ const TYPE_ROLES = [
       <section class="sg-section">
         <h2>Type roles</h2>
         <p class="sg-note">
-          Seven roles. Each sample consumes <em>all</em> of its role's tokens — font
+          Seven type roles (plus a size-only <code>button-large</code> role for the
+        oversized HOME section links). Each sample consumes <em>all</em> of its role's tokens — font
           size (per-breakpoint, so resize to watch it shift across Large&nbsp;1800+,
           Desktop&nbsp;≤1799, Tablet&nbsp;≤1279, Mobile&nbsp;≤800), colour, weight,
           line-height, letter-spacing, paragraph spacing and measure — so editing any
@@ -510,6 +512,10 @@ const TYPE_ROLES = [
         roleGroup('body', 'Body'),
         roleGroup('caption', 'Caption'),
         roleGroup('label', 'Label'),
+        // Size-only role (no colour/weight/leading aliases — the .home-link sets
+        // those itself): just the four per-breakpoint sizes.
+        { title: 'Large button (HOME links)', controls:
+          ['large', 'desktop', 'tablet', 'mobile'].map((t) => size(`--font-size-button-large-${t}`, 24, 240, 1)) },
         { title: 'Typography — shared', controls: [
           text('--font-family-primary'),
           text('--font-family-mono'),
@@ -798,7 +804,7 @@ const TYPE_ROLES = [
         const g = (n) => readVal(n);
         const fs = (k) => `  --font-size-${k}: ${g('--font-size-' + k)};`;
         const fsGroup = (role) => [`${role}-large`, `${role}-desktop`, `${role}-tablet`, `${role}-mobile`].map(fs).join('\n');
-        const roles = ['display', 'h1', 'h2', 'h3', 'body', 'caption', 'label'];
+        const roles = ['display', 'h1', 'h2', 'h3', 'body', 'caption', 'label', 'button-large'];
         const aliases = roles.map((r) => `    --font-size-${r}: var(--font-size-${r}-TIER);`).join('\n');
         const aliasBlock = (tier) => `  :root {\n${aliases.replace(/TIER/g, tier)}\n    --page-top-gap: var(--page-top-gap-${tier});\n  }`;
         return `:root {
@@ -866,6 +872,8 @@ ${fsGroup('body')}
 ${fsGroup('caption')}
 
 ${fsGroup('label')}
+
+${fsGroup('button-large')}
 
   /* Resolved per-role aliases — default to the Desktop tier. */
 ${roles.map((r) => `  --font-size-${r}: var(--font-size-${r}-desktop);`).join('\n')}
@@ -1175,6 +1183,9 @@ ${aliasBlock('mobile')}
       .sg-sample-caption p:not(:last-child) { margin-bottom: var(--paragraph-caption); }
       .sg-sample-label p { font-size: var(--font-size-label); line-height: var(--leading-label); letter-spacing: var(--tracking-label); color: var(--text-label); font-weight: var(--weight-label); text-transform: uppercase; }
       .sg-sample-label p:not(:last-child) { margin-bottom: var(--paragraph-label); }
+      /* Size-only role (matches HOME's .home-link: brand blue, regular weight). */
+      .sg-sample-button-large { max-width: 100%; }
+      .sg-sample-button-large p { font-size: var(--font-size-button-large); line-height: 1.05; letter-spacing: -0.01em; color: var(--color-primary); font-weight: var(--font-weight-regular); }
       .sg-demo-family { font-size: 26px; flex: 1 1 240px; }
 
       /* Font-weight samples */

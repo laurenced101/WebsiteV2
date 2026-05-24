@@ -22,7 +22,10 @@
 <style>
   .hero-frame {
     position: relative;
-    aspect-ratio: 5 / 3;
+    /* Height-driven hero (Figma): 85vh tall, full container width. The canvas
+       cover-crops (drawSlideWithKB) so the image aspect stays locked — no stretch
+       — regardless of the box ratio. Was a width-driven 5:3 box. */
+    height: 85vh;
     overflow: hidden;
     background: var(--ink);
   }

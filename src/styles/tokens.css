@@ -122,6 +122,14 @@
   --font-size-label-tablet: 11px;
   --font-size-label-mobile: 10px;
 
+  /* "Large button" role — the oversized section links on HOME (/about,
+     /experience, /process). Its own role (not a heading) so it's editable per
+     breakpoint in /styleguide, independent of the heading scale. */
+  --font-size-button-large-large: 160px;
+  --font-size-button-large-desktop: 128px;
+  --font-size-button-large-tablet: 88px;
+  --font-size-button-large-mobile: 64px;
+
   /* Resolved per-role aliases — what components consume. Default to the
      Desktop tier (≤1799); overridden per breakpoint at the bottom of the file. */
   --font-size-display: var(--font-size-display-desktop);
@@ -131,6 +139,7 @@
   --font-size-body: var(--font-size-body-desktop);
   --font-size-caption: var(--font-size-caption-desktop);
   --font-size-label: var(--font-size-label-desktop);
+  --font-size-button-large: var(--font-size-button-large-desktop);
 
   /* Line-height + letter-spacing (Session 5). Unitless ratios / em values that
      scale with font-size, so — unlike font-size — they need no per-breakpoint
@@ -236,6 +245,7 @@
     --font-size-body: var(--font-size-body-large);
     --font-size-caption: var(--font-size-caption-large);
     --font-size-label: var(--font-size-label-large);
+    --font-size-button-large: var(--font-size-button-large-large);
     --page-top-gap: var(--page-top-gap-large);
   }
 }
@@ -248,6 +258,7 @@
     --font-size-body: var(--font-size-body-tablet);
     --font-size-caption: var(--font-size-caption-tablet);
     --font-size-label: var(--font-size-label-tablet);
+    --font-size-button-large: var(--font-size-button-large-tablet);
     --page-top-gap: var(--page-top-gap-tablet);
   }
 }
@@ -260,6 +271,7 @@
     --font-size-body: var(--font-size-body-mobile);
     --font-size-caption: var(--font-size-caption-mobile);
     --font-size-label: var(--font-size-label-mobile);
+    --font-size-button-large: var(--font-size-button-large-mobile);
     --page-top-gap: var(--page-top-gap-mobile);
   }
 }

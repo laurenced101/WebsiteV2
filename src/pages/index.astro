@@ -56,13 +56,16 @@ import HomePillar from '../components/HomePillar.astro';
   .hero { padding-bottom: 140px; }   /* TODO: tokenise */
 
   /* STATEMENT */
+  /* Divider line below the statement removed per Figma (the pillars now begin
+     without a rule above the first one). */
   .home-statement .wrap {
     padding: 0 0 140px;              /* TODO: tokenise */
-    border-bottom: var(--outline) solid var(--color-primary);
   }
   .home-statement p {
-    font-size: 32px;                 /* TODO: tokenise (HOME type scale — Session 4) */
-    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-h2);  /* h2 size per Figma (was 32px); colour stays
+                                        ink — the statement is dark prose with blue
+                                        inline links, not a blue heading. */
+    font-weight: var(--weight-h2);
     line-height: 1.4;
     color: var(--ink);
   }
@@ -83,10 +86,12 @@ import HomePillar from '../components/HomePillar.astro';
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: var(--space-4);
+    gap: var(--space-12);            /* more spacing between links (Figma) */
   }
   .home-link {
-    font-size: 104px;                /* TODO: tokenise (HOME type scale — Session 4) */
+    font-size: var(--font-size-button-large);  /* dedicated "large button" type
+                                                  role, editable per breakpoint in
+                                                  /styleguide (Figma) */
     font-weight: var(--font-weight-regular);
     color: var(--color-primary);
     line-height: 1.05;
@@ -103,13 +108,18 @@ import HomePillar from '../components/HomePillar.astro';
   /* TABLET/MOBILE fallbacks (prototype used 900 / 600 breakpoints here). */
   @media (max-width: 900px) {
     .hero { padding-bottom: 100px; }
-    .home-statement p { font-size: 24px; }      /* TODO: tokenise */
     .home-statement .wrap { padding: 0 0 100px; }
     .pillars .wrap { padding: 64px 0 80px; }
     .home-links { padding: 120px 0 160px; }
-    .home-link { font-size: 64px; }             /* TODO: tokenise */
   }
   @media (max-width: 600px) {
-    .home-link { font-size: 48px; }             /* TODO: tokenise */
+    .home-link { font-size: var(--font-size-button-large); }
   }
+</style>
+
+<style is:global>
+  /* HOME sits its hero close to the navbar (Figma): override the site-wide
+     page-top-gap with ~the navbar's own height, for this route only. Set on
+     .page-main itself — that's where global.css reads it for padding-top. */
+  .page-main { --page-top-gap: var(--space-64); }
 </style>

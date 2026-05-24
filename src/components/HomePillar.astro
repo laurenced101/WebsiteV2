@@ -38,18 +38,26 @@ const { heading, image, imageAlt = '', ctaHref = '/experience', ctaLabel = 'See 
     display: flex;
     align-items: center;
     justify-content: space-between;
-    transition: opacity var(--duration-fast) var(--ease-standard);
+    transition: opacity var(--duration-fast) var(--ease-standard),
+                background var(--duration-standard) var(--ease-standard),
+                color var(--duration-standard) var(--ease-standard);
   }
   .pillar-heading:hover { opacity: 0.6; }
   .pillar-heading::after {
     content: "+";
-    font-size: 44px;          /* TODO: tokenise */
-    font-weight: var(--font-weight-regular);
+    font-size: 72px;          /* bigger toggle per Figma (was 44px) */
+    font-weight: var(--font-weight-light);
     color: var(--color-primary);
-    transition: transform var(--duration-standard) var(--ease-standard);
+    transition: transform var(--duration-standard) var(--ease-standard),
+                color var(--duration-standard) var(--ease-standard);
     line-height: 1;
   }
   .pillar.expanded .pillar-heading::after { transform: rotate(45deg); }
+  /* Open state inverts the header row to a solid blue bar with white text + X
+     (Figma). Flush to the content column — no horizontal padding — so it stays
+     aligned with the panel body below and reads as an edge-to-edge blue block. */
+  .pillar.expanded .pillar-heading { background: var(--color-primary); color: var(--surface); }
+  .pillar.expanded .pillar-heading::after { color: var(--surface); }
 
   .pillar-panel {
     display: grid;
@@ -98,7 +106,7 @@ const { heading, image, imageAlt = '', ctaHref = '/experience', ctaLabel = 'See 
   /* Tablet/mobile fallbacks (prototype used a 900px breakpoint here). */
   @media (max-width: 900px) {
     .pillar-heading { font-size: 48px; padding: 44px 0; }   /* TODO: tokenise */
-    .pillar-heading::after { font-size: 36px; }
+    .pillar-heading::after { font-size: 52px; }             /* bigger toggle (Figma) */
     .pillar-inner { grid-template-columns: 1fr; gap: var(--space-24); padding-bottom: 44px; }
   }
   @media (max-width: 600px) {
