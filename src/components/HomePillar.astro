@@ -28,11 +28,11 @@ const { heading, image, imageAlt = '', ctaHref = '/experience', ctaLabel = 'See 
 <style>
   .pillar { border-bottom: var(--outline) solid var(--color-primary); }
   .pillar-heading {
-    font-size: 64px;          /* TODO: tokenise (HOME type scale — Session 4) */
+    font-size: var(--font-size-feature);
     font-weight: var(--font-weight-regular);
     color: var(--color-primary);
     cursor: pointer;
-    padding: 56px 0;          /* TODO: tokenise */
+    padding: var(--space-48) 0;
     margin: 0;
     line-height: 1;
     display: flex;
@@ -45,7 +45,7 @@ const { heading, image, imageAlt = '', ctaHref = '/experience', ctaLabel = 'See 
   .pillar-heading:hover { opacity: 0.6; }
   .pillar-heading::after {
     content: "+";
-    font-size: 72px;          /* bigger toggle per Figma (was 44px) */
+    font-size: var(--font-size-feature);  /* toggle scales with the heading */
     font-weight: var(--font-weight-light);
     color: var(--color-primary);
     transition: transform var(--duration-standard) var(--ease-standard),
@@ -67,15 +67,15 @@ const { heading, image, imageAlt = '', ctaHref = '/experience', ctaLabel = 'See 
   .pillar.expanded .pillar-panel { grid-template-rows: 1fr; }
   .pillar-clip { overflow: hidden; }
   .pillar-inner {
-    padding: 0 0 56px 0;      /* TODO: tokenise */
+    padding: 0 0 var(--space-48) 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-48);
     align-items: start;
   }
   .pillar-text {
-    font-size: 17px;          /* TODO: tokenise */
-    line-height: 1.65;
+    font-size: var(--font-size-body);
+    line-height: var(--leading-body);
     color: var(--ink);
   }
   .pillar-text :global(p) { margin-bottom: var(--space-32); }
@@ -87,12 +87,12 @@ const { heading, image, imageAlt = '', ctaHref = '/experience', ctaLabel = 'See 
     border-bottom: var(--outline) solid var(--color-primary);
     font-size: var(--font-size-label);
     text-transform: uppercase;
-    letter-spacing: 1px;      /* TODO: tokenise */
+    letter-spacing: var(--tracking-wide);
     padding-bottom: 2px;
     font-weight: var(--font-weight-medium);
     transition: gap var(--duration-fast) var(--ease-standard);
   }
-  .pillar-link:hover { gap: 14px; }
+  .pillar-link:hover { gap: var(--space-16); }
   .pillar-image {
     aspect-ratio: 4 / 3;
     background: var(--grey-bg);
@@ -103,14 +103,13 @@ const { heading, image, imageAlt = '', ctaHref = '/experience', ctaLabel = 'See 
     object-fit: cover; display: block;
   }
 
-  /* Tablet/mobile fallbacks (prototype used a 900px breakpoint here). */
-  @media (max-width: 900px) {
-    .pillar-heading { font-size: 48px; padding: 44px 0; }   /* TODO: tokenise */
-    .pillar-heading::after { font-size: 52px; }             /* bigger toggle (Figma) */
-    .pillar-inner { grid-template-columns: 1fr; gap: var(--space-24); padding-bottom: 44px; }
+  /* Heading + toggle sizes shift via the --font-size-feature token; these tiers
+     are layout only, on the standard 1279 / 800 breakpoints. */
+  @media (max-width: 1279px) {
+    .pillar-heading { padding: var(--space-32) 0; }
   }
-  @media (max-width: 600px) {
-    .pillar-heading { font-size: 36px; padding: 36px 0; }   /* TODO: tokenise */
+  @media (max-width: 800px) {
+    .pillar-inner { grid-template-columns: 1fr; gap: var(--space-24); padding-bottom: var(--space-32); }
   }
 </style>
 

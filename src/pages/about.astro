@@ -113,7 +113,7 @@ const clients = [
   /* ===== HERO ===== */
   .about-hero {
     position: relative;
-    aspect-ratio: 16 / 9;           /* TODO: tokenise */
+    aspect-ratio: 16 / 9;           /* deliberate layout constant */
   }
   .about-hero-media {
     position: absolute;
@@ -192,7 +192,7 @@ const clients = [
     margin-top: var(--space-48);
   }
   .about-client {
-    height: 84px;                   /* TODO: tokenise */
+    height: 84px;                   /* logo-wall cell — deliberate constant (cf. /experience wall) */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -202,7 +202,7 @@ const clients = [
     width: auto;
     height: auto;
     max-width: 80%;
-    max-height: 56px;               /* TODO: tokenise */
+    max-height: 56px;               /* deliberate logo cap */
     object-fit: contain;
   }
 
@@ -213,7 +213,7 @@ const clients = [
 
   /* ===== MOBILE (≤800) ===== */
   @media (max-width: 800px) {
-    .about-hero { aspect-ratio: 4 / 5; }   /* taller crop for portrait on phones — TODO: tokenise */
+    .about-hero { aspect-ratio: 4 / 5; }   /* taller crop for portrait on phones — deliberate */
     .about-figrow { grid-template-columns: 1fr; gap: var(--space-16); }
     .about-clients { grid-template-columns: repeat(3, 1fr); gap: var(--space-12); }
     .about-client { height: 64px; padding: var(--space-12); }

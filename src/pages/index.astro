@@ -51,25 +51,21 @@ import HomePillar from '../components/HomePillar.astro';
 </BaseLayout>
 
 <style>
-  /* HERO — top gap comes from .page-main (global, site-wide); only bottom
-     padding here, mirroring how /experience's first section is spaced. */
-  .hero { padding-bottom: 140px; }   /* TODO: tokenise */
+  /* HERO — top gap comes from .page-main (small on HOME, see is:global below);
+     only bottom padding here. */
+  .hero { padding-bottom: var(--space-128); }
 
-  /* STATEMENT */
-  /* Divider line below the statement removed per Figma (the pillars now begin
-     without a rule above the first one). */
-  .home-statement .wrap {
-    padding: 0 0 140px;              /* TODO: tokenise */
-  }
+  /* STATEMENT — divider line below removed per Figma (pillars begin with no rule
+     above the first one). */
+  .home-statement .wrap { padding: 0 0 var(--space-128); }
   .home-statement p {
-    font-size: var(--font-size-h2);  /* h2 size per Figma (was 32px); colour stays
-                                        ink — the statement is dark prose with blue
-                                        inline links, not a blue heading. */
+    font-size: var(--font-size-h2);  /* colour stays ink — dark prose with blue
+                                        inline links, not a blue heading */
     font-weight: var(--weight-h2);
     line-height: 1.4;
     color: var(--ink);
   }
-  .home-statement p + p { margin-top: 28px; }   /* TODO: tokenise */
+  .home-statement p + p { margin-top: var(--space-32); }
   .home-statement .link {
     color: var(--color-primary);
     border-bottom: 2px solid var(--color-primary);
@@ -78,10 +74,10 @@ import HomePillar from '../components/HomePillar.astro';
   }
 
   /* PILLARS — wrapper spacing; pillar internals live in HomePillar.astro. */
-  .pillars .wrap { padding: 80px 0 100px; }   /* TODO: tokenise */
+  .pillars .wrap { padding: var(--space-64) 0 var(--space-96); }
 
   /* SECTION LINKS */
-  .home-links { padding: 180px 0 240px; }     /* TODO: tokenise */
+  .home-links { padding: var(--space-160) 0 var(--space-240); }
   .home-links .wrap {
     display: flex;
     flex-direction: column;
@@ -94,26 +90,24 @@ import HomePillar from '../components/HomePillar.astro';
                                                   /styleguide (Figma) */
     font-weight: var(--font-weight-regular);
     color: var(--color-primary);
-    line-height: 1.05;
+    line-height: var(--leading-tight);
     cursor: pointer;
     transition: opacity var(--duration-fast) var(--ease-standard),
                 padding-right var(--duration-standard) cubic-bezier(0.4, 0, 0.2, 1);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.01em;         /* optical tighten — no tracking token at this size */
   }
   .home-link:hover {
     opacity: 0.55;
-    padding-right: 16px;
+    padding-right: var(--space-16);
   }
 
-  /* TABLET/MOBILE fallbacks (prototype used 900 / 600 breakpoints here). */
-  @media (max-width: 900px) {
-    .hero { padding-bottom: 100px; }
-    .home-statement .wrap { padding: 0 0 100px; }
-    .pillars .wrap { padding: 64px 0 80px; }
-    .home-links { padding: 120px 0 160px; }
-  }
-  @media (max-width: 600px) {
-    .home-link { font-size: var(--font-size-button-large); }
+  /* Spacing tightens below desktop (standard 1279 breakpoint; mobile ≤800 inherits).
+     Type sizes shift independently via the font-size tokens. */
+  @media (max-width: 1279px) {
+    .hero { padding-bottom: var(--space-96); }
+    .home-statement .wrap { padding: 0 0 var(--space-96); }
+    .pillars .wrap { padding: var(--space-48) 0 var(--space-64); }
+    .home-links { padding: var(--space-96) 0 var(--space-128); }
   }
 </style>
 

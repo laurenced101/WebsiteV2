@@ -14,8 +14,8 @@ import { getImage } from 'astro:assets';
 // swaps them into real `src`/`srcset` the first time a row is hovered/expanded,
 // so a collapsed deck costs zero bytes until the visitor shows intent.
 //
-// Displayed size: 480px (desktop) / 360px (≤900). widths cover 1×–2× of both.
-const SLIDE_SIZES = '(max-width: 900px) 360px, 480px';
+// Displayed size: 480px (desktop) / 360px (≤1279). widths cover 1×–2× of both.
+const SLIDE_SIZES = '(max-width: 1279px) 360px, 480px';
 const SLIDE_WIDTHS = [360, 480, 720, 960];
 const { images = [] } = Astro.props;
 const total = images.length;
@@ -119,7 +119,7 @@ const frames = await Promise.all(
   }
   .panel-slideshow-wrapper.auto-on .slideshow-status { opacity: 1; }
 
-  @media (max-width: 900px) {
+  @media (max-width: 1279px) {
     .slideshow-image { width: 360px; height: 240px; }
   }
 

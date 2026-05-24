@@ -32,6 +32,7 @@ const TYPE_ROLES = [
   { role: 'body', a: 'Body copy — the quick brown fox jumps over the lazy dog while reaching audiences in the millions.', b: 'A second paragraph follows, so the gap above it is the paragraph-spacing token for this role.' },
   { role: 'caption', a: 'Caption — small secondary text: descriptions, sub-lines, button labels.', b: 'Second caption line, to show paragraph spacing.' },
   { role: 'label', a: 'Label — micro text', b: 'Second label line' },
+  { role: 'feature', a: '/design_leadership', b: '/strategy' },
   { role: 'button-large', a: '/about', b: '/experience' },
 ];
 ---
@@ -516,6 +517,8 @@ const TYPE_ROLES = [
         // those itself): just the four per-breakpoint sizes.
         { title: 'Large button (HOME links)', controls:
           ['large', 'desktop', 'tablet', 'mobile'].map((t) => size(`--font-size-button-large-${t}`, 24, 240, 1)) },
+        { title: 'Feature heading (HOME pillars)', controls:
+          ['large', 'desktop', 'tablet', 'mobile'].map((t) => size(`--font-size-feature-${t}`, 16, 160, 1)) },
         { title: 'Typography — shared', controls: [
           text('--font-family-primary'),
           text('--font-family-mono'),
@@ -523,7 +526,7 @@ const TYPE_ROLES = [
           ...LEADING_PRIMS.map((n) => size(n, 1, 2, 0.05, '')),
           ...TRACKING_PRIMS.map((n) => size(n, -0.1, 0.3, 0.005, 'em')),
         ] },
-        { title: 'Spacing scale', controls: [4, 8, 12, 16, 24, 32, 48, 64, 96, 128].map((n) => size(`--space-${n}`, 0, 160, 1)) },
+        { title: 'Spacing scale', controls: [4, 8, 12, 16, 24, 32, 48, 64, 96, 128, 160, 240].map((n) => size(`--space-${n}`, 0, 256, 1)) },
         { title: 'Rules', controls: [size('--outline', 0, 8, 0.5), size('--hard-rule', 0, 24, 0.5)] },
         { title: 'Layout', controls: [
           size('--layout-max-width-large', 600, 2000, 10),
@@ -531,6 +534,7 @@ const TYPE_ROLES = [
           size('--layout-margin-tablet', 0, 120, 1),
           size('--layout-margin-mobile', 0, 120, 1),
           ...['large', 'desktop', 'tablet', 'mobile'].map((t) => size(`--page-top-gap-${t}`, 0, 400, 4)),
+          size('--home-hero-height', 40, 100, 1, 'vh'),
         ] },
         { title: 'Motion', controls: [
           size('--duration-fast', 0, 1, 0.05, 's'),
@@ -804,7 +808,7 @@ const TYPE_ROLES = [
         const g = (n) => readVal(n);
         const fs = (k) => `  --font-size-${k}: ${g('--font-size-' + k)};`;
         const fsGroup = (role) => [`${role}-large`, `${role}-desktop`, `${role}-tablet`, `${role}-mobile`].map(fs).join('\n');
-        const roles = ['display', 'h1', 'h2', 'h3', 'body', 'caption', 'label', 'button-large'];
+        const roles = ['display', 'h1', 'h2', 'h3', 'body', 'caption', 'label', 'feature', 'button-large'];
         const aliases = roles.map((r) => `    --font-size-${r}: var(--font-size-${r}-TIER);`).join('\n');
         const aliasBlock = (tier) => `  :root {\n${aliases.replace(/TIER/g, tier)}\n    --page-top-gap: var(--page-top-gap-${tier});\n  }`;
         return `:root {
@@ -844,8 +848,11 @@ const TYPE_ROLES = [
   --page-top-gap-mobile:  ${g('--page-top-gap-mobile')};
   --page-top-gap: var(--page-top-gap-desktop);
 
+  /* HOME hero height */
+  --home-hero-height: ${g('--home-hero-height')};
+
   /* Spacing scale — primitives, no role aliases */
-${[4, 8, 12, 16, 24, 32, 48, 64, 96, 128].map((n) => `  --space-${n}: ${g('--space-' + n)};`).join('\n')}
+${[4, 8, 12, 16, 24, 32, 48, 64, 96, 128, 160, 240].map((n) => `  --space-${n}: ${g('--space-' + n)};`).join('\n')}
 
   /* Typography — font family */
   --font-family-primary: ${g('--font-family-primary')};
@@ -872,6 +879,8 @@ ${fsGroup('body')}
 ${fsGroup('caption')}
 
 ${fsGroup('label')}
+
+${fsGroup('feature')}
 
 ${fsGroup('button-large')}
 
@@ -1183,7 +1192,9 @@ ${aliasBlock('mobile')}
       .sg-sample-caption p:not(:last-child) { margin-bottom: var(--paragraph-caption); }
       .sg-sample-label p { font-size: var(--font-size-label); line-height: var(--leading-label); letter-spacing: var(--tracking-label); color: var(--text-label); font-weight: var(--weight-label); text-transform: uppercase; }
       .sg-sample-label p:not(:last-child) { margin-bottom: var(--paragraph-label); }
-      /* Size-only role (matches HOME's .home-link: brand blue, regular weight). */
+      /* Size-only roles (match HOME's .home-link / pillar headings: brand blue, regular). */
+      .sg-sample-feature { max-width: 100%; }
+      .sg-sample-feature p { font-size: var(--font-size-feature); line-height: 1.05; color: var(--color-primary); font-weight: var(--font-weight-regular); }
       .sg-sample-button-large { max-width: 100%; }
       .sg-sample-button-large p { font-size: var(--font-size-button-large); line-height: 1.05; letter-spacing: -0.01em; color: var(--color-primary); font-weight: var(--font-weight-regular); }
       .sg-demo-family { font-size: 26px; flex: 1 1 240px; }
