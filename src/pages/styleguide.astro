@@ -10,13 +10,15 @@
 //     into markup — every value readout is read live from getComputedStyle at
 //     the bottom of this file, so editing tokens.css updates this page for free.
 //   - No new tokens are introduced here. Observation only.
-//   - Standalone: no site nav/footer (chrome would compete with the content),
+//   - Carries the real site Navbar so the page previews site chrome and the
+//     --page-top-gap token in situ (the gap below the navbar). No footer,
 //     noindex, and not linked anywhere in the site.
 //
 // The Gap lists below are static text on purpose: they are an audit snapshot of
 // hardcoded values found in the codebase, not tokens. Re-run the audit when
 // component styles change.
 import '../styles/global.css';
+import Navbar from '../components/Navbar.astro';
 
 // Type roles for the live "Type roles" section. Each sample paragraph consumes
 // the role's tokens (size + color + leading + tracking + paragraph spacing), so
@@ -46,6 +48,7 @@ const TYPE_ROLES = [
     />
   </head>
   <body>
+    <Navbar />
     <div class="sg-corner">styleguide</div>
 
     <!-- Live breakpoint indicator — which of the four tested tiers the viewport is
@@ -72,7 +75,7 @@ const TYPE_ROLES = [
       <textarea id="sg-export" class="sg-export" readonly hidden></textarea>
     </aside>
 
-    <main class="sg">
+    <main class="sg page-main">
       <!-- HEADER -->
       <header class="sg-header">
         <h1>Design tokens</h1>
@@ -290,6 +293,13 @@ const TYPE_ROLES = [
               <code class="sg-val" data-token="--layout-margin-mobile"></code>
               <span class="sg-muted">— Mobile gutter, ≤800px (side padding)</span>
             </div>
+          </div>
+
+          <div class="sg-page-gap-demo">
+            <div class="sg-page-gap-bar" style="height: var(--page-top-gap);"></div>
+            <code class="sg-name">--page-top-gap</code>
+            <code class="sg-val" data-token="--page-top-gap"></code>
+            <span class="sg-muted">— Navbar → first content, every page (resolved for the current breakpoint)</span>
           </div>
         </div>
       </section>
@@ -517,6 +527,7 @@ const TYPE_ROLES = [
           size('--layout-max-width-desktop', 600, 2000, 10),
           size('--layout-margin-tablet', 0, 120, 1),
           size('--layout-margin-mobile', 0, 120, 1),
+          ...['large', 'desktop', 'tablet', 'mobile'].map((t) => size(`--page-top-gap-${t}`, 0, 400, 4)),
         ] },
         { title: 'Motion', controls: [
           size('--duration-fast', 0, 1, 0.05, 's'),
@@ -792,7 +803,7 @@ const TYPE_ROLES = [
         const fsGroup = (role) => [`${role}-large`, `${role}-desktop`, `${role}-tablet`, `${role}-mobile`].map(fs).join('\n');
         const roles = ['display', 'h1', 'h2', 'h3', 'body', 'caption', 'label'];
         const aliases = roles.map((r) => `    --font-size-${r}: var(--font-size-${r}-TIER);`).join('\n');
-        const aliasBlock = (tier) => `  :root {\n${aliases.replace(/TIER/g, tier)}\n  }`;
+        const aliasBlock = (tier) => `  :root {\n${aliases.replace(/TIER/g, tier)}\n    --page-top-gap: var(--page-top-gap-${tier});\n  }`;
         return `:root {
   /* Color */
   --color-primary: ${g('--color-primary')};
@@ -821,6 +832,14 @@ const TYPE_ROLES = [
   /* Layout margins */
   --layout-margin-tablet: ${g('--layout-margin-tablet')};
   --layout-margin-mobile: ${g('--layout-margin-mobile')};
+
+  /* Page top gap — navbar → first content (per breakpoint), via .page-main.
+     Default below = Desktop; media queries at the bottom re-point per tier. */
+  --page-top-gap-large:   ${g('--page-top-gap-large')};
+  --page-top-gap-desktop: ${g('--page-top-gap-desktop')};
+  --page-top-gap-tablet:  ${g('--page-top-gap-tablet')};
+  --page-top-gap-mobile:  ${g('--page-top-gap-mobile')};
+  --page-top-gap: var(--page-top-gap-desktop);
 
   /* Spacing scale — primitives, no role aliases */
 ${[4, 8, 12, 16, 24, 32, 48, 64, 96, 128].map((n) => `  --space-${n}: ${g('--space-' + n)};`).join('\n')}
@@ -1022,7 +1041,8 @@ ${aliasBlock('mobile')}
       .sg {
         max-width: var(--layout-max-width-desktop);
         margin: 0 auto;
-        padding: 64px 0 120px;
+        /* Top gap comes from .page-main (--page-top-gap); only bottom padding here. */
+        padding-bottom: 120px;
       }
       @media (min-width: 1800px) {
         .sg { max-width: var(--layout-max-width-large); }
@@ -1040,8 +1060,10 @@ ${aliasBlock('mobile')}
           padding-right: var(--layout-margin-mobile);
         }
       }
+      /* Bottom-left so it clears the sticky navbar at the top (edit toggle is
+         bottom-right). */
       .sg-corner {
-        position: fixed; top: 8px; right: 12px; z-index: 10;
+        position: fixed; bottom: 20px; left: 20px; z-index: 10;
         font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
         color: var(--grey-light);
         font-family: var(--font-family-mono);
@@ -1049,7 +1071,7 @@ ${aliasBlock('mobile')}
       /* Breakpoint indicator — fixed to the top, centered. Color-coded per tier so
          the active breakpoint is readable at a glance while resizing. */
       .sg-breakpoint {
-        position: fixed; top: 8px; left: 50%; transform: translateX(-50%); z-index: 55;
+        position: fixed; top: 100px; left: 50%; transform: translateX(-50%); z-index: 120;
         display: flex; align-items: center; gap: 8px;
         padding: 5px 12px; border-radius: 999px;
         background: #111; color: #fff;
@@ -1204,6 +1226,21 @@ ${aliasBlock('mobile')}
         background: var(--grey-bg);
         padding: 12px;
         display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap;
+      }
+      /* Page top gap — real-scale vertical bar showing the navbar→content gap,
+         with the label row beneath. The bar's height is driven by the token. */
+      .sg-page-gap-demo {
+        margin-top: 14px; background: var(--surface);
+        border: 1px solid var(--grey-light); padding: 12px;
+        display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap;
+      }
+      .sg-page-gap-bar {
+        flex-basis: 100%;
+        background: repeating-linear-gradient(
+          45deg, var(--expand-tint), var(--expand-tint) 8px,
+          var(--grey-bg) 8px, var(--grey-bg) 16px);
+        border: 1px dashed var(--color-primary);
+        margin-bottom: 8px;
       }
 
       /* ACCENT */
