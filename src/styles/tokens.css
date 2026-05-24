@@ -37,6 +37,16 @@
   --layout-margin-tablet: 20px;         /* Tablet, max 1279px */
   --layout-margin-mobile: 12px;         /* Mobile, max 800px */
 
+  /* Page top gap — space from the (sticky) navbar down to the first page content.
+     Per-breakpoint, like the type scale: components read the resolved alias
+     (--page-top-gap, via .page-main in global.css), which the media queries at the
+     bottom of this file point at the right tier. Default below = Desktop (≤1799). */
+  --page-top-gap-large:   240px;
+  --page-top-gap-desktop: 160px;
+  --page-top-gap-tablet:  96px;
+  --page-top-gap-mobile:  64px;
+  --page-top-gap: var(--page-top-gap-desktop);
+
   /* Spacing scale — primitives, no role aliases (Session 5).
      Spacing applies contextually to many components, so a "role" doesn't map
      cleanly: components consume these directly (e.g. var(--space-16)). Covers
@@ -212,6 +222,7 @@
     --font-size-body: var(--font-size-body-large);
     --font-size-caption: var(--font-size-caption-large);
     --font-size-label: var(--font-size-label-large);
+    --page-top-gap: var(--page-top-gap-large);
   }
 }
 @media (max-width: 1279px) {
@@ -223,6 +234,7 @@
     --font-size-body: var(--font-size-body-tablet);
     --font-size-caption: var(--font-size-caption-tablet);
     --font-size-label: var(--font-size-label-tablet);
+    --page-top-gap: var(--page-top-gap-tablet);
   }
 }
 @media (max-width: 800px) {
@@ -234,5 +246,6 @@
     --font-size-body: var(--font-size-body-mobile);
     --font-size-caption: var(--font-size-caption-mobile);
     --font-size-label: var(--font-size-label-mobile);
+    --page-top-gap: var(--page-top-gap-mobile);
   }
 }

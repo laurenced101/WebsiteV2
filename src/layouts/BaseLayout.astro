@@ -22,7 +22,7 @@ const { title = 'laurence-dawes.design', active } = Astro.props;
   </head>
   <body>
     <Navbar active={active} />
-    <slot />
+    <main class="page-main"><slot /></main>
     <Footer />
   </body>
 </html>

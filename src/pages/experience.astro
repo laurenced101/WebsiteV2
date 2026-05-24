@@ -89,50 +89,53 @@ import { projects } from '../data/projects.generated.js';
 <style is:global>
   .index-grid {
     display: grid;
-    grid-template-columns: 180px 1fr 130px 50px 150px;
-    column-gap: 20px;
+    grid-template-columns: 180px 1fr 130px 50px 220px;
+    column-gap: var(--space-24);
     align-items: center;
   }
   @media (max-width: 900px) {
-    .index-grid { grid-template-columns: 130px 1fr 100px 50px 110px; column-gap: 14px; }
+    .index-grid { grid-template-columns: 130px 1fr 100px 50px 160px; column-gap: var(--space-12); }
   }
 </style>
 
 <style>
   /* STATEMENT */
+  /* Top gap comes from `.page-main` (global, same on every page); only bottom
+     padding here. Vertical padding only — side gutters come from `.wrap` margins. */
   .statement .wrap {
-    padding: 80px 0 70px;
-    border-bottom: 2.5px solid var(--color-primary);
+    padding-bottom: var(--space-64);
   }
-  .statement h1 { font-size: var(--font-size-h1); font-weight: var(--font-weight-regular); color: var(--color-primary); line-height: 1; margin-bottom: var(--space-24); }
-  .statement p { font-size: var(--font-size-h2); font-weight: var(--font-weight-medium); line-height: 1.4; }
+  .statement h1 { font-size: var(--font-size-h1); font-weight: var(--weight-h1); color: var(--text-h1); line-height: var(--leading-h1); margin-bottom: var(--space-32); }
+  .statement p { font-size: var(--font-size-h2); font-weight: var(--weight-h2); line-height: 1.4; letter-spacing: var(--tracking-h2); max-width: var(--measure-h2); }
   .statement .accent { color: var(--color-primary); }
 
   /* SECTIONS */
-  .section .wrap { padding: 56px 0; border-bottom: var(--outline) solid var(--color-primary); }
-  .section.stats .wrap { padding: var(--space-64) 0; }
-  .section.clients .wrap { padding: 56px 0 var(--space-64); border-bottom: 0; }
+  /* Divider rules between dossier sections removed (per layout feedback) — the
+     thick hard-rule before the index is now the only separator in the dossier. */
+  .section .wrap { padding-block: var(--space-48); }
+  .section.stats .wrap { padding-block: var(--space-64); }
+  .section.clients .wrap { padding-top: var(--space-48); padding-bottom: var(--space-64); }
   .section-label {
-    font-size: var(--font-size-label); font-weight: var(--font-weight-medium);
-    letter-spacing: 0.96px; text-transform: uppercase;
-    color: var(--grey-light); margin-bottom: 28px;
+    font-size: var(--font-size-label); font-weight: var(--weight-label);
+    letter-spacing: var(--tracking-label); text-transform: uppercase;
+    color: var(--text-label); margin-bottom: var(--space-24);
   }
 
   /* DISCIPLINES */
   .disciplines-row { display: flex; gap: var(--space-24); }
   .discipline {
     flex: 1; border-top: var(--outline) solid var(--color-primary);
-    padding-top: var(--space-16); display: flex; flex-direction: column; gap: 10px;
+    padding-top: var(--space-16); display: flex; flex-direction: column; gap: var(--space-12);
   }
   .discipline-num { font-size: var(--font-size-caption); color: var(--color-primary); }
-  .discipline-title { font-size: var(--font-size-h3); font-weight: var(--font-weight-medium); color: var(--ink); }
-  .discipline-desc { font-size: var(--font-size-caption); color: var(--grey-mid); line-height: var(--leading-caption); }
+  .discipline-title { font-size: var(--font-size-h3); font-weight: var(--weight-h3); color: var(--text-h3); }
+  .discipline-desc { font-size: var(--font-size-caption); color: var(--text-caption); line-height: var(--leading-caption); }
 
   /* STATS */
   .stats-row { display: flex; gap: var(--space-24); }
   .stat { flex: 1; display: flex; flex-direction: column; gap: var(--space-8); }
-  .stat-num { font-size: var(--font-size-display); font-weight: var(--font-weight-medium); color: var(--color-primary); line-height: 1; letter-spacing: var(--tracking-display); }
-  .stat-label { font-size: var(--font-size-caption); color: var(--grey-mid); line-height: 1.4; }
+  .stat-num { font-size: var(--font-size-display); font-weight: var(--weight-display); color: var(--text-display); line-height: var(--leading-display); letter-spacing: var(--tracking-display); }
+  .stat-label { font-size: var(--font-size-caption); color: var(--text-caption); line-height: var(--leading-caption); }
 
   /* CLIENT WALL */
   .logo-grid { display: flex; flex-direction: column; gap: var(--space-16); }
@@ -140,36 +143,38 @@ import { projects } from '../data/projects.generated.js';
   .logo-cell {
     flex: 1; height: 94px; background: var(--grey-bg);
     display: flex; align-items: center; justify-content: center;
-    color: #adadad; font-size: var(--font-size-label); font-weight: var(--font-weight-medium);
-    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-label); font-size: var(--font-size-label); font-weight: var(--weight-label);
+    letter-spacing: var(--tracking-label); text-transform: uppercase;
   }
 
   /* HARD RULE */
   .hard-rule-wrap .wrap { height: var(--hard-rule); background: var(--color-primary); }
 
   /* INDEX */
-  .index .wrap { padding: var(--space-64) 0 90px; }
+  /* No bottom padding: the bottom-note's symmetric padding-block below is the sole
+     spacer between the last project and the footer, so the note sits centered in it. */
+  .index .wrap { padding-top: var(--space-64); padding-bottom: 0; }
   .index-head {
-    padding-bottom: 18px;
+    padding-bottom: var(--space-16);
     border-bottom: var(--outline) solid var(--color-primary);
-    display: flex; flex-direction: column; gap: 10px;
+    display: flex; flex-direction: column; gap: var(--space-12);
   }
-  .index-head h2 { font-size: var(--font-size-h3); font-weight: var(--font-weight-medium); }
-  .index-head .sub { font-size: var(--font-size-caption); color: var(--grey-mid); line-height: var(--leading-caption); }
+  .index-head h2 { font-size: var(--font-size-h3); font-weight: var(--weight-h3); color: var(--text-h3); }
+  .index-head .sub { font-size: var(--font-size-caption); color: var(--text-caption); line-height: var(--leading-caption); }
 
   .index-col-head {
-    padding: 18px 0;
+    padding: var(--space-16) 0;
     border-bottom: 1px solid var(--color-primary);
-    font-size: var(--font-size-label); font-weight: var(--font-weight-medium);
-    letter-spacing: 0.96px; text-transform: uppercase;
-    color: var(--grey-light);
+    font-size: var(--font-size-label); font-weight: var(--weight-label);
+    letter-spacing: var(--tracking-label); text-transform: uppercase;
+    color: var(--text-label);
   }
 
   /* BOTTOM */
   .bottom-note .wrap {
-    padding: var(--space-64) 0; text-align: center;
-    font-size: var(--font-size-label); letter-spacing: 0.96px;
-    text-transform: uppercase; color: var(--grey-light);
+    padding-block: var(--space-96); text-align: center;
+    font-size: var(--font-size-label); letter-spacing: var(--tracking-label);
+    text-transform: uppercase; color: var(--text-label);
   }
 
   /* Display/heading sizes now resize via the font-size token aliases
