@@ -1,0 +1,67 @@
+---
+// process.astro — the PROCESS page (Ticket 24). Coming-soon layout:
+//   /process h1 → a fixed 5-across row of square line icons → "Coming soon."
+// Icons are blue line marks in /public/process/ (sourced from the Figma PNGs —
+// the Figma assets are raster, not vector; at the fixed ≤208px display size a
+// 512px source is crisp on retina). Always 5 across; the grid scales them down
+// on smaller screens.
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const icons = [
+  { file: 'teams.png', label: 'Teams' },
+  { file: 'innovation.png', label: 'Innovation' },
+  { file: 'systems.png', label: 'Systems' },
+  { file: 'insights.png', label: 'Insights' },
+  { file: 'process.png', label: 'Process' },
+];
+---
+<BaseLayout title="/process" active="process">
+  <section class="process">
+    <div class="wrap">
+      <h1>/process</h1>
+      <div class="process-icons">
+        {icons.map((i) => (
+          <div class="process-icon"><img src={`/process/${i.file}`} alt={i.label} width="208" height="208" /></div>
+        ))}
+      </div>
+      <p class="coming-soon">Coming soon.</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Top gap comes from .page-main (global). Generous bottom gap pushes the footer
+     down so the coming-soon content sits high (Figma). */
+  .process .wrap { padding-bottom: var(--space-240); }
+  .process h1 {
+    font-size: var(--font-size-h1); font-weight: var(--weight-h1);
+    color: var(--text-h1); line-height: var(--leading-h1);
+    margin-bottom: var(--space-48);
+  }
+
+  /* Icons — always 5 across (grid), square cells, scaling down with the column.
+     Gap tightens on mobile. */
+  .process-icons {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-48);
+    align-items: center;
+  }
+  .process-icon { aspect-ratio: 1; }
+  .process-icon img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+  .coming-soon {
+    font-size: var(--font-size-h2); font-weight: var(--weight-h2);
+    line-height: var(--leading-h2); color: var(--ink);
+    margin-top: var(--space-48);
+  }
+
+  @media (max-width: 1279px) {
+    .process-icons { gap: var(--space-24); }
+    .process .wrap { padding-bottom: var(--space-160); }
+  }
+  @media (max-width: 800px) {
+    .process-icons { gap: var(--space-12); }
+    .process .wrap { padding-bottom: var(--space-96); }
+  }
+</style>
