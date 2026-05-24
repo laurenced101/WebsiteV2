@@ -1,6 +1,7 @@
 ---
 // BaseLayout.astro — wraps every page with global styles, navbar + footer.
 // Usage: <BaseLayout title="/experience" active="experience"> ... </BaseLayout>
+import { Font } from 'astro:assets';
 import '../styles/global.css';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
@@ -13,12 +14,7 @@ const { title = 'laurence-dawes.design', active } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+    <Font cssVariable="--font-space-grotesk" preload />
   </head>
   <body>
     <Navbar active={active} />

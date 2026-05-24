@@ -17,6 +17,7 @@
 // The Gap lists below are static text on purpose: they are an audit snapshot of
 // hardcoded values found in the codebase, not tokens. Re-run the audit when
 // component styles change.
+import { Font } from 'astro:assets';
 import '../styles/global.css';
 import Navbar from '../components/Navbar.astro';
 
@@ -40,12 +41,8 @@ const TYPE_ROLES = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex,nofollow" />
     <title>styleguide — laurence-dawes.design</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+    <Font cssVariable="--font-space-grotesk" preload />
+    <Font cssVariable="--font-space-mono" />
   </head>
   <body>
     <Navbar />
