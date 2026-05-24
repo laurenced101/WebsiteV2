@@ -5,17 +5,25 @@
 //
 // Note: the `.index-grid` column template is defined as a page-level global in
 // experience.astro so the row aligns with the index column header.
+import { Image } from 'astro:assets';
 import Slideshow from './Slideshow.astro';
+import { resolveImage } from '../lib/projectImages.js';
 
 const { project, idx } = Astro.props;
-const { brand, brandLogoPath, title, desc, discipline, year, role, body, images } = project;
+const { brand, brandLogoPath, title, desc, discipline, year, role, body, thumb, images } = project;
+
+// Resolve the stored paths to build-optimized assets. `cover` is the row
+// thumbnail (Cover property); `slides` is the panel deck (Slideshow property).
+const cover = resolveImage(thumb);
+const slides = (images ?? []).map(resolveImage).filter(Boolean);
+const logo = resolveImage(brandLogoPath);
 ---
 <article class="project" data-idx={idx}>
   <div class="index-grid project-row">
     <div class="row-brand">
       <span class="brand-text">{brand}</span>
-      {brandLogoPath && (
-        <img class="brand-logo" src={brandLogoPath} alt={`${brand} logo`} loading="lazy" />
+      {logo && (
+        <Image class="brand-logo" src={logo} width={320} alt={`${brand} logo`} loading="lazy" />
       )}
     </div>
     <div class="row-project">
@@ -24,12 +32,12 @@ const { brand, brandLogoPath, title, desc, discipline, year, role, body, images 
     </div>
     <div class="row-discipline">{discipline}</div>
     <div class="row-year">{year}</div>
-    <div class="row-thumb"><img loading="lazy" src={images[0]} alt="" /></div>
+    <div class="row-thumb">{cover && <Image src={cover} width={440} alt="" loading="lazy" />}</div>
   </div>
   <div class="project-panel">
     <div class="panel-clip">
       <div class="panel-inner">
-        <Slideshow images={images} />
+        <Slideshow images={slides} />
         <p class="panel-text">{body}</p>
         <div class="panel-meta">
           <span>Brand <strong>{brand}</strong></span>
@@ -45,7 +53,9 @@ const { brand, brandLogoPath, title, desc, discipline, year, role, body, images 
 <style>
   /* PROJECT ROW */
   .project { border-bottom: 1px solid var(--color-primary); }
-  .project-row { min-height: 112px; cursor: pointer; transition: background var(--duration-fast) var(--ease-standard); }
+  /* Taller rows give the title/desc clear breathing room top & bottom (they're
+     vertically centred) and let the thumbnail render larger. */
+  .project-row { min-height: 160px; cursor: pointer; transition: background var(--duration-fast) var(--ease-standard); }
   .project-row:hover { background: rgba(0, 0, 245, 0.025); }
   .project.expanded > .project-row { background: var(--expand-tint); }
 
@@ -54,9 +64,9 @@ const { brand, brandLogoPath, title, desc, discipline, year, role, body, images 
   .brand-text {
     position: absolute; top: 50%; left: 0;
     transform: translateY(-50%);
-    font-size: var(--font-size-label); font-weight: var(--font-weight-semibold);
-    letter-spacing: 0.8px; text-transform: uppercase;
-    color: var(--ink);
+    font-size: var(--font-size-label); font-weight: var(--weight-label);
+    letter-spacing: var(--tracking-label); text-transform: uppercase;
+    color: var(--text-label);
     transition: opacity var(--duration-fast) var(--ease-standard);
     white-space: nowrap;
   }
@@ -74,10 +84,14 @@ const { brand, brandLogoPath, title, desc, discipline, year, role, body, images 
   .project.expanded .brand-logo { opacity: 1; }
 
   .row-project { min-width: 0; }
-  .row-title { font-size: var(--font-size-h3); font-weight: var(--font-weight-medium); color: var(--ink); margin-bottom: var(--space-4); line-height: 1.3; }
-  .row-desc { font-size: var(--font-size-caption); color: var(--grey-mid); line-height: var(--leading-caption); }
-  .row-discipline { font-size: var(--font-size-label); letter-spacing: 0.72px; text-transform: uppercase; color: var(--grey-mid); }
-  .row-year { font-size: var(--font-size-caption); color: var(--grey-mid); }
+  .row-title { font-size: var(--font-size-h3); font-weight: var(--weight-h3); color: var(--text-h3); margin-bottom: var(--space-4); line-height: var(--leading-h3); }
+  /* Clamp the description to 3 lines, truncating with an ellipsis past that. */
+  .row-desc {
+    font-size: var(--font-size-caption); color: var(--text-caption); line-height: var(--leading-caption);
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden;
+  }
+  .row-discipline { font-size: var(--font-size-label); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--text-label); }
+  .row-year { font-size: var(--font-size-caption); color: var(--text-caption); }
 
   /* THUMB */
   .row-thumb {
@@ -85,7 +99,7 @@ const { brand, brandLogoPath, title, desc, discipline, year, role, body, images 
     background: var(--grey-bg);
     overflow: hidden;
     justify-self: end;
-    width: 150px;
+    width: 100%;
   }
   .row-thumb img {
     width: 100%; height: 100%;
@@ -108,21 +122,23 @@ const { brand, brandLogoPath, title, desc, discipline, year, role, body, images 
   .panel-inner { padding: var(--space-24) 0 40px 200px; }
 
   .panel-text {
-    max-width: 680px;
-    font-size: var(--font-size-body); line-height: 1.6;
-    color: var(--ink);
-    margin-bottom: 18px;
+    max-width: var(--measure-body);
+    font-size: var(--font-size-body); line-height: var(--leading-body);
+    color: var(--text-body);
+    margin-bottom: var(--space-16);
   }
   .panel-meta {
     display: flex; gap: var(--space-32); flex-wrap: wrap;
-    font-size: var(--font-size-label); letter-spacing: 0.72px;
-    text-transform: uppercase; color: var(--grey-mid);
+    font-size: var(--font-size-label); letter-spacing: var(--tracking-label);
+    text-transform: uppercase; color: var(--text-label);
   }
-  .panel-meta span strong { color: var(--ink); font-weight: var(--font-weight-medium); margin-left: 6px; }
+  /* `strong` keeps `--ink` (emphasis/value) so it stays distinct from the
+     greyed `.panel-meta` label it sits inside — not conformed to a role colour. */
+  .panel-meta span strong { color: var(--ink); font-weight: var(--weight-label); margin-left: var(--space-8); }
 
   @media (max-width: 900px) {
     .brand-logo { max-width: 120px; }
-    .row-thumb { width: 110px; }
+    /* .row-thumb width is 100% of its (narrower) grid column at this breakpoint. */
     .panel-inner { padding-left: 150px; }
   }
 </style>

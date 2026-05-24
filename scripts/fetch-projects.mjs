@@ -1,7 +1,9 @@
 // Build-time fetcher: pulls the EXPERIENCE page's project data from the
-// "Projects V2" Notion DB, downloads each project's Cover + Logo image into
-// public/notion/, and writes src/data/projects.generated.js in the exact shape
-// the template (ProjectRow.astro) consumes.
+// "Projects V2" Notion DB, downloads each project's Cover image(s) + Logo into
+// src/assets/notion/ (so Astro's image pipeline optimizes them), and writes
+// src/data/projects.generated.js in the exact shape ProjectRow.astro consumes.
+// Cover drives the row thumbnail; the multi-file Slideshow property drives the
+// expand-panel slideshow frames (with fallbacks between the two).
 //
 // Runs automatically before `npm run dev` / `npm run build` / `npm start`
 // (predev / prebuild / prestart hooks). Re-downloads everything every run —
@@ -12,7 +14,7 @@
 // settings on Vercel.
 //
 // Output shape (one record), matching the hardcoded src/data/projects.js:
-//   { brand, brandLogoPath, title, desc, discipline, year, role, body, images }
+//   { brand, brandLogoPath, title, desc, discipline, year, role, body, thumb, images }
 
 import { Client } from '@notionhq/client';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
@@ -22,14 +24,18 @@ import { fileURLToPath } from 'node:url';
 // --- paths ---------------------------------------------------------------
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
-const MEDIA_DIR = join(ROOT, 'public', 'notion');     // gitignored download tree
+// Downloaded into src/ (not public/) so Astro's build-time image pipeline
+// (astro:assets / Sharp) optimizes them — resize, AVIF/WebP, hashed + immutably
+// cached. Files in public/ would ship as-is, unoptimized. Gitignored tree.
+const MEDIA_DIR = join(ROOT, 'src', 'assets', 'notion');
 const COVERS_DIR = join(MEDIA_DIR, 'covers');
 const LOGOS_DIR = join(MEDIA_DIR, 'logos');
 const OUT_FILE = join(ROOT, 'src', 'data', 'projects.generated.js');
 
-// Public URL prefixes (what the browser requests; mirror MEDIA_DIR layout).
-const COVERS_URL = '/notion/covers';
-const LOGOS_URL = '/notion/logos';
+// Stored path = the project-root-relative key that `import.meta.glob` produces,
+// so src/lib/projectImages.js can map each path back to its optimized asset.
+const COVERS_URL = '/src/assets/notion/covers';
+const LOGOS_URL = '/src/assets/notion/logos';
 
 const DATA_SOURCE_ID = '36912c70-512f-806b-a11d-000bce36d341';
 
@@ -79,6 +85,13 @@ function fileUrl(prop) {
   const f = prop?.files?.[0];
   if (!f) return null;
   return f.type === 'external' ? f.external?.url : f.file?.url ?? null;
+}
+
+// Every downloadable file URL from a Notion "files" property, in order.
+function fileUrls(prop) {
+  return (prop?.files ?? [])
+    .map((f) => (f.type === 'external' ? f.external?.url : f.file?.url))
+    .filter(Boolean);
 }
 
 // Derive a file extension from a (signed) URL's path, defaulting to .webp.
@@ -154,17 +167,28 @@ async function main() {
     const description = plain(p['Description']);
     const { role, year } = parseDetails(plain(p['Project Details']));
 
-    const coverSrc = fileUrl(p['Cover']);
+    // Cover drives the row thumbnail; the Slideshow files property drives the
+    // expand-panel deck. Fallbacks: thumbnail → first slideshow frame if no
+    // Cover; deck → Cover if the Slideshow property is empty.
+    const coverSrcs = fileUrls(p['Cover']);
+    const slideshowSrcs = fileUrls(p['Slideshow']);
     const logoSrc = fileUrl(p['Logo']);
 
-    const images = coverSrc
-      ? [await download(coverSrc, COVERS_DIR, row.id, COVERS_URL)]
-      : [];
+    const thumbSrc = coverSrcs[0] ?? slideshowSrcs[0] ?? null;
+    const frameSrcs = slideshowSrcs.length ? slideshowSrcs : coverSrcs;
+
+    const thumb = thumbSrc
+      ? await download(thumbSrc, COVERS_DIR, `${row.id}-thumb`, COVERS_URL)
+      : null;
+    const images = [];
+    for (let i = 0; i < frameSrcs.length; i++) {
+      images.push(await download(frameSrcs[i], COVERS_DIR, `${row.id}-${i}`, COVERS_URL));
+    }
     const brandLogoPath = logoSrc
       ? await download(logoSrc, LOGOS_DIR, row.id, LOGOS_URL)
       : null;
 
-    if (!coverSrc) console.warn(`[fetch-projects] no Cover for "${brand} — ${title}"`);
+    if (!thumbSrc) console.warn(`[fetch-projects] no Cover/Slideshow image for "${brand} — ${title}"`);
 
     projects.push({
       brand,
@@ -175,6 +199,7 @@ async function main() {
       year,
       role,
       body: description,
+      thumb,
       images,
     });
   }
