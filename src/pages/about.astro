@@ -11,35 +11,36 @@
 // the blue is token-controlled. Client logos keep their own (baked) treatment.
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-// Client-logo wall — ported in live reading order (left→right, top→bottom). Files
-// are pre-treated wordmarks in /public/about/clients/ (kept as-is, no .duo layer).
+// Client-logo wall — live reading order (left→right, top→bottom). Files are
+// BLACK wordmarks (transparent PNG) in /public/about/clients/; the blue look is a
+// CSS treatment (a blue linear-gradient set to `mix-blend-mode: lighten` over a
+// light tile — see .about-client below), so black marks read blue, light bg stays
+// light. Duran Duran dropped (#22) → 24 logos, 5-up.
 const clients = [
-  { name: 'Mattel', file: 'client-01.jpg' },
-  { name: 'Black Eyed Peas', file: 'client-02.jpg' },
-  { name: 'Meta', file: 'client-03.jpg' },
-  { name: 'LEGO', file: 'client-04.jpg' },
-  { name: 'Google', file: 'client-05.jpg' },
-  { name: 'Snapchat', file: 'client-06.jpg' },
-  { name: 'Twitch', file: 'client-07.jpg' },
-  { name: 'Disney', file: 'client-08.jpg' },
-  { name: 'Niantic', file: 'client-09.jpg' },
-  { name: 'FOX', file: 'client-10.jpg' },
-  { name: 'Qualcomm', file: 'client-11.jpg' },
-  { name: 'Nike', file: 'client-12.jpg' },
-  { name: 'Unity', file: 'client-13.jpg' },
-  { name: 'Roblox', file: 'client-14.jpg' },
-  { name: 'Bose', file: 'client-15.jpg' },
-  { name: 'Verizon', file: 'client-16.jpg' },
-  { name: 'Samsung', file: 'client-17.jpg' },
-  { name: 'GE', file: 'client-18.jpg' },
-  { name: 'Amazon', file: 'client-19.jpg' },
-  { name: 'NHL', file: 'client-20.jpg' },
-  { name: 'Comcast', file: 'client-21.jpg' },
-  { name: 'AT&T', file: 'client-22.jpg' },
-  { name: 'Whirlpool', file: 'client-23.jpg' },
-  { name: 'Morgan Stanley', file: 'client-24.jpg' },
-  { name: 'Duran Duran', file: 'client-25.jpg' },
-  // Walmart (client-26) + PGA (client-27) hidden per Figma feedback (#17).
+  { name: 'Mattel', file: 'mattel.png' },
+  { name: 'Black Eyed Peas', file: 'black-eyed-peas.png' },
+  { name: 'Meta', file: 'meta.png' },
+  { name: 'LEGO', file: 'lego.png' },
+  { name: 'Google', file: 'google.png' },
+  { name: 'Snapchat', file: 'snapchat.png' },
+  { name: 'Twitch', file: 'twitch.png' },
+  { name: 'Disney', file: 'disney.png' },
+  { name: 'Niantic', file: 'niantic.png' },
+  { name: 'FOX', file: 'fox.png' },
+  { name: 'Qualcomm', file: 'qualcomm.png' },
+  { name: 'Nike', file: 'nike.png' },
+  { name: 'Unity', file: 'unity.png' },
+  { name: 'Roblox', file: 'roblox.png' },
+  { name: 'Bose', file: 'bose.png' },
+  { name: 'Verizon', file: 'verizon.png' },
+  { name: 'Samsung', file: 'samsung.png' },
+  { name: 'GE', file: 'ge.png' },
+  { name: 'Amazon', file: 'amazon.png' },
+  { name: 'NHL', file: 'nhl.png' },
+  { name: 'Comcast', file: 'comcast.png' },
+  { name: 'AT&T', file: 'att.png' },
+  { name: 'Whirlpool', file: 'whirlpool.png' },
+  { name: 'Morgan Stanley', file: 'morgan-stanley.png' },
 ];
 ---
 <BaseLayout title="/about" active="about">
@@ -129,17 +130,22 @@ const clients = [
     z-index: 1;
     height: 100%;
     display: flex;
-    align-items: center;            /* title vertically centred in the hero (Figma) */
+    align-items: center;            /* title vertically centred in the hero */
+    justify-content: center;        /* horizontally centred (Desktop/Large/Tablet); mobile → left */
   }
   .about-hero-title {
-    font-size: var(--font-size-h1);
+    /* Smaller than the page h1 (Ticket 22), centred over the hero. Per-breakpoint
+       fixed sizes — a one-off hero treatment, not a global type role. */
+    font-size: 48px;
     font-weight: var(--weight-h1);
     line-height: var(--leading-h1);
     letter-spacing: var(--tracking-h1);
-    /* On the blue hero, the brand-blue h1 colour would vanish — title is set in
-       the surface colour so it reads as the white overlay the live page uses. */
+    text-align: center;
+    /* On the blue hero the brand-blue h1 colour would vanish — set in the surface
+       colour so it reads as the white overlay the live page uses. */
     color: var(--surface);
   }
+  @media (min-width: 1800px) { .about-hero-title { font-size: 56px; } }
 
   /* ===== INTRO ===== */
   /* Larger gap above the intro (hero→intro) per Figma. */
@@ -149,7 +155,6 @@ const clients = [
     font-weight: var(--weight-body);
     line-height: var(--leading-body);
     color: var(--text-body);
-    max-width: var(--measure-h2);
   }
   .about-intro p + p { margin-top: var(--space-24); }
 
@@ -172,9 +177,21 @@ const clients = [
     font-weight: var(--weight-body);
     line-height: var(--leading-body);
     color: var(--text-body);
-    max-width: var(--measure-h2);
   }
   .about-section p + p { margin-top: var(--space-16); }
+
+  /* ===== BLOG BODY-WIDTH (Ticket 22) =====
+     Prose (intro + section headings/text) is constrained to the blog measure and
+     centred within the content width; media (image rows + client wall) stays full
+     content width. Desktop/Large only — Tablet/Mobile run prose full width (the
+     cap is removed in the ≤1279 block). */
+  .about-intro p,
+  .about-section h2,
+  .about-section p {
+    max-width: var(--layout-max-width-blog);
+    margin-left: auto;
+    margin-right: auto;
+  }
 
   /* ===== IMAGE ROWS ===== */
   /* Two photos side by side at natural aspect, tops aligned. */
@@ -187,8 +204,12 @@ const clients = [
   }
 
   /* ===== CLIENT WALL ===== */
-  /* Pre-treated wordmarks (no .duo layer). 5-up desktop grid; logos contained
-     and capped so wide wordmarks and square marks read at similar weight. */
+  /* Full content width, 5-up. Logos are BLACK wordmarks (transparent PNG); the blue
+     look is the Figma treatment replicated in CSS: a per-cell blue linear-gradient
+     set to mix-blend-mode: lighten over a light tile. Lighten keeps the lighter of
+     each channel, so the near-white tile stays put while the black mark takes the
+     blue. `isolation: isolate` scopes the blend to the cell (the tile is its own
+     backdrop) so it can't bleed onto the page. */
   .about-clients {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -196,6 +217,9 @@ const clients = [
     margin-top: var(--space-96);    /* larger gap before the wall (Figma) */
   }
   .about-client {
+    position: relative;
+    isolation: isolate;
+    background: var(--surface);
     height: 84px;                   /* logo-wall cell — deliberate constant (cf. /experience wall) */
     display: flex;
     align-items: center;
@@ -209,14 +233,30 @@ const clients = [
     max-height: 56px;               /* deliberate logo cap */
     object-fit: contain;
   }
+  .about-client::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* Exact Figma gradient (left→right); lighter than --color-primary by design. */
+    background: linear-gradient(to right, #5252f5, #2727f5);
+    mix-blend-mode: lighten;
+    pointer-events: none;
+  }
 
   /* ===== TABLET (≤1279) ===== */
   @media (max-width: 1279px) {
+    .about-hero-title { font-size: 40px; }
+    /* Prose runs full content width below desktop (blog cap is Desktop/Large only). */
+    .about-intro p,
+    .about-section h2,
+    .about-section p { max-width: none; margin-left: 0; margin-right: 0; }
     .about-clients { grid-template-columns: repeat(4, 1fr); }
   }
 
   /* ===== MOBILE (≤800) ===== */
   @media (max-width: 800px) {
+    .about-hero-inner { justify-content: flex-start; }   /* hero title left-aligned on mobile */
+    .about-hero-title { font-size: 32px; text-align: left; }
     .about-figrow { grid-template-columns: 1fr; gap: var(--space-16); }
     .about-clients { grid-template-columns: repeat(3, 1fr); gap: var(--space-12); }
     .about-client { height: 64px; padding: var(--space-12); }

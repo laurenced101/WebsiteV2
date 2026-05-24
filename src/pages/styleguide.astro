@@ -279,6 +279,11 @@ const TYPE_ROLES = [
             <code class="sg-val" data-token="--layout-max-width-desktop"></code>
             <span class="sg-muted">— Desktop, ≤1799px</span>
           </div>
+          <div class="sg-wrap-sim sg-wrap-sim--blog">
+            <code class="sg-name">--layout-max-width-blog</code>
+            <code class="sg-val" data-token="--layout-max-width-blog"></code>
+            <span class="sg-muted">— Blog prose measure (ABOUT), centered; resolved for the current breakpoint</span>
+          </div>
 
           <div class="sg-gutter-demo sg-gutter-demo--tablet">
             <div class="sg-gutter-inner">
@@ -531,6 +536,8 @@ const TYPE_ROLES = [
         { title: 'Layout', controls: [
           size('--layout-max-width-large', 600, 2000, 10),
           size('--layout-max-width-desktop', 600, 2000, 10),
+          size('--layout-max-width-blog-large', 400, 1200, 8),
+          size('--layout-max-width-blog-desktop', 400, 1200, 8),
           size('--layout-margin-tablet', 0, 120, 1),
           size('--layout-margin-mobile', 0, 120, 1),
           ...['large', 'desktop', 'tablet', 'mobile'].map((t) => size(`--page-top-gap-${t}`, 0, 400, 4)),
@@ -836,6 +843,11 @@ const TYPE_ROLES = [
   --layout-max-width-large: ${g('--layout-max-width-large')};
   --layout-max-width-desktop: ${g('--layout-max-width-desktop')};
 
+  /* Blog body-width (ABOUT prose) — resolved alias picks the tier via the 1800+ query */
+  --layout-max-width-blog-large: ${g('--layout-max-width-blog-large')};
+  --layout-max-width-blog-desktop: ${g('--layout-max-width-blog-desktop')};
+  --layout-max-width-blog: var(--layout-max-width-blog-desktop);
+
   /* Layout margins */
   --layout-margin-tablet: ${g('--layout-margin-tablet')};
   --layout-margin-mobile: ${g('--layout-margin-mobile')};
@@ -925,6 +937,7 @@ ${roles.map((r) => `  --measure-${r}: ${g('--measure-' + r)};`).join('\n')}
 
 @media (min-width: 1800px) {
 ${aliasBlock('large')}
+  :root { --layout-max-width-blog: var(--layout-max-width-blog-large); }
 }
 @media (max-width: 1279px) {
 ${aliasBlock('tablet')}
@@ -1232,6 +1245,7 @@ ${aliasBlock('mobile')}
       }
       .sg-wrap-sim--large { max-width: var(--layout-max-width-large); }
       .sg-wrap-sim--desktop { max-width: var(--layout-max-width-desktop); }
+      .sg-wrap-sim--blog { max-width: var(--layout-max-width-blog); }
       /* Gutter rows fill the band; side padding = the margin token, indenting the
          inner box (mirrors Tablet/Mobile gutters on a full-width page). */
       .sg-gutter-demo {

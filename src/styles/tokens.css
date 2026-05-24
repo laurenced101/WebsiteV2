@@ -33,6 +33,14 @@
   --layout-max-width-large: 1200px;     /* Large Desktop, 1800px+ */
   --layout-max-width-desktop: 1000px;   /* Desktop, max 1799px */
 
+  /* Blog body-width — narrower measure for prose (ABOUT intro + section text),
+     centered within the content width while media stays full width. Desktop/Large
+     only; Tablet/Mobile prose runs full content width (the consumer drops the cap).
+     Resolved alias below selects the tier via the 1800+ media query. */
+  --layout-max-width-blog-large: 816px;
+  --layout-max-width-blog-desktop: 680px;
+  --layout-max-width-blog: var(--layout-max-width-blog-desktop);
+
   /* Layout margins (used on Tablet + Mobile in place of max-width) */
   --layout-margin-tablet: 20px;         /* Tablet, max 1279px */
   --layout-margin-mobile: 12px;         /* Mobile, max 800px */
@@ -263,6 +271,7 @@
     --font-size-button-large: var(--font-size-button-large-large);
     --font-size-feature: var(--font-size-feature-large);
     --page-top-gap: var(--page-top-gap-large);
+    --layout-max-width-blog: var(--layout-max-width-blog-large);
   }
 }
 @media (max-width: 1279px) {
