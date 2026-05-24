@@ -38,11 +38,13 @@ const { heading, image, imageAlt = '', ctaHref = '/experience', ctaLabel = 'See 
     display: flex;
     align-items: center;
     justify-content: space-between;
-    transition: opacity var(--duration-fast) var(--ease-standard),
+    transition: padding-left var(--duration-standard) var(--ease-standard),
                 background var(--duration-standard) var(--ease-standard),
                 color var(--duration-standard) var(--ease-standard);
   }
-  .pillar-heading:hover { opacity: 0.6; }
+  /* Hover = full blue bar, white text, heading nudged right (Figma). */
+  .pillar-heading:hover { background: var(--color-primary); color: var(--surface); padding-left: var(--space-24); }
+  .pillar-heading:hover::after { color: var(--surface); }
   .pillar-heading::after {
     content: "+";
     font-size: var(--font-size-feature);  /* toggle scales with the heading */
@@ -52,12 +54,9 @@ const { heading, image, imageAlt = '', ctaHref = '/experience', ctaLabel = 'See 
                 color var(--duration-standard) var(--ease-standard);
     line-height: 1;
   }
+  /* Open = the white DEFAULT look (NOT blue), with the + rotated to × (Figma).
+     Blue is reserved for hover only. */
   .pillar.expanded .pillar-heading::after { transform: rotate(45deg); }
-  /* Open state inverts the header row to a solid blue bar with white text + X
-     (Figma). Flush to the content column — no horizontal padding — so it stays
-     aligned with the panel body below and reads as an edge-to-edge blue block. */
-  .pillar.expanded .pillar-heading { background: var(--color-primary); color: var(--surface); }
-  .pillar.expanded .pillar-heading::after { color: var(--surface); }
 
   .pillar-panel {
     display: grid;

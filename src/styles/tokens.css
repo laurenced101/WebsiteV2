@@ -142,7 +142,7 @@
   --font-size-feature-large: 72px;
   --font-size-feature-desktop: 64px;
   --font-size-feature-tablet: 48px;
-  --font-size-feature-mobile: 40px;
+  --font-size-feature-mobile: 28px;   /* reduced 40→28 so pillar headings fit at 375 (Ticket 21) */
 
   /* Resolved per-role aliases — what components consume. Default to the
      Desktop tier (≤1799); overridden per breakpoint at the bottom of the file. */

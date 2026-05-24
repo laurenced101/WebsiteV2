@@ -8,11 +8,9 @@ import HomeSlideshow from '../components/HomeSlideshow.astro';
 import HomePillar from '../components/HomePillar.astro';
 ---
 <BaseLayout title="laurence-dawes.design">
-  <!-- HERO SLIDESHOW (contained in .wrap, 5:3) -->
+  <!-- HERO SLIDESHOW — full-bleed, flush under the navbar, 75vh -->
   <section class="hero">
-    <div class="wrap">
-      <HomeSlideshow />
-    </div>
+    <HomeSlideshow />
   </section>
 
   <!-- STATEMENT -->
@@ -51,9 +49,12 @@ import HomePillar from '../components/HomePillar.astro';
 </BaseLayout>
 
 <style>
-  /* HERO — top gap comes from .page-main (small on HOME, see is:global below);
-     only bottom padding here. */
-  .hero { padding-bottom: var(--space-128); }
+  /* HERO — full-bleed (no .wrap), flush under the navbar (page-top-gap 0, see
+     is:global below), 75vh tall via a HOME-local --hero-height override (the
+     shared token stays 85vh for ABOUT). The slideshow canvas already bakes the
+     blue duotone via its treatment CONFIG — same look as the ABOUT .duo photos —
+     so no .duo wrapper is needed here. Only bottom padding below. */
+  .hero { --hero-height: 75vh; padding-bottom: var(--space-128); }
 
   /* STATEMENT — divider line below removed per Figma (pillars begin with no rule
      above the first one). */
@@ -73,16 +74,20 @@ import HomePillar from '../components/HomePillar.astro';
     cursor: pointer;
   }
 
-  /* PILLARS — wrapper spacing; pillar internals live in HomePillar.astro. */
+  /* PILLARS — wrapper spacing; pillar internals live in HomePillar.astro.
+     Blue line at the top of the first pillar's header (same rhythm as the
+     inter-pillar dividers / border-bottoms — Figma). */
   .pillars .wrap { padding: var(--space-64) 0 var(--space-96); }
+  .pillars :global(.pillar:first-child) { border-top: var(--outline) solid var(--color-primary); }
 
-  /* SECTION LINKS */
-  .home-links { padding: var(--space-160) 0 var(--space-240); }
+  /* SECTION LINKS — keep the (large) gap up to the pillars; reduce the gap down
+     to the footer; more spacing between the links themselves (Figma). */
+  .home-links { padding: var(--space-160) 0 var(--space-96); }
   .home-links .wrap {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: var(--space-12);            /* more spacing between links (Figma) */
+    gap: var(--space-24);
   }
   .home-link {
     font-size: var(--font-size-button-large);  /* dedicated "large button" type
@@ -107,13 +112,13 @@ import HomePillar from '../components/HomePillar.astro';
     .hero { padding-bottom: var(--space-96); }
     .home-statement .wrap { padding: 0 0 var(--space-96); }
     .pillars .wrap { padding: var(--space-48) 0 var(--space-64); }
-    .home-links { padding: var(--space-96) 0 var(--space-128); }
+    .home-links { padding: var(--space-96) 0 var(--space-64); }
   }
 </style>
 
 <style is:global>
-  /* HOME sits its hero close to the navbar (Figma): override the site-wide
-     page-top-gap with ~the navbar's own height, for this route only. Set on
-     .page-main itself — that's where global.css reads it for padding-top. */
-  .page-main { --page-top-gap: var(--space-64); }
+  /* HOME hero is flush under the navbar (Figma): zero the site-wide
+     page-top-gap for this route only. Set on .page-main itself — that's where
+     global.css reads it for padding-top. */
+  .page-main { --page-top-gap: 0; }
 </style>
