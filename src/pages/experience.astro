@@ -183,13 +183,31 @@ import { projects } from '../data/projects.generated.js';
 </style>
 
 <script>
+  // ===== Deck image lazy-loading =====
+  // Deck frames ship with their src/srcset parked in data-* (see Slideshow.astro)
+  // so collapsed panels cost zero bytes. Swap them in on first intent — hover
+  // (pointerenter) prefetches so the deck is usually ready by the time the row is
+  // clicked; the expand handler is the fallback for touch / no-hover. Idempotent.
+  function loadDeck(project) {
+    if (!project || project.dataset.deckLoaded) return;
+    project.dataset.deckLoaded = '1';
+    project.querySelectorAll('img.deck-img').forEach((img) => {
+      if (img.dataset.srcset) img.srcset = img.dataset.srcset;
+      if (img.dataset.src) img.src = img.dataset.src;
+    });
+  }
+
   // ===== Expand / collapse =====
   // Toggling `.expanded` on `.project` drives the panel open (CSS) and tells the
   // slideshow RAF (in Slideshow.astro) which tracks to auto-advance. On collapse,
   // reset the slideshow back to the first frame.
   document.querySelectorAll('.project-row').forEach((row) => {
+    // Prefetch this row's deck the moment the pointer lands on it.
+    row.addEventListener('pointerenter', () => loadDeck(row.parentElement));
+
     row.addEventListener('click', () => {
       const project = row.parentElement;
+      loadDeck(project);
       const wasExpanded = project.classList.contains('expanded');
       // Collapse all (and reset their slideshows to position 0)
       document.querySelectorAll('.project.expanded').forEach((p) => {

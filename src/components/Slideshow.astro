@@ -4,17 +4,44 @@
 // wrapper > viewport > track structure plus controls (only when there's
 // more than one image). The script below wires up every instance on the
 // page: RAF-driven auto-advance, hover/touch pause, and button snap.
-import { Image } from 'astro:assets';
+import { getImage } from 'astro:assets';
 // `images` are build-optimized assets (ImageMetadata) resolved upstream in
-// ProjectRow; render each through <Image> so Astro emits sized, modern-format files.
+// ProjectRow. Decks live inside collapsed panels, so we DON'T emit a live
+// `src` — `loading="lazy"` can't help here (a 0-height collapsed panel still
+// sits at its row's y-position, so the browser counts near-top decks as "in
+// viewport" and fetches them on first paint). Instead we resolve each frame to
+// its optimized src/srcset and stash them in data-* attributes; experience.astro
+// swaps them into real `src`/`srcset` the first time a row is hovered/expanded,
+// so a collapsed deck costs zero bytes until the visitor shows intent.
+//
+// Displayed size: 480px (desktop) / 360px (≤900). widths cover 1×–2× of both.
+const SLIDE_SIZES = '(max-width: 900px) 360px, 480px';
+const SLIDE_WIDTHS = [360, 480, 720, 960];
 const { images = [] } = Astro.props;
 const total = images.length;
+const frames = await Promise.all(
+  images.map((img) =>
+    getImage({ src: img, widths: SLIDE_WIDTHS, sizes: SLIDE_SIZES, format: 'webp' }),
+  ),
+);
 ---
 <div class="panel-slideshow-wrapper">
   <div class="panel-slideshow">
     <div class="panel-slideshow-track">
-      {images.map((img) => (
-        <div class="slideshow-image"><Image src={img} width={960} alt="" loading="lazy" /></div>
+      {frames.map((f) => (
+        <div class="slideshow-image">
+          <img
+            class="deck-img"
+            data-src={f.src}
+            data-srcset={f.srcSet.attribute}
+            sizes={SLIDE_SIZES}
+            width={f.attributes.width}
+            height={f.attributes.height}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
       ))}
     </div>
   </div>

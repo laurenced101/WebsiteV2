@@ -32,7 +32,16 @@ const logo = resolveImage(brandLogoPath);
     </div>
     <div class="row-discipline">{discipline}</div>
     <div class="row-year">{year}</div>
-    <div class="row-thumb">{cover && <Image src={cover} width={440} alt="" loading="lazy" />}</div>
+    <div class="row-thumb">{cover && (
+      <Image
+        src={cover}
+        widths={[160, 220, 330, 440]}
+        sizes="(max-width: 900px) 160px, 220px"
+        alt=""
+        loading="lazy"
+        decoding="async"
+      />
+    )}</div>
   </div>
   <div class="project-panel">
     <div class="panel-clip">
