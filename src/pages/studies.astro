@@ -1,0 +1,98 @@
+---
+// studies.astro — the STUDIES page (Ticket 25). On-demand (prerender = false) so
+// the middleware's per-request cookie check runs at request time. Renders either:
+//   • the password GATE (a blank page, no chrome — when Astro.locals.studiesGate), or
+//   • the coming-soon content (inside BaseLayout) once unlocked.
+// The gate POSTs back here; src/middleware.ts validates + sets the auth cookie.
+export const prerender = false;
+
+import { Font } from 'astro:assets';
+import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const gate = Astro.locals.studiesGate;
+const authError = Astro.locals.studiesAuthError;
+---
+{gate ? (
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>/studies</title>
+      <Font cssVariable="--font-space-grotesk" preload />
+    </head>
+    <body>
+      <main class="gate">
+        <form class="gate-block" method="POST" action="/studies">
+          <p class="gate-title">This section is password-protected.</p>
+          <div class="gate-form">
+            <input class="gate-input" type="password" name="password" placeholder="Enter password" aria-label="Password" autofocus required />
+            <button class="gate-btn" type="submit">Enter</button>
+          </div>
+          {authError && <p class="gate-error">Incorrect password — try again.</p>}
+          <p class="gate-note">For access, please get in touch.</p>
+        </form>
+      </main>
+    </body>
+  </html>
+) : (
+  <BaseLayout title="/studies" active="studies">
+    <section class="studies">
+      <div class="wrap">
+        <h1>/studies</h1>
+        <p class="coming-soon">Coming soon.</p>
+      </div>
+    </section>
+  </BaseLayout>
+)}
+
+<style>
+  /* ===== PASSWORD GATE ===== blank page, password block centred both axes. */
+  .gate {
+    min-height: 100vh;
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    padding: var(--space-24);
+  }
+  .gate-block { display: flex; flex-direction: column; gap: var(--space-24); align-items: center; }
+  .gate-title {
+    font-size: var(--font-size-body); line-height: var(--leading-body);
+    color: var(--ink); text-align: center;
+  }
+  .gate-form { display: flex; gap: var(--space-12); align-items: center; }
+  .gate-input {
+    width: 360px; max-width: 100%;
+    border: var(--outline) solid var(--color-primary); background: var(--surface);
+    padding: var(--space-12) var(--space-16);
+    font-family: inherit; font-size: var(--font-size-body); color: var(--ink);
+  }
+  .gate-input::placeholder { color: var(--grey-mid); }
+  .gate-input:focus { outline: none; box-shadow: 0 0 0 1px var(--color-primary); }
+  .gate-btn {
+    background: var(--color-primary); color: var(--surface);
+    border: none; cursor: pointer;
+    padding: var(--space-12) var(--space-32);
+    font-family: inherit; font-size: var(--font-size-body);
+  }
+  .gate-error { font-size: var(--font-size-caption); color: var(--color-primary); text-align: center; }
+  .gate-note { font-size: var(--font-size-caption); color: var(--grey-mid); text-align: center; }
+
+  @media (max-width: 800px) {
+    .gate-form { flex-direction: column; width: 100%; }
+    .gate-input, .gate-btn { width: 100%; }
+  }
+
+  /* ===== COMING-SOON CONTENT ===== mirrors /process (minus the icon row). */
+  .studies .wrap { padding-bottom: var(--space-240); }
+  .studies h1 {
+    font-size: var(--font-size-h1); font-weight: var(--weight-h1);
+    color: var(--text-h1); line-height: var(--leading-h1);
+    margin-bottom: var(--space-48);
+  }
+  .studies .coming-soon {
+    font-size: var(--font-size-h2); font-weight: var(--weight-h2);
+    line-height: var(--leading-h2); color: var(--ink);
+  }
+  @media (max-width: 1279px) { .studies .wrap { padding-bottom: var(--space-160); } }
+  @media (max-width: 800px) { .studies .wrap { padding-bottom: var(--space-96); } }
+</style>

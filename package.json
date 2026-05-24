@@ -15,6 +15,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/vercel": "^10.0.7",
     "@notionhq/client": "^5.22.0",
     "astro": "^6.3.7"
   }

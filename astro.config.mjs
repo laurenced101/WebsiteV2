@@ -1,8 +1,14 @@
 import { defineConfig, fontProviders } from 'astro/config';
+import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   site: 'https://laurence-dawes.design',
+  // Static by default: every page prerenders to a static file unless it opts out
+  // with `export const prerender = false`. The Vercel adapter turns those
+  // opted-out routes (currently just /studies, which needs a per-request cookie
+  // check) into serverless functions; everything else stays static.
   output: 'static',
+  adapter: vercel(),
   // Self-hosted fonts (replaces the render-blocking Google Fonts <link>).
   // Astro downloads + optimizes the files at build, serves them same-origin
   // (hashed, immutably cached), and — via the <Font> component in <head> —
