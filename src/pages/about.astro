@@ -1,0 +1,249 @@
+---
+// about.astro — the ABOUT page. At-parity port of the live (Figma Sites) ABOUT
+// page. Copy + image references are hardcoded here (same posture as HOME) rather
+// than pulled from Notion — ABOUT is a single static page that changes a handful
+// of times a year, so a Notion content pipeline isn't worth its complexity.
+//
+// Images live in /public/about/ (section photos) and /public/about/clients/
+// (logo wall), committed locally — no external/signed-URL dependencies. The blue
+// duotone on the photos is NOT the baked-in treatment from the source files: it's
+// driven in CSS (saturation filter + a blend-mode overlay, the `.duo` class) so
+// the blue is token-controlled. Client logos keep their own (baked) treatment.
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Client-logo wall — ported in live reading order (left→right, top→bottom). Files
+// are pre-treated wordmarks in /public/about/clients/ (kept as-is, no .duo layer).
+const clients = [
+  { name: 'Mattel', file: 'client-01.jpg' },
+  { name: 'Black Eyed Peas', file: 'client-02.jpg' },
+  { name: 'Meta', file: 'client-03.jpg' },
+  { name: 'LEGO', file: 'client-04.jpg' },
+  { name: 'Google', file: 'client-05.jpg' },
+  { name: 'Snapchat', file: 'client-06.jpg' },
+  { name: 'Twitch', file: 'client-07.jpg' },
+  { name: 'Disney', file: 'client-08.jpg' },
+  { name: 'Niantic', file: 'client-09.jpg' },
+  { name: 'FOX', file: 'client-10.jpg' },
+  { name: 'Qualcomm', file: 'client-11.jpg' },
+  { name: 'Nike', file: 'client-12.jpg' },
+  { name: 'Unity', file: 'client-13.jpg' },
+  { name: 'Roblox', file: 'client-14.jpg' },
+  { name: 'Bose', file: 'client-15.jpg' },
+  { name: 'Verizon', file: 'client-16.jpg' },
+  { name: 'Samsung', file: 'client-17.jpg' },
+  { name: 'GE', file: 'client-18.jpg' },
+  { name: 'Amazon', file: 'client-19.jpg' },
+  { name: 'NHL', file: 'client-20.jpg' },
+  { name: 'Comcast', file: 'client-21.jpg' },
+  { name: 'AT&T', file: 'client-22.jpg' },
+  { name: 'Whirlpool', file: 'client-23.jpg' },
+  { name: 'Morgan Stanley', file: 'client-24.jpg' },
+  { name: 'Duran Duran', file: 'client-25.jpg' },
+  { name: 'Walmart', file: 'client-26.jpg' },
+  { name: 'PGA', file: 'client-27.jpg' },
+];
+---
+<BaseLayout title="/about" active="about">
+  <!-- HERO — full-bleed portrait with the page title overlaid lower-left.
+       Title sits in a .wrap so it aligns to the content column. -->
+  <section class="about-hero">
+    <figure class="duo about-hero-media"><img src="/about/hero.jpg" alt="Portrait of Laurence Dawes" /></figure>
+    <div class="wrap about-hero-inner"><h1 class="about-hero-title">/about</h1></div>
+  </section>
+
+  <!-- INTRO -->
+  <section class="about-intro">
+    <div class="wrap">
+      <p>Laurence is a design leader with over 20 years experience living and working in Los Angeles, California. Specializing in leading diverse creative teams, he&rsquo;s currently immersed in the worlds of augmented reality and AI, unifying the two to create experiences indicative of a new future of human interaction.</p>
+      <p>Hailing from the UK, Laurence grew up with an innate curiosity to create &amp; build. The English countryside where he spent his childhood offered a boundless playground for exploration - whether building treehouses or connecting LEGO bricks, many a day was spent problem solving and turning creative ideas into tangible reality. These early sparks manifested toward studying industrial design as a practice in the south of England and then onto developing world class toy and play experiences in Denmark. This in turn saw Laurence move toward digital product and experience design, experimenting and creating within a wide variety of mediums.</p>
+    </div>
+  </section>
+
+  <!-- PHYSICAL PLAY -->
+  <section class="about-section">
+    <div class="wrap">
+      <h2>Physical play</h2>
+      <p>In 2006 Laurence joined LEGO to design and develop new toy products for children across the globe. This journey saw him work with physical product development and 2D &amp; 3D design languages, honing his craft with an emphasis on detail and attentiveness in design. The LEGO motto of &rdquo;det bedste er ikke for godt&rdquo; (only the best is good enough) resonated deeply and has remained a guiding principle in Laurence&rsquo;s work to date.</p>
+      <p>Throughout this journey, Laurence led multi-disciplined teams working on flagship product launches and in latter years exploring new worlds of digital-physical play experience, spurned by new advances in mobile technology, gaming &amp; augmented reality.</p>
+      <div class="about-figrow">
+        <figure class="duo"><img src="/about/physical-1.jpg" alt="" /></figure>
+        <figure class="duo"><img src="/about/physical-2.jpg" alt="" /></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIGITAL EXPERIENCES -->
+  <section class="about-section">
+    <div class="wrap">
+      <h2>Digital experiences</h2>
+      <p>This exploration in new digital dimensions led Laurence to join Trigger XR in 2015, transitioning to working fully in the realm of digital &amp; immersive experiences. With a focus on AR, VR and their adjacent technologies, Laurence led the conception and development of numerous mobile AR, VR &amp; location-based experiences again leading diverse teams to come up with industry-leading and often groundbreaking products. Wearing many hats, Laurence&rsquo;s role covered innovation, strategy, client development &amp; people leadership, initially leading Trigger XR&rsquo;s European base in Denmark before moving to the U.S. in 2019 to focus on building a specialist innovation team and work ever more closely with key brand &amp; client partners.</p>
+      <div class="about-figrow">
+        <figure class="duo"><img src="/about/digital-1.jpg" alt="" /></figure>
+        <figure class="duo"><img src="/about/digital-2.jpg" alt="" /></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEADING COLLABORATION + CLIENT WALL -->
+  <section class="about-section">
+    <div class="wrap">
+      <h2>Leading collaboration</h2>
+      <p>Throughout his career Laurence has collaborated with many companies &amp; brands primarily in innovation-focused projects exploring the application of new technologies to business and brand objectives. Covering a wide variety of verticals, Laurence has extensive experience working closely and quickly within innovation and creative teams to give birth to truly forward-thinking work - whether inspiring the imagination of existing audiences totaling in the millions globally, or seeking to capture the attention of new audiences through never-seen-before experiences, Laurence thrives in high-collaboration environments.</p>
+      <div class="about-clients">
+        {clients.map((c) => (
+          <div class="about-client"><img src={`/about/clients/${c.file}`} alt={c.name} loading="lazy" /></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- AWARDS & PATENTS -->
+  <section class="about-section about-section--last">
+    <div class="wrap">
+      <h2>Awards &amp; patents</h2>
+      <p>Laurence has received a number of awards for his work in physical products &amp; digital experiences, including SXSW, Toy Of The Year, Webby &amp; CES Innovation awards among others.</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ===== Duotone treatment (the `.duo` class) =====
+     Drives the brand-blue look in CSS rather than relying on the baked-in blue
+     of the source files: (1) a saturation filter neutralises the image to
+     luminance, (2) a blend-mode overlay re-applies the brand blue. `color`
+     blend keeps the image's luminance and takes the overlay's hue → highlights
+     stay light, shadows stay deep, all in blue. `isolation: isolate` scopes the
+     blend to the figure so it can't bleed onto the page behind it.
+     TODO: tokenise (blend mode / saturation amount) — Session 4 motion/type pass. */
+  .duo {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--color-primary);
+    margin: 0;
+  }
+  .duo img {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: saturate(0);            /* saturation knob */
+  }
+  .duo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--color-primary);
+    mix-blend-mode: color;          /* blend layer drives the blue */
+    pointer-events: none;
+  }
+
+  /* ===== HERO ===== */
+  .about-hero {
+    position: relative;
+    aspect-ratio: 16 / 9;           /* TODO: tokenise */
+  }
+  .about-hero-media {
+    position: absolute;
+    inset: 0;
+  }
+  .about-hero-media img {
+    height: 100%;
+    object-fit: cover;
+  }
+  .about-hero-inner {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: var(--space-48);
+  }
+  .about-hero-title {
+    font-size: var(--font-size-h1);
+    font-weight: var(--weight-h1);
+    line-height: var(--leading-h1);
+    letter-spacing: var(--tracking-h1);
+    /* On the blue hero, the brand-blue h1 colour would vanish — title is set in
+       the surface colour so it reads as the white overlay the live page uses. */
+    color: var(--surface);
+  }
+
+  /* ===== INTRO ===== */
+  .about-intro .wrap { padding-block: var(--space-64); }
+  .about-intro p {
+    font-size: var(--font-size-h3);
+    font-weight: var(--weight-body);
+    line-height: var(--leading-body);
+    color: var(--text-body);
+    max-width: var(--measure-h2);
+  }
+  .about-intro p + p { margin-top: var(--space-24); }
+
+  /* ===== SECTIONS ===== */
+  .about-section .wrap { padding-bottom: var(--space-96); }
+  .about-section--last .wrap { padding-bottom: var(--space-128); }
+  .about-section h2 {
+    font-size: var(--font-size-h2);
+    font-weight: var(--weight-h2);
+    line-height: var(--leading-h2);
+    letter-spacing: var(--tracking-h2);
+    color: var(--text-h2);
+    margin-bottom: var(--space-24);
+  }
+  .about-section p {
+    font-size: var(--font-size-body);
+    font-weight: var(--weight-body);
+    line-height: var(--leading-body);
+    color: var(--text-body);
+    max-width: var(--measure-h2);
+  }
+  .about-section p + p { margin-top: var(--space-16); }
+
+  /* ===== IMAGE ROWS ===== */
+  /* Two photos side by side at natural aspect, tops aligned. */
+  .about-figrow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-24);
+    align-items: start;
+    margin-top: var(--space-32);
+  }
+
+  /* ===== CLIENT WALL ===== */
+  /* Pre-treated wordmarks (no .duo layer). 5-up desktop grid; logos contained
+     and capped so wide wordmarks and square marks read at similar weight. */
+  .about-clients {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-24);
+    margin-top: var(--space-48);
+  }
+  .about-client {
+    height: 84px;                   /* TODO: tokenise */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-16);
+  }
+  .about-client img {
+    width: auto;
+    height: auto;
+    max-width: 80%;
+    max-height: 56px;               /* TODO: tokenise */
+    object-fit: contain;
+  }
+
+  /* ===== TABLET (≤1279) ===== */
+  @media (max-width: 1279px) {
+    .about-clients { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  /* ===== MOBILE (≤800) ===== */
+  @media (max-width: 800px) {
+    .about-hero { aspect-ratio: 4 / 5; }   /* taller crop for portrait on phones — TODO: tokenise */
+    .about-figrow { grid-template-columns: 1fr; gap: var(--space-16); }
+    .about-clients { grid-template-columns: repeat(3, 1fr); gap: var(--space-12); }
+    .about-client { height: 64px; padding: var(--space-12); }
+    .about-client img { max-height: 40px; }
+  }
+</style>
