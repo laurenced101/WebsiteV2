@@ -15,7 +15,12 @@ import { clients } from '../data/clients.js';
 // stale manifest entry can't break the build.
 const clientLogoFiles = import.meta.glob('../assets/clients/*.webp', { eager: true, import: 'default' });
 const clientLogos = clients
-  .map((c) => ({ name: c.name, img: clientLogoFiles[`../assets/clients/${c.file}`] }))
+  .map((c) => ({
+    name: c.name,
+    img: clientLogoFiles[`../assets/clients/${c.file}`],
+    scale: c.scale,
+    hideOnMobile: c.hideOnMobile,
+  }))
   .filter((c) => c.img);
 ---
 <BaseLayout title="/experience" active="experience">
@@ -58,7 +63,9 @@ const clientLogos = clients
       <div class="section-label">Selected partners &amp; clients</div>
       <div class="logo-grid">
         {clientLogos.map((c) => (
-          <div class="logo-cell"><Image src={c.img} width={320} alt={c.name} loading="lazy" /></div>
+          <div class:list={['logo-cell', c.hideOnMobile && 'logo-hide-mobile']} style={c.scale ? `--logo-scale: ${c.scale};` : undefined}>
+            <Image src={c.img} width={320} alt={c.name} loading="lazy" />
+          </div>
         ))}
       </div>
     </div>
@@ -154,18 +161,18 @@ const clientLogos = clients
      heights: contain within a capped height + width so wide wordmarks and square
      marks read at similar visual weight. (Caps are eyeballed against a render.) */
   .logo-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-16); }
-  /* White tiles (not the grey placeholder fill): ~6 of the supplied logos carry
-     a baked-in white background, so white cells let those blend seamlessly while
-     the transparent ones + LEGO's blue tile still sit cleanly. Literal #fff —
-     there's no white token, and this is the one surface that needs true white. */
+  /* Tiles use the page surface (--surface, #F7F7F7) so the wall reads seamlessly
+     rather than as boxed tiles. Per-logo `--logo-scale` (set inline from the
+     manifest) bumps delicate marks; defaults to 1. */
   .logo-cell {
-    height: 94px; background: #fff;
+    height: 94px; background: var(--surface);
     display: flex; align-items: center; justify-content: center;
     padding: var(--space-16);
   }
   .logo-cell :global(img) {
     width: auto; height: auto;
-    max-width: 78%; max-height: 38px;
+    max-width: calc(78% * var(--logo-scale, 1));
+    max-height: calc(38px * var(--logo-scale, 1));
     object-fit: contain;
   }
 
@@ -211,8 +218,10 @@ const clientLogos = clients
        they read as the divider-separated list the mobile design shows. */
     .disciplines-row { flex-direction: column; gap: var(--space-24); }
     .stats-row { flex-direction: column; gap: var(--space-32); }
-    /* Client wall → 3-up on mobile (5-up on desktop) */
+    /* Client wall → 3-up on mobile (5-up on desktop). Amazon is dropped here
+       (hideOnMobile) so the 9 remaining logos form a clean 3×3. */
     .logo-grid { grid-template-columns: repeat(3, 1fr); }
+    .logo-cell.logo-hide-mobile { display: none; }
 
     /* Mobile reintroduces dividers between dossier sections (desktop omits them);
        skip the clients section since the thick hard rule follows it. */

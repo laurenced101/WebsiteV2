@@ -4,16 +4,18 @@
 // on the Vercel/Linux build (e.g. LEGO.webp, magic-leap.webp). Pre-treated
 // transparent webp with the gradient baked in (see that folder's README).
 //
-// NOTE: order below is PROVISIONAL — awaiting Laurence's ordering screenshot.
+// Optional per-logo controls:
+//   scale        — multiplies the in-cell size caps (for delicate marks).
+//   hideOnMobile — drop from the ≤800 grid (keeps it a clean 3×3).
 export const clients = [
-  { name: 'Google', file: 'Google.webp' },
-  { name: 'LEGO', file: 'LEGO.webp' },
-  { name: 'Meta', file: 'Meta.webp' },
-  { name: 'Amazon', file: 'Amazon.webp' },
   { name: 'Disney', file: 'Disney.webp' },
-  { name: 'Bose', file: 'Bose.webp' },
-  { name: 'Niantic', file: 'Niantic.webp' },
-  { name: 'Qualcomm', file: 'Qualcomm.webp' },
+  { name: 'Meta', file: 'Meta.webp' },
+  { name: 'LEGO', file: 'LEGO.webp' },
+  { name: 'Google', file: 'Google.webp' },
   { name: 'Snap', file: 'Snap.webp' },
-  { name: 'Magic Leap', file: 'magic-leap.webp' },
+  { name: 'Amazon', file: 'Amazon.webp', hideOnMobile: true },
+  { name: 'Magic Leap', file: 'magic-leap.webp', scale: 1.4 },
+  { name: 'Niantic', file: 'Niantic.webp' },
+  { name: 'Bose', file: 'Bose.webp' },
+  { name: 'Qualcomm', file: 'Qualcomm.webp' },
 ];
