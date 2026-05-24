@@ -1,20 +1,37 @@
 ---
 // Navbar.astro — sticky top nav, ported from the v7 prototype.
-// `active` marks the current section: 'about' | 'experience' | 'process' | 'articles'.
+// `active` marks the current section: 'about' | 'experience' | 'process' | 'studies'.
+// Desktop / Large / Tablet show the button bar; Mobile (≤800) collapses to a
+// hamburger that opens a full-width menu panel (Figma node 195-1690).
 const { active } = Astro.props;
 const links = [
   { key: 'about', label: 'About', href: '/about' },
   { key: 'experience', label: 'Experience', href: '/experience' },
   { key: 'process', label: 'Process', href: '/process' },
-  { key: 'articles', label: 'Articles', href: '#' },
+  { key: 'studies', label: 'Studies', href: '/studies' },
 ];
 ---
-<nav class="navbar">
+<nav class="navbar" data-navbar>
   <div class="wrap navbar-inner">
     <a class="logo" href="/"><span class="light">laurence-dawes.</span>design</a>
     <div class="nav-buttons">
       {links.map((l) => (
         <a class={`nav-btn${active === l.key ? ' active' : ''}`} href={l.href}>{l.label}</a>
+      ))}
+    </div>
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+      <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>
+    </button>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu">
+    <div class="mobile-menu-top">
+      <span class="mobile-logo">laurence dawes design</span>
+      <button class="nav-close" type="button" aria-label="Close menu">×</button>
+    </div>
+    <div class="mobile-menu-list">
+      {links.map((l) => (
+        <a href={l.href}>{l.href}</a>
       ))}
     </div>
   </div>
@@ -30,8 +47,9 @@ const links = [
     padding: var(--space-16) 0;
   }
   .navbar-inner { display: flex; align-items: center; justify-content: space-between; }
-  .logo { font-size: var(--font-size-body); font-weight: var(--font-weight-bold); color: var(--color-primary); letter-spacing: 4.32px; }
-  .logo .light { font-weight: var(--font-weight-regular); letter-spacing: 7.92px; }
+  /* Logo: 16px, tighter tracking per Ticket 19 (laurence-dawes. 4px / design 2px). */
+  .logo { font-size: 16px; font-weight: var(--font-weight-bold); color: var(--color-primary); letter-spacing: 2px; }
+  .logo .light { font-weight: var(--font-weight-regular); letter-spacing: 4px; }
   .nav-buttons { display: flex; gap: var(--space-16); }
   .nav-btn {
     padding: var(--space-8) var(--space-16);
@@ -41,4 +59,47 @@ const links = [
     transition: background var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
   }
   .nav-btn.active, .nav-btn:hover { background: var(--color-primary); color: var(--surface); }
+
+  /* Hamburger toggle — three 2px bars (Figma: 26px wide, 16px tall). Mobile-only. */
+  .nav-toggle { display: none; background: none; border: none; padding: 0; cursor: pointer; }
+  .bars { display: block; width: 26px; height: 16px; position: relative; }
+  .bars i { position: absolute; left: 0; width: 26px; height: 2px; background: var(--color-primary); }
+  .bars i:nth-child(1) { top: 0; }
+  .bars i:nth-child(2) { top: 7px; }
+  .bars i:nth-child(3) { top: 14px; }
+
+  /* Mobile menu panel — hidden until ≤800 + .is-open. */
+  .mobile-menu { display: none; }
+  .mobile-menu-top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: var(--space-16) var(--space-12);
+    border-bottom: var(--outline) solid var(--color-primary);
+  }
+  .mobile-logo { font-size: 16px; letter-spacing: 2px; color: var(--color-primary); }
+  .nav-close { background: none; border: none; padding: 0; cursor: pointer; font-size: 24px; line-height: 1; color: var(--color-primary); }
+  .mobile-menu-list { display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-16) var(--space-12) var(--space-24); }
+  .mobile-menu-list a { font-size: 34px; line-height: 1; color: var(--color-primary); font-weight: var(--font-weight-regular); }
+
+  @media (max-width: 800px) {
+    .navbar { padding: var(--space-16) 0; }
+    .nav-buttons { display: none; }
+    .nav-toggle { display: block; }
+    .navbar.is-open { border-bottom: none; padding: 0; }
+    .navbar.is-open .navbar-inner { display: none; }
+    .navbar.is-open .mobile-menu { display: block; }
+  }
 </style>
+
+<script>
+  const nav = document.querySelector('[data-navbar]');
+  if (nav) {
+    const toggle = nav.querySelector('.nav-toggle');
+    const close = nav.querySelector('.nav-close');
+    const open = () => { nav.classList.add('is-open'); toggle?.setAttribute('aria-expanded', 'true'); };
+    const shut = () => { nav.classList.remove('is-open'); toggle?.setAttribute('aria-expanded', 'false'); };
+    toggle?.addEventListener('click', open);
+    close?.addEventListener('click', shut);
+    // Close if viewport grows past mobile (avoids a stuck-open panel on rotate/resize).
+    window.matchMedia('(min-width: 801px)').addEventListener('change', (e) => { if (e.matches) shut(); });
+  }
+</script>

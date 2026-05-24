@@ -1,7 +1,7 @@
 ---
-// Footer.astro — bordered footer box, ported from the v7 prototype.
-// Build-credit line changed from the prototype's "Prototype — D2 Dossier"
-// to "Built with Astro" (this is a real Astro site now).
+// Footer.astro — Ticket 19 redesign.
+// Desktop/Large: bordered box. Tablet/Mobile (≤1279): full-width top rule, no box.
+// Circular LinkedIn + Mail icons; copy "© laurence dawes <year>" / "built with astro".
 const year = new Date().getFullYear();
 ---
 <footer class="footer">
@@ -9,11 +9,15 @@ const year = new Date().getFullYear();
     <div class="footer-content">
       <p>© laurence dawes {year}</p>
       <div class="footer-icons">
-        <a href="#" class="footer-icon" aria-label="LinkedIn">in</a>
-        <a href="#" class="footer-icon" aria-label="Email">✉</a>
+        <a href="https://www.linkedin.com/in/laurence-dawes-101/" target="_blank" rel="noopener" class="footer-icon" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4.98 3.5A2.5 2.5 0 1 1 5 8.5a2.5 2.5 0 0 1-.02-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.4c0-1.3-.02-2.95-1.8-2.95-1.8 0-2.08 1.4-2.08 2.85V21H9z"/></svg>
+        </a>
+        <a href="mailto:laurence.j.dawes@gmail.com" class="footer-icon" aria-label="Email">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm9 7.5L4 7v1.2l8 5 8-5V7z"/></svg>
+        </a>
       </div>
       <div class="footer-rule"></div>
-      <p>Built with Astro</p>
+      <p>built with astro</p>
     </div>
   </div>
 </footer>
@@ -22,18 +26,28 @@ const year = new Date().getFullYear();
   .footer { padding: 0 0 var(--space-48); }
   .footer-content {
     border: var(--outline) solid var(--color-primary);
+    background: var(--surface);
     padding: var(--space-24);
     display: flex; flex-direction: column; gap: var(--space-12);
+  }
+  /* Tablet/Mobile: drop the box for a full-width top rule. */
+  @media (max-width: 1279px) {
+    .footer-content {
+      border: none;
+      border-top: var(--outline) solid var(--color-primary);
+      background: none;
+      padding: var(--space-24) 0;
+    }
   }
   /* Colour stays brand blue (deliberate — matches the blue-bordered footer box);
      line-height kept at 22px (the unitless leading scale would crush it). */
   .footer-content p { font-size: var(--font-size-label); letter-spacing: var(--tracking-label); color: var(--color-primary); font-weight: var(--weight-label); line-height: 22px; }
   .footer-icons { display: flex; gap: var(--space-12); align-items: center; }
   .footer-icon {
-    width: 22px; height: 22px;
+    width: 22px; height: 22px; border-radius: 50%;
     background: var(--color-primary); color: var(--surface);
     display: flex; align-items: center; justify-content: center;
-    font-size: var(--font-size-label); font-weight: var(--font-weight-bold);
   }
+  .footer-icon svg { width: 12px; height: 12px; display: block; }
   .footer-rule { width: 34px; height: 1px; background: var(--color-primary); }
 </style>
