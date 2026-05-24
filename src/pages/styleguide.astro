@@ -34,6 +34,7 @@ const TYPE_ROLES = [
   { role: 'label', a: 'Label — micro text', b: 'Second label line' },
   { role: 'feature', a: '/design_leadership', b: '/strategy' },
   { role: 'button-large', a: '/about', b: '/experience' },
+  { role: 'stat', a: '20+', b: '100M+' },
 ];
 ---
 <!DOCTYPE html>
@@ -524,6 +525,8 @@ const TYPE_ROLES = [
           ['large', 'desktop', 'tablet', 'mobile'].map((t) => size(`--font-size-button-large-${t}`, 24, 240, 1)) },
         { title: 'Feature heading (HOME pillars)', controls:
           ['large', 'desktop', 'tablet', 'mobile'].map((t) => size(`--font-size-feature-${t}`, 16, 160, 1)) },
+        { title: 'Stat number (/experience)', controls:
+          ['large', 'desktop', 'tablet', 'mobile'].map((t) => size(`--font-size-stat-${t}`, 16, 200, 1)) },
         { title: 'Typography — shared', controls: [
           text('--font-family-primary'),
           text('--font-family-mono'),
@@ -815,7 +818,7 @@ const TYPE_ROLES = [
         const g = (n) => readVal(n);
         const fs = (k) => `  --font-size-${k}: ${g('--font-size-' + k)};`;
         const fsGroup = (role) => [`${role}-large`, `${role}-desktop`, `${role}-tablet`, `${role}-mobile`].map(fs).join('\n');
-        const roles = ['display', 'h1', 'h2', 'h3', 'body', 'caption', 'label', 'feature', 'button-large'];
+        const roles = ['display', 'h1', 'h2', 'h3', 'body', 'caption', 'label', 'feature', 'button-large', 'stat'];
         const aliases = roles.map((r) => `    --font-size-${r}: var(--font-size-${r}-TIER);`).join('\n');
         const aliasBlock = (tier) => `  :root {\n${aliases.replace(/TIER/g, tier)}\n    --page-top-gap: var(--page-top-gap-${tier});\n  }`;
         return `:root {
@@ -895,6 +898,8 @@ ${fsGroup('label')}
 ${fsGroup('feature')}
 
 ${fsGroup('button-large')}
+
+${fsGroup('stat')}
 
   /* Resolved per-role aliases — default to the Desktop tier. */
 ${roles.map((r) => `  --font-size-${r}: var(--font-size-${r}-desktop);`).join('\n')}

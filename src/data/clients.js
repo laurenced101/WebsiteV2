@@ -13,9 +13,9 @@ export const clients = [
   { name: 'LEGO', file: 'LEGO.webp' },
   { name: 'Google', file: 'Google.webp' },
   { name: 'Snap', file: 'Snap.webp' },
-  { name: 'Amazon', file: 'Amazon.webp', hideOnMobile: true },
+  { name: 'Amazon', file: 'Amazon.webp' },
   { name: 'Magic Leap', file: 'magic-leap-dark.webp', scale: 1.4 },
   { name: 'Niantic', file: 'Niantic.webp' },
   { name: 'Bose', file: 'Bose.webp' },
-  { name: 'Qualcomm', file: 'Qualcomm.webp' },
+  { name: 'Qualcomm', file: 'Qualcomm.webp', hideOnMobile: true },  // 10th — dropped on mobile for a clean 3×3 (#23)
 ];

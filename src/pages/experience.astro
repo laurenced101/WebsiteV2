@@ -151,7 +151,8 @@ const clientLogos = clients
   /* STATS */
   .stats-row { display: flex; gap: var(--space-24); }
   .stat { flex: 1; display: flex; flex-direction: column; gap: var(--space-8); }
-  .stat-num { font-size: var(--font-size-display); font-weight: var(--weight-display); color: var(--text-display); line-height: var(--leading-display); letter-spacing: var(--tracking-display); }
+  /* Tuned `stat` size (not display) so each number fits one line at every breakpoint (Ticket 23). */
+  .stat-num { font-size: var(--font-size-stat); font-weight: var(--weight-display); color: var(--text-display); line-height: var(--leading-display); letter-spacing: var(--tracking-display); }
   .stat-label { font-size: var(--font-size-caption); color: var(--text-caption); line-height: var(--leading-caption); }
 
   /* CLIENT WALL — data-driven from src/data/clients.js (curated logos).
@@ -160,10 +161,13 @@ const clientLogos = clients
      heights: contain within a capped height + width so wide wordmarks and square
      marks read at similar visual weight. (Caps are eyeballed against a render.) */
   .logo-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-16); }
-  /* Tiles use the page surface (--surface, #F7F7F7) so the wall reads seamlessly
-     rather than as boxed tiles. Per-logo `--logo-scale` (set inline from the
-     manifest) bumps delicate marks; defaults to 1. */
+  /* Logos are BLACK wordmarks; the blue look is the shared Figma treatment (same
+     as the ABOUT wall): a per-cell blue linear-gradient at mix-blend-mode:lighten
+     over the light (--surface) tile, scoped by isolation:isolate. So black marks
+     read blue while the near-white tile stays put and the wall reads seamlessly.
+     Per-logo `--logo-scale` (inline from the manifest) bumps delicate marks. */
   .logo-cell {
+    position: relative; isolation: isolate;
     height: 94px; background: var(--surface);
     display: flex; align-items: center; justify-content: center;
     padding: var(--space-16);
@@ -173,6 +177,11 @@ const clientLogos = clients
     max-width: calc(78% * var(--logo-scale, 1));
     max-height: calc(38px * var(--logo-scale, 1));
     object-fit: contain;
+  }
+  .logo-cell::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to right, #5252f5, #2727f5);  /* exact Figma gradient */
+    mix-blend-mode: lighten; pointer-events: none;
   }
 
   /* INDEX */
@@ -214,8 +223,8 @@ const clientLogos = clients
        they read as the divider-separated list the mobile design shows. */
     .disciplines-row { flex-direction: column; gap: var(--space-24); }
     .stats-row { flex-direction: column; gap: var(--space-32); }
-    /* Client wall → 3-up on mobile (5-up on desktop). Amazon is dropped here
-       (hideOnMobile) so the 9 remaining logos form a clean 3×3. */
+    /* Client wall → 3-up on mobile (5-up on desktop). The 10th logo (Qualcomm) is
+       dropped here (hideOnMobile) so the 9 remaining form a clean 3×3. */
     .logo-grid { grid-template-columns: repeat(3, 1fr); }
     .logo-cell.logo-hide-mobile { display: none; }
 

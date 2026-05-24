@@ -79,10 +79,12 @@ const logo = resolveImage(brandLogoPath);
     transition: opacity var(--duration-fast) var(--ease-standard);
     white-space: nowrap;
   }
+  /* Expanded/hover: the brand logo fills the row height as a 160px square, flush
+     left, replacing the wordmark (Figma ProjectRow — Expanded, "brand-logo"). */
   .brand-logo {
     position: absolute; top: 0; left: 0;
-    height: 100%; max-width: 160px;
-    object-fit: contain; object-position: left center;
+    width: 160px; height: 100%;
+    object-fit: contain; object-position: center;
     opacity: 0;
     transition: opacity var(--duration-fast) var(--ease-standard);
     pointer-events: none;
@@ -154,7 +156,7 @@ const logo = resolveImage(brandLogoPath);
   .panel-meta span strong { color: var(--ink); font-weight: var(--weight-label); margin-left: var(--space-8); }
 
   @media (max-width: 1279px) {
-    .brand-logo { max-width: 120px; }
+    .brand-logo { width: 120px; }
     /* .row-thumb width is 100% of its (narrower) grid column at this breakpoint. */
     .panel-inner { padding-left: 150px; }
   }

@@ -152,6 +152,14 @@
   --font-size-feature-tablet: 48px;
   --font-size-feature-mobile: 28px;   /* reduced 40→28 so pillar headings fit at 375 (Ticket 21) */
 
+  /* "Stat" role — the "By the numbers" figures on /experience (20+, 100M+, 15).
+     Decoupled from the display role and tuned per breakpoint so each fits on one
+     line at every width (Ticket 23). */
+  --font-size-stat-large: 80px;
+  --font-size-stat-desktop: 64px;
+  --font-size-stat-tablet: 56px;
+  --font-size-stat-mobile: 56px;
+
   /* Resolved per-role aliases — what components consume. Default to the
      Desktop tier (≤1799); overridden per breakpoint at the bottom of the file. */
   --font-size-display: var(--font-size-display-desktop);
@@ -163,6 +171,7 @@
   --font-size-label: var(--font-size-label-desktop);
   --font-size-button-large: var(--font-size-button-large-desktop);
   --font-size-feature: var(--font-size-feature-desktop);
+  --font-size-stat: var(--font-size-stat-desktop);
 
   /* Line-height + letter-spacing (Session 5). Unitless ratios / em values that
      scale with font-size, so — unlike font-size — they need no per-breakpoint
@@ -270,6 +279,7 @@
     --font-size-label: var(--font-size-label-large);
     --font-size-button-large: var(--font-size-button-large-large);
     --font-size-feature: var(--font-size-feature-large);
+    --font-size-stat: var(--font-size-stat-large);
     --page-top-gap: var(--page-top-gap-large);
     --layout-max-width-blog: var(--layout-max-width-blog-large);
   }
@@ -285,6 +295,7 @@
     --font-size-label: var(--font-size-label-tablet);
     --font-size-button-large: var(--font-size-button-large-tablet);
     --font-size-feature: var(--font-size-feature-tablet);
+    --font-size-stat: var(--font-size-stat-tablet);
     --page-top-gap: var(--page-top-gap-tablet);
   }
 }
@@ -299,6 +310,7 @@
     --font-size-label: var(--font-size-label-mobile);
     --font-size-button-large: var(--font-size-button-large-mobile);
     --font-size-feature: var(--font-size-feature-mobile);
+    --font-size-stat: var(--font-size-stat-mobile);
     --page-top-gap: var(--page-top-gap-mobile);
   }
 }
