@@ -534,7 +534,7 @@ const TYPE_ROLES = [
           size('--layout-margin-tablet', 0, 120, 1),
           size('--layout-margin-mobile', 0, 120, 1),
           ...['large', 'desktop', 'tablet', 'mobile'].map((t) => size(`--page-top-gap-${t}`, 0, 400, 4)),
-          size('--home-hero-height', 40, 100, 1, 'vh'),
+          size('--hero-height', 40, 100, 1, 'vh'),
         ] },
         { title: 'Motion', controls: [
           size('--duration-fast', 0, 1, 0.05, 's'),
@@ -848,8 +848,8 @@ const TYPE_ROLES = [
   --page-top-gap-mobile:  ${g('--page-top-gap-mobile')};
   --page-top-gap: var(--page-top-gap-desktop);
 
-  /* HOME hero height */
-  --home-hero-height: ${g('--home-hero-height')};
+  /* Hero height (HOME + ABOUT) */
+  --hero-height: ${g('--hero-height')};
 
   /* Spacing scale — primitives, no role aliases */
 ${[4, 8, 12, 16, 24, 32, 48, 64, 96, 128, 160, 240].map((n) => `  --space-${n}: ${g('--space-' + n)};`).join('\n')}

@@ -39,12 +39,11 @@ const clients = [
   { name: 'Whirlpool', file: 'client-23.jpg' },
   { name: 'Morgan Stanley', file: 'client-24.jpg' },
   { name: 'Duran Duran', file: 'client-25.jpg' },
-  { name: 'Walmart', file: 'client-26.jpg' },
-  { name: 'PGA', file: 'client-27.jpg' },
+  // Walmart (client-26) + PGA (client-27) hidden per Figma feedback (#17).
 ];
 ---
 <BaseLayout title="/about" active="about">
-  <!-- HERO — full-bleed portrait with the page title overlaid lower-left.
+  <!-- HERO — full-bleed 85vh portrait (flush to navbar), title centred over it.
        Title sits in a .wrap so it aligns to the content column. -->
   <section class="about-hero">
     <figure class="duo about-hero-media"><img src="/about/hero.jpg" alt="Portrait of Laurence Dawes" /></figure>
@@ -111,9 +110,10 @@ const clients = [
      utility in global.css (knobs in tokens.css). Figures just add the class. */
 
   /* ===== HERO ===== */
+  /* 85vh, flush to the navbar (see is:global page-top-gap override below). */
   .about-hero {
     position: relative;
-    aspect-ratio: 16 / 9;           /* deliberate layout constant */
+    height: var(--hero-height);
   }
   .about-hero-media {
     position: absolute;
@@ -122,14 +122,14 @@ const clients = [
   .about-hero-media img {
     height: 100%;
     object-fit: cover;
+    object-position: right center;  /* keep the portrait on the right; crop the left edge (Figma) */
   }
   .about-hero-inner {
     position: relative;
     z-index: 1;
     height: 100%;
     display: flex;
-    align-items: flex-end;
-    padding-bottom: var(--space-48);
+    align-items: center;            /* title vertically centred in the hero (Figma) */
   }
   .about-hero-title {
     font-size: var(--font-size-h1);
@@ -142,9 +142,10 @@ const clients = [
   }
 
   /* ===== INTRO ===== */
-  .about-intro .wrap { padding-block: var(--space-64); }
+  /* Larger gap above the intro (hero→intro) per Figma. */
+  .about-intro .wrap { padding-top: var(--space-96); padding-bottom: var(--space-64); }
   .about-intro p {
-    font-size: var(--font-size-h3);
+    font-size: var(--font-size-body);   /* body role per Figma (was an h3 lede) */
     font-weight: var(--weight-body);
     line-height: var(--leading-body);
     color: var(--text-body);
@@ -154,13 +155,16 @@ const clients = [
 
   /* ===== SECTIONS ===== */
   .about-section .wrap { padding-bottom: var(--space-96); }
-  .about-section--last .wrap { padding-bottom: var(--space-128); }
+  /* Much larger gap before the footer (Figma). */
+  .about-section--last .wrap { padding-bottom: var(--space-240); }
+  /* Section headings sized to the h3 role (Figma), kept brand-blue (the h3 role
+     colour is ink, so colour is set explicitly). */
   .about-section h2 {
-    font-size: var(--font-size-h2);
-    font-weight: var(--weight-h2);
-    line-height: var(--leading-h2);
-    letter-spacing: var(--tracking-h2);
-    color: var(--text-h2);
+    font-size: var(--font-size-h3);
+    font-weight: var(--weight-h3);
+    line-height: var(--leading-h3);
+    letter-spacing: var(--tracking-h3);
+    color: var(--color-primary);
     margin-bottom: var(--space-24);
   }
   .about-section p {
@@ -189,7 +193,7 @@ const clients = [
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: var(--space-24);
-    margin-top: var(--space-48);
+    margin-top: var(--space-96);    /* larger gap before the wall (Figma) */
   }
   .about-client {
     height: 84px;                   /* logo-wall cell — deliberate constant (cf. /experience wall) */
@@ -213,10 +217,16 @@ const clients = [
 
   /* ===== MOBILE (≤800) ===== */
   @media (max-width: 800px) {
-    .about-hero { aspect-ratio: 4 / 5; }   /* taller crop for portrait on phones — deliberate */
     .about-figrow { grid-template-columns: 1fr; gap: var(--space-16); }
     .about-clients { grid-template-columns: repeat(3, 1fr); gap: var(--space-12); }
     .about-client { height: 64px; padding: var(--space-12); }
     .about-client img { max-height: 40px; }
   }
+</style>
+
+<style is:global>
+  /* ABOUT hero touches the navbar — no top gap (a unique setting for this page,
+     per Figma #17). Override the site-wide page-top-gap to 0 on this route only;
+     set on .page-main itself, where global.css reads it for padding-top. */
+  .page-main { --page-top-gap: 0px; }
 </style>

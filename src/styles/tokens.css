@@ -47,9 +47,10 @@
   --page-top-gap-mobile:  64px;
   --page-top-gap: var(--page-top-gap-desktop);
 
-  /* HOME hero height — the height-driven slideshow box (the canvas cover-crops
-     to fit). Viewport-relative; one knob so it's tunable. */
-  --home-hero-height: 85vh;
+  /* Hero height — the height-driven hero box on HOME (slideshow, canvas
+     cover-crops) and ABOUT (portrait, object-fit cover). Viewport-relative;
+     one shared knob so it's tunable. */
+  --hero-height: 85vh;
 
   /* Spacing scale — primitives, no role aliases (Session 5).
      Spacing applies contextually to many components, so a "role" doesn't map
