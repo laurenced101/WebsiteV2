@@ -1,0 +1,118 @@
+---
+// HomePillar.astro — one expandable pillar on HOME (used three times).
+// Heading click toggles `.expanded`; pillars open independently (multiple can
+// be open at once). The plus rotates 45° to an X, and the panel reveals via a
+// grid-template-rows 0fr→1fr transition (both ported from the prototype).
+//
+// Body copy is passed as the default slot; the heading, image (a /public path),
+// and CTA target come in as props.
+const { heading, image, imageAlt = '', ctaHref = '/experience', ctaLabel = 'See full experience' } = Astro.props;
+---
+<div class="pillar">
+  <h2 class="pillar-heading">{heading}</h2>
+  <div class="pillar-panel">
+    <div class="pillar-clip">
+      <div class="pillar-inner">
+        <div class="pillar-text">
+          <slot />
+          <a class="pillar-link" href={ctaHref}>{ctaLabel} →</a>
+        </div>
+        <div class="pillar-image">
+          <img src={image} alt={imageAlt} loading="lazy" decoding="async" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .pillar { border-bottom: var(--outline) solid var(--color-primary); }
+  .pillar-heading {
+    font-size: 64px;          /* TODO: tokenise (HOME type scale — Session 4) */
+    font-weight: var(--font-weight-regular);
+    color: var(--color-primary);
+    cursor: pointer;
+    padding: 56px 0;          /* TODO: tokenise */
+    margin: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: opacity var(--duration-fast) var(--ease-standard);
+  }
+  .pillar-heading:hover { opacity: 0.6; }
+  .pillar-heading::after {
+    content: "+";
+    font-size: 44px;          /* TODO: tokenise */
+    font-weight: var(--font-weight-regular);
+    color: var(--color-primary);
+    transition: transform var(--duration-standard) var(--ease-standard);
+    line-height: 1;
+  }
+  .pillar.expanded .pillar-heading::after { transform: rotate(45deg); }
+
+  .pillar-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--duration-slow) var(--ease-standard);
+  }
+  .pillar.expanded .pillar-panel { grid-template-rows: 1fr; }
+  .pillar-clip { overflow: hidden; }
+  .pillar-inner {
+    padding: 0 0 56px 0;      /* TODO: tokenise */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-48);
+    align-items: start;
+  }
+  .pillar-text {
+    font-size: 17px;          /* TODO: tokenise */
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .pillar-text :global(p) { margin-bottom: var(--space-32); }
+  .pillar-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    color: var(--color-primary);
+    border-bottom: var(--outline) solid var(--color-primary);
+    font-size: var(--font-size-label);
+    text-transform: uppercase;
+    letter-spacing: 1px;      /* TODO: tokenise */
+    padding-bottom: 2px;
+    font-weight: var(--font-weight-medium);
+    transition: gap var(--duration-fast) var(--ease-standard);
+  }
+  .pillar-link:hover { gap: 14px; }
+  .pillar-image {
+    aspect-ratio: 4 / 3;
+    background: var(--grey-bg);
+    overflow: hidden;
+  }
+  .pillar-image img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+
+  /* Tablet/mobile fallbacks (prototype used a 900px breakpoint here). */
+  @media (max-width: 900px) {
+    .pillar-heading { font-size: 48px; padding: 44px 0; }   /* TODO: tokenise */
+    .pillar-heading::after { font-size: 36px; }
+    .pillar-inner { grid-template-columns: 1fr; gap: var(--space-24); padding-bottom: 44px; }
+  }
+  @media (max-width: 600px) {
+    .pillar-heading { font-size: 36px; padding: 36px 0; }   /* TODO: tokenise */
+  }
+</style>
+
+<script>
+  // Pillars expand independently — multiple open at once (per the prototype).
+  // Astro bundles this script once even though the component repeats, so this
+  // single querySelectorAll wires up every pillar on the page.
+  document.querySelectorAll('.pillar-heading').forEach((heading) => {
+    heading.addEventListener('click', () => {
+      heading.parentElement.classList.toggle('expanded');
+    });
+  });
+</script>

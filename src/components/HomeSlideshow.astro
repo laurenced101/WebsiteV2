@@ -1,0 +1,382 @@
+---
+// HomeSlideshow.astro — the tuned static-treatment slideshow, ported from the
+// standalone slideshow-v2.html prototype into the HOME hero placement.
+//
+// What changed in the port (everything else is verbatim — see the brief):
+//  - Sizing fits the parent .hero-frame (5:3) via a ResizeObserver, instead of
+//    fitCanvas() filling the viewport on a window-resize listener. The
+//    cover-crop in drawSlideWithKB handles the 5:3-vs-source aspect mismatch.
+//  - Hover over the frame pauses the SLIDE timer only; the canvas keeps
+//    rendering so the static treatment (noise/scanlines/glitch) stays alive.
+//  - Mobile floors (mobileBreakpoint 800 / mobileMinHeight 500) are applied to
+//    the .hero-frame box in CSS below, not to the viewport.
+//
+// The duotone + per-frame noise + scanlines + glitch, the luminance-space
+// crossfade, all locked CONFIG values, and the prefers-reduced-motion fallback
+// port unchanged. CONFIG lives in the client script (single source of truth).
+---
+<div class="hero-frame" id="heroFrame">
+  <canvas class="hero-canvas" id="heroCanvas"></canvas>
+</div>
+
+<style>
+  .hero-frame {
+    position: relative;
+    aspect-ratio: 5 / 3;
+    overflow: hidden;
+    background: var(--ink);
+  }
+  .hero-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  /* MOBILE (≤800): the 5:3 frame would fall under ~465px tall at phone widths,
+     so floor it at mobileMinHeight (500px) — the canvas centre-crops (cover) to
+     fill the taller box. Mirrors CONFIG.mobileBreakpoint / mobileMinHeight. */
+  @media (max-width: 800px) {
+    .hero-frame { min-height: 500px; }
+  }
+</style>
+
+<script>
+  // ─────────────────────────────────────────────────────────────
+  //  CONFIG — locked. Do not tweak (per the brief). Tokenising these
+  //  for the live /styleguide editor is a deliberate follow-up.
+  // ─────────────────────────────────────────────────────────────
+  const CONFIG = {
+    // SLIDES — locked order. Bare filenames; resolved to /home-slideshow/ below
+    // (encodeURIComponent handles the spaces in "LEGO House.webp" etc.).
+    sources: [
+      'ML.webp',
+      'Assist.webp',
+      'LEGO House.webp',
+      'Duran Duran.webp',
+      'Watch.webp',
+      'LEGO Fox.webp',
+      'Brainwash.webp',
+      'Cooking.webp',
+      'Desk.webp',
+      'LEGO Movie.webp',
+      'LEGO Creator.webp',
+      'Augmoto.webp',
+      'LEGO Minifigs.webp',
+      '3D.webp',
+    ],
+
+    // TIMING
+    slideDuration:     2600,
+    crossfadeDuration: 200,
+
+    // DUOTONE
+    darkColor:  [0, 0, 245],
+    lightColor: [247, 247, 247],
+    contrast:   1.4,
+
+    // STATIC
+    noiseStrength: 0.84,
+    noiseFps:      10,
+    noiseResScale: 2.0,
+
+    // SCANLINES
+    scanlines:          true,
+    scanlineSpacing:    3,
+    scanlineOpacity:    0.18,
+    scanlineDriftSpeed: 6,
+
+    // GLITCH FRAMES
+    glitchEnabled:     true,
+    glitchProbability: 0.004,
+    glitchMaxShift:    20,
+
+    // KEN BURNS
+    kenBurns: {
+      enabled:     false,
+      startScale:  1.00,
+      endScale:    1.04,
+      startCenter: [0.50, 0.50],
+      endCenter:   [0.51, 0.49],
+    },
+
+    // MOBILE — interpreted as floors for the .hero-frame (see CSS above),
+    // not the viewport.
+    mobileBreakpoint: 800,
+    mobileMinHeight:  500,
+
+    fps: 30,
+  };
+  // ─────────────────────────────────────────────────────────────
+
+  const BASE_PATH = '/home-slideshow/';
+
+  // Module state
+  let displayW = 0, displayH = 0;
+  let noiseW = 0, noiseH = 0;
+  let noiseImageData = null;
+  let noiseUint32 = null;
+  let lastFrame = 0;
+  let lastNoiseRefresh = 0;
+  let glitchShift = 0;
+  let glitchTimer = 0;
+  let prefersReducedMotion = false;
+  let animationRunning = false;
+  const treatedSlides = [];
+
+  // Slide timing decoupled from the RAF clock so hover-to-pause can freeze the
+  // slide rotation/crossfade while the per-frame static treatment keeps running.
+  let slideClock = 0;     // ms — only advances while not paused
+  let lastLoopT = 0;      // timestamp of the previous rendered frame
+  let paused = false;
+
+  const frame   = document.getElementById('heroFrame');
+  const visible = document.getElementById('heroCanvas');
+  const vctx    = visible.getContext('2d');
+  const noise   = document.createElement('canvas');
+  const nctx    = noise.getContext('2d');
+
+  function preloadAndTreat(src) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const c = document.createElement('canvas');
+        c.width = img.naturalWidth;
+        c.height = img.naturalHeight;
+        const cctx = c.getContext('2d');
+        cctx.drawImage(img, 0, 0);
+        const imgData = cctx.getImageData(0, 0, c.width, c.height);
+        const data = imgData.data;
+        const [dr, dg, db] = CONFIG.darkColor;
+        const [lr, lg, lb] = CONFIG.lightColor;
+        const k = CONFIG.contrast;
+        for (let i = 0; i < data.length; i += 4) {
+          let lum = (0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2]) / 255;
+          lum = Math.max(0, Math.min(1, (lum - 0.5) * k + 0.5));
+          data[i]   = dr * (1 - lum) + lr * lum;
+          data[i+1] = dg * (1 - lum) + lg * lum;
+          data[i+2] = db * (1 - lum) + lb * lum;
+        }
+        cctx.putImageData(imgData, 0, 0);
+        resolve(c);
+      };
+      img.onerror = () => reject(new Error(`Failed to load ${src}`));
+      img.src = BASE_PATH + encodeURIComponent(src);
+    });
+  }
+
+  Promise.all(CONFIG.sources.map(preloadAndTreat))
+    .then(treated => {
+      treatedSlides.push(...treated);
+      console.log(`Loaded & treated ${treatedSlides.length} slides.`);
+      start();
+    })
+    .catch(err => {
+      console.error(err);
+    });
+
+  function start() {
+    fitCanvas();
+
+    // Fit to the parent .hero-frame, not the viewport.
+    const ro = new ResizeObserver(() => {
+      fitCanvas();
+      if (prefersReducedMotion) renderStaticFrame();
+    });
+    ro.observe(frame);
+
+    // Hover pauses the slide timer only (canvas keeps rendering — see loop()).
+    frame.addEventListener('mouseenter', () => paused = true);
+    frame.addEventListener('mouseleave', () => paused = false);
+
+    // Reduced-motion: respect the user's OS-level setting.
+    const reducedMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
+    prefersReducedMotion = reducedMQ.matches;
+    reducedMQ.addEventListener('change', e => {
+      prefersReducedMotion = e.matches;
+      if (e.matches) {
+        animationRunning = false;
+        renderStaticFrame();
+      } else if (!animationRunning) {
+        animationRunning = true;
+        lastLoopT = 0;
+        requestAnimationFrame(loop);
+      }
+    });
+
+    if (prefersReducedMotion) {
+      renderStaticFrame();
+    } else {
+      animationRunning = true;
+      requestAnimationFrame(loop);
+    }
+  }
+
+  function fitCanvas() {
+    const dpr = window.devicePixelRatio || 1;
+    const dw = frame.clientWidth;
+    const dh = frame.clientHeight;
+    if (dw === 0 || dh === 0) return;
+
+    displayW = dw;
+    displayH = dh;
+
+    visible.width  = Math.max(1, Math.round(dw * dpr));
+    visible.height = Math.max(1, Math.round(dh * dpr));
+    vctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    noiseW = Math.max(1, Math.round(dw * CONFIG.noiseResScale));
+    noiseH = Math.max(1, Math.round(dh * CONFIG.noiseResScale));
+    noise.width  = noiseW;
+    noise.height = noiseH;
+    noiseImageData = nctx.createImageData(noiseW, noiseH);
+    noiseUint32 = new Uint32Array(noiseImageData.data.buffer);
+  }
+
+  function refreshNoise() {
+    const len = noiseUint32.length;
+    for (let i = 0; i < len; i++) {
+      const v = (Math.random() * 256) | 0;
+      noiseUint32[i] = (255 << 24) | (v << 16) | (v << 8) | v;
+    }
+    nctx.putImageData(noiseImageData, 0, 0);
+  }
+
+  // Draw one slide with cover-crop + optional Ken Burns transform.
+  // Cover-crop ensures the canvas is always fully filled regardless of how its
+  // aspect compares to the source aspect (mobile = taller frame = sides cropped).
+  function drawSlideWithKB(slideCanvas, slideElapsed, alpha) {
+    let scale = 1, cx = 0.5, cy = 0.5;
+    if (CONFIG.kenBurns.enabled) {
+      const cycleDur = CONFIG.slideDuration + CONFIG.crossfadeDuration;
+      const k = CONFIG.kenBurns;
+      const cycle = Math.min(slideElapsed / cycleDur, 1);
+      const u = 0.5 - 0.5 * Math.cos(cycle * Math.PI);
+      scale = k.startScale + (k.endScale - k.startScale) * u;
+      cx = k.startCenter[0] + (k.endCenter[0] - k.startCenter[0]) * u;
+      cy = k.startCenter[1] + (k.endCenter[1] - k.startCenter[1]) * u;
+    }
+
+    const W = slideCanvas.width, H = slideCanvas.height;
+    const sourceAspect = W / H;
+    const displayAspect = displayW / displayH;
+
+    // Base crop rect = largest source region matching display aspect (cover).
+    let baseW, baseH;
+    if (sourceAspect > displayAspect) {
+      baseH = H;
+      baseW = H * displayAspect;
+    } else {
+      baseW = W;
+      baseH = W / displayAspect;
+    }
+
+    // Apply Ken Burns zoom on top of the cover crop.
+    const sw = baseW / scale;
+    const sh = baseH / scale;
+    let sx = W * cx - sw / 2;
+    let sy = H * cy - sh / 2;
+    sx = Math.max(0, Math.min(W - sw, sx));
+    sy = Math.max(0, Math.min(H - sh, sy));
+
+    vctx.save();
+    vctx.globalAlpha = alpha;
+    vctx.imageSmoothingQuality = 'high';
+    vctx.drawImage(slideCanvas, sx, sy, sw, sh, 0, 0, displayW, displayH);
+    vctx.restore();
+  }
+
+  // Render a single static frame — used when prefers-reduced-motion is active.
+  function renderStaticFrame() {
+    if (!treatedSlides.length || displayW === 0) return;
+    refreshNoise();
+    vctx.clearRect(0, 0, displayW, displayH);
+    drawSlideWithKB(treatedSlides[0], 0, 1.0);
+    if (CONFIG.noiseStrength > 0) {
+      vctx.save();
+      vctx.globalCompositeOperation = 'overlay';
+      vctx.globalAlpha = CONFIG.noiseStrength;
+      vctx.imageSmoothingEnabled = false;
+      vctx.drawImage(noise, 0, 0, displayW, displayH);
+      vctx.restore();
+    }
+    if (CONFIG.scanlines) {
+      vctx.save();
+      vctx.fillStyle = `rgba(0,0,0,${CONFIG.scanlineOpacity})`;
+      for (let y = 0; y < displayH; y += CONFIG.scanlineSpacing) {
+        vctx.fillRect(0, y, displayW, 1);
+      }
+      vctx.restore();
+    }
+  }
+
+  function loop(t) {
+    if (!animationRunning) return;
+    requestAnimationFrame(loop);
+    if (t - lastFrame < 1000 / CONFIG.fps) return;
+
+    // Advance the (pausable) slide clock by the gap since the last RENDERED
+    // frame. Clamp the delta so a tab-switch / stall can't jump the rotation.
+    let dt = lastLoopT ? (t - lastLoopT) : 0;
+    if (dt > 100) dt = 100;
+    lastLoopT = t;
+    lastFrame = t;
+    if (!paused) slideClock += dt;
+
+    const N = treatedSlides.length;
+    const slot = CONFIG.slideDuration + CONFIG.crossfadeDuration;
+    const cyclePeriod = N * slot;
+    const tInCycle = slideClock % cyclePeriod;
+    const slideIdx = Math.floor(tInCycle / slot);
+    const tInSlot = tInCycle % slot;
+
+    if (CONFIG.glitchEnabled) {
+      if (glitchTimer > 0) {
+        glitchTimer--;
+      } else if (Math.random() < CONFIG.glitchProbability) {
+        glitchShift = (Math.random() - 0.5) * 2 * CONFIG.glitchMaxShift;
+        glitchTimer = 2 + ((Math.random() * 3) | 0);
+      } else {
+        glitchShift = 0;
+      }
+    }
+
+    vctx.clearRect(0, 0, displayW, displayH);
+    vctx.save();
+    vctx.translate(glitchShift, 0);
+
+    if (tInSlot < CONFIG.slideDuration) {
+      drawSlideWithKB(treatedSlides[slideIdx], tInSlot, 1.0);
+    } else {
+      const fadeT = (tInSlot - CONFIG.slideDuration) / CONFIG.crossfadeDuration;
+      const nextIdx = (slideIdx + 1) % N;
+      drawSlideWithKB(treatedSlides[slideIdx], tInSlot, 1.0);
+      drawSlideWithKB(treatedSlides[nextIdx], fadeT * CONFIG.crossfadeDuration, fadeT);
+    }
+
+    vctx.restore();
+
+    if (t - lastNoiseRefresh >= 1000 / CONFIG.noiseFps) {
+      refreshNoise();
+      lastNoiseRefresh = t;
+    }
+    if (CONFIG.noiseStrength > 0) {
+      vctx.save();
+      vctx.globalCompositeOperation = 'overlay';
+      vctx.globalAlpha = CONFIG.noiseStrength;
+      vctx.imageSmoothingEnabled = false;
+      vctx.drawImage(noise, 0, 0, displayW, displayH);
+      vctx.restore();
+    }
+
+    if (CONFIG.scanlines) {
+      const drift = (t * CONFIG.scanlineDriftSpeed / 1000) % CONFIG.scanlineSpacing;
+      vctx.save();
+      vctx.fillStyle = `rgba(0,0,0,${CONFIG.scanlineOpacity})`;
+      for (let y = -CONFIG.scanlineSpacing + drift; y < displayH; y += CONFIG.scanlineSpacing) {
+        vctx.fillRect(0, y, displayW, 1);
+      }
+      vctx.restore();
+    }
+  }
+</script>

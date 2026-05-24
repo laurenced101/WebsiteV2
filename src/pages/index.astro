@@ -1,0 +1,115 @@
+---
+// index.astro — the HOME page. Ported from home-prototype_1.html, with the real
+// tuned static-treatment slideshow (HomeSlideshow) in the hero placement instead
+// of the prototype's plain crossfade placeholder. Navbar + footer come from
+// BaseLayout; the standalone prototype's <nav>/<footer> markup is not ported.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HomeSlideshow from '../components/HomeSlideshow.astro';
+import HomePillar from '../components/HomePillar.astro';
+---
+<BaseLayout title="laurence-dawes.design">
+  <!-- HERO SLIDESHOW (contained in .wrap, 5:3) -->
+  <section class="hero">
+    <div class="wrap">
+      <HomeSlideshow />
+    </div>
+  </section>
+
+  <!-- STATEMENT -->
+  <section class="home-statement">
+    <div class="wrap">
+      <p>An award-winning design leader working at the juncture of <span class="link">design</span>, <span class="link">technology</span> &amp; <span class="link">strategy</span>.</p>
+      <p>Currently working with AI &amp; XR technology, Laurence has built many groundbreaking products and experiences together with industry leaders such as <span class="link">LEGO</span>, <span class="link">Google</span>, <span class="link">Disney</span>, <span class="link">Bose</span> and <span class="link">Niantic</span>, to name a few.</p>
+    </div>
+  </section>
+
+  <!-- PILLARS -->
+  <section class="pillars">
+    <div class="wrap">
+      <HomePillar heading="/design_leadership" image="/Workshop2.webp">
+        <p>Two decades leading multi-disciplinary teams across LEGO, Trigger XR and AI/XR-native organisations — taking ideas from earliest concept through to global launch. Building creative cultures, mentoring talent, and shaping product vision in spaces where the technology often hasn't been invented yet.</p>
+      </HomePillar>
+
+      <HomePillar heading="/strategy" image="/Spectator1.webp">
+        <p>Connecting emerging technology to brand opportunity. Building innovation roadmaps for partners including Bose, Niantic and Google — finding where R&amp;D capability, audience need and commercial reality intersect, and turning that into work that ships.</p>
+      </HomePillar>
+
+      <HomePillar heading="/product_&_experience" image="/Coach1.webp">
+        <p>Hands-on design of physical play products, AR experiences and immersive installations. From LEGO toy lines reaching audiences in the millions to flagship AR launches with industry leaders — bringing craft and detail to every layer of the work.</p>
+      </HomePillar>
+    </div>
+  </section>
+
+  <!-- SECTION LINKS -->
+  <section class="home-links">
+    <div class="wrap">
+      <a class="home-link" href="#about">/about</a>
+      <a class="home-link" href="/experience">/experience</a>
+      <a class="home-link" href="#process">/process</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* HERO — top gap comes from .page-main (global, site-wide); only bottom
+     padding here, mirroring how /experience's first section is spaced. */
+  .hero { padding-bottom: 140px; }   /* TODO: tokenise */
+
+  /* STATEMENT */
+  .home-statement .wrap {
+    padding: 0 0 140px;              /* TODO: tokenise */
+    border-bottom: var(--outline) solid var(--color-primary);
+  }
+  .home-statement p {
+    font-size: 32px;                 /* TODO: tokenise (HOME type scale — Session 4) */
+    font-weight: var(--font-weight-medium);
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .home-statement p + p { margin-top: 28px; }   /* TODO: tokenise */
+  .home-statement .link {
+    color: var(--color-primary);
+    border-bottom: 2px solid var(--color-primary);
+    padding-bottom: 1px;
+    cursor: pointer;
+  }
+
+  /* PILLARS — wrapper spacing; pillar internals live in HomePillar.astro. */
+  .pillars .wrap { padding: 80px 0 100px; }   /* TODO: tokenise */
+
+  /* SECTION LINKS */
+  .home-links { padding: 180px 0 240px; }     /* TODO: tokenise */
+  .home-links .wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-4);
+  }
+  .home-link {
+    font-size: 104px;                /* TODO: tokenise (HOME type scale — Session 4) */
+    font-weight: var(--font-weight-regular);
+    color: var(--color-primary);
+    line-height: 1.05;
+    cursor: pointer;
+    transition: opacity var(--duration-fast) var(--ease-standard),
+                padding-right var(--duration-standard) cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: -0.01em;
+  }
+  .home-link:hover {
+    opacity: 0.55;
+    padding-right: 16px;
+  }
+
+  /* TABLET/MOBILE fallbacks (prototype used 900 / 600 breakpoints here). */
+  @media (max-width: 900px) {
+    .hero { padding-bottom: 100px; }
+    .home-statement p { font-size: 24px; }      /* TODO: tokenise */
+    .home-statement .wrap { padding: 0 0 100px; }
+    .pillars .wrap { padding: 64px 0 80px; }
+    .home-links { padding: 120px 0 160px; }
+    .home-link { font-size: 64px; }             /* TODO: tokenise */
+  }
+  @media (max-width: 600px) {
+    .home-link { font-size: 48px; }             /* TODO: tokenise */
+  }
+</style>

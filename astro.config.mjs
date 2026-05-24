@@ -3,11 +3,6 @@ import { defineConfig, fontProviders } from 'astro/config';
 export default defineConfig({
   site: 'https://laurence-dawes.design',
   output: 'static',
-  // Stopgap: no index page exists yet, so the bare root would 404.
-  // Forward / → /experience until the HOME page is built.
-  redirects: {
-    '/': '/experience',
-  },
   // Self-hosted fonts (replaces the render-blocking Google Fonts <link>).
   // Astro downloads + optimizes the files at build, serves them same-origin
   // (hashed, immutably cached), and — via the <Font> component in <head> —
