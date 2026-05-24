@@ -14,7 +14,7 @@ export const clients = [
   { name: 'Google', file: 'Google.webp' },
   { name: 'Snap', file: 'Snap.webp' },
   { name: 'Amazon', file: 'Amazon.webp', hideOnMobile: true },
-  { name: 'Magic Leap', file: 'magic-leap.webp', scale: 1.4 },
+  { name: 'Magic Leap', file: 'magic-leap-dark.webp', scale: 1.4 },
   { name: 'Niantic', file: 'Niantic.webp' },
   { name: 'Bose', file: 'Bose.webp' },
   { name: 'Qualcomm', file: 'Qualcomm.webp' },
