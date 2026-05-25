@@ -50,21 +50,21 @@ import HomePillar from '../components/HomePillar.astro';
 </BaseLayout>
 
 <style>
-  /* HERO — full-bleed (no .wrap), flush under the navbar (page-top-gap 0, see
-     is:global below), 75vh tall via a HOME-local --hero-height override (the
-     shared token stays 85vh for ABOUT). The slideshow canvas already bakes the
-     blue duotone via its treatment CONFIG — same look as the ABOUT .duo photos —
-     so no .duo wrapper is needed here. Only bottom padding below. */
+  /* HERO — per the Figma designer notes:
+       • Tablet/Mobile (≤1279): full edge-to-edge width, flush under the navbar
+         (page-top-gap 0, see is:global below), 75vh tall; the canvas cover-crops
+         within the frame.
+       • Desktop/Large (≥1280): the hero MAINTAINS its 16:9 aspect at 75vh height,
+         so the width follows the aspect and may break outside the body width —
+         centred, overflow clipped. A 64px gap sits below the navbar.
+     75vh comes from a HOME-local --hero-height override (ABOUT's shared token
+     stays 85vh). The slideshow canvas already bakes the blue duotone via its
+     treatment CONFIG (same look as the ABOUT .duo photos), so no .duo wrapper. */
   .hero { --hero-height: 75vh; padding-bottom: var(--space-160); }
-  /* Desktop/Large: contain the hero to the content width at a 16:9 box (inset,
-     not edge-to-edge — matches the Figma direction). Tablet/Mobile (≤1279) keep
-     the full-bleed 75vh box above. The canvas cover-crops to whatever box it gets. */
   @media (min-width: 1280px) {
-    .hero-inner { max-width: var(--layout-max-width-desktop); margin: 0 auto; }
-    .hero :global(.hero-frame) { height: auto; aspect-ratio: 16 / 9; min-height: 0; }
-  }
-  @media (min-width: 1800px) {
-    .hero-inner { max-width: var(--layout-max-width-large); }
+    .hero { display: flex; justify-content: center; overflow: hidden; }
+    .hero-inner { height: 75vh; aspect-ratio: 16 / 9; flex: none; }
+    .hero :global(.hero-frame) { height: 100%; min-height: 0; }
   }
 
   /* STATEMENT — divider line below removed per Figma (pillars begin with no rule
@@ -128,8 +128,9 @@ import HomePillar from '../components/HomePillar.astro';
 </style>
 
 <style is:global>
-  /* HOME hero is flush under the navbar (Figma): zero the site-wide
-     page-top-gap for this route only. Set on .page-main itself — that's where
-     global.css reads it for padding-top. */
+  /* HOME hero gap (Figma): flush under the navbar on Tablet/Mobile (0), with a
+     64px gap on Desktop/Large. Set on .page-main itself — that's where global.css
+     reads it for padding-top. */
   .page-main { --page-top-gap: 0; }
+  @media (min-width: 1280px) { .page-main { --page-top-gap: 64px; } }
 </style>
