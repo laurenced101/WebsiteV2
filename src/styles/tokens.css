@@ -160,6 +160,14 @@
   --font-size-stat-tablet: 56px;
   --font-size-stat-mobile: 56px;
 
+  /* "Title" role — page titles (/experience, /process, /studies). Decoupled from
+     h1 so page titles tune independently of body h1 (HOME statement now uses h1).
+     Seeded to the h1 values, so no visual change until tuned in /styleguide. */
+  --font-size-title-large: 120px;
+  --font-size-title-desktop: 90px;
+  --font-size-title-tablet: 60px;
+  --font-size-title-mobile: 58px;
+
   /* Resolved per-role aliases — what components consume. Default to the
      Desktop tier (≤1799); overridden per breakpoint at the bottom of the file. */
   --font-size-display: var(--font-size-display-desktop);
@@ -172,6 +180,7 @@
   --font-size-button-large: var(--font-size-button-large-desktop);
   --font-size-feature: var(--font-size-feature-desktop);
   --font-size-stat: var(--font-size-stat-desktop);
+  --font-size-title: var(--font-size-title-desktop);
 
   /* Line-height + letter-spacing (Session 5). Unitless ratios / em values that
      scale with font-size, so — unlike font-size — they need no per-breakpoint
@@ -280,6 +289,7 @@
     --font-size-button-large: var(--font-size-button-large-large);
     --font-size-feature: var(--font-size-feature-large);
     --font-size-stat: var(--font-size-stat-large);
+    --font-size-title: var(--font-size-title-large);
     --page-top-gap: var(--page-top-gap-large);
     --layout-max-width-blog: var(--layout-max-width-blog-large);
   }
@@ -296,6 +306,7 @@
     --font-size-button-large: var(--font-size-button-large-tablet);
     --font-size-feature: var(--font-size-feature-tablet);
     --font-size-stat: var(--font-size-stat-tablet);
+    --font-size-title: var(--font-size-title-tablet);
     --page-top-gap: var(--page-top-gap-tablet);
   }
 }
@@ -311,6 +322,7 @@
     --font-size-button-large: var(--font-size-button-large-mobile);
     --font-size-feature: var(--font-size-feature-mobile);
     --font-size-stat: var(--font-size-stat-mobile);
+    --font-size-title: var(--font-size-title-mobile);
     --page-top-gap: var(--page-top-gap-mobile);
   }
 }
