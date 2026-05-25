@@ -83,7 +83,9 @@ Run through these in order **only when Laurence explicitly says "wrap up"** (or 
 
 3. **Notion ticket** — For any ticket moved to `In progress` this session: confirm the code is ready, then flip Status to `For Review` and fill "Review Notes (Claude)" with what changed and any caveats Laurence should watch for during testing. Never set `Done` — that's Laurence's call.
 
-4. **Memory sweep** — Review the session for:
+4. **Figma sync** — Review the session's changes for anything that altered the **layout or visual look** of the site without a matching Figma update (deliberate deviations from a frame, new/changed type tokens, spacing, new component states, asset issues, etc.). Append each as a checklist item to the **🔁 Recurring Figma Updates** ticket (#26, `36b12c70512f80aea9c6dcb04ffd55fd`) under the current `## YYYY-MM-DD cycle` heading — create that heading at the top if today's cycle doesn't exist yet. Per-ticket Figma updates remain the primary discipline; this is the safety net for drift between sessions. Nothing visual changed → skip.
+
+5. **Memory sweep** — Review the session for:
    - new feedback (corrections + confirmed approaches),
    - new project facts (initiatives, decisions, deadlines),
    - new references (external systems, docs, URLs),
@@ -91,4 +93,4 @@ Run through these in order **only when Laurence explicitly says "wrap up"** (or 
 
    Save anything durable; skip ephemeral task state.
 
-5. **Hand-off summary** — One short paragraph: what changed, what's pending Laurence's action (testing, deploy verification, ticket review), and what the next session should pick up.
+6. **Hand-off summary** — One short paragraph: what changed, what's pending Laurence's action (testing, deploy verification, ticket review), and what the next session should pick up.
