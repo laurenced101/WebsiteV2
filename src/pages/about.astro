@@ -26,7 +26,7 @@ const clients = [
   { name: 'Twitch', file: 'twitch.png' },
   { name: 'Disney', file: 'disney.png' },
   { name: 'Niantic', file: 'niantic.png' },
-  { name: 'FOX', file: 'fox.png' },
+  { name: 'FOX', file: 'fox.png', preTinted: true },   // Figma fill is clipped; this is the cell render (already blue) → skip the CSS tint
   { name: 'Qualcomm', file: 'qualcomm.png' },
   { name: 'Nike', file: 'nike.png' },
   { name: 'Unity', file: 'unity.png' },
@@ -91,7 +91,7 @@ const clients = [
       <p>Throughout his career Laurence has collaborated with many companies &amp; brands primarily in innovation-focused projects exploring the application of new technologies to business and brand objectives. Covering a wide variety of verticals, Laurence has extensive experience working closely and quickly within innovation and creative teams to give birth to truly forward-thinking work - whether inspiring the imagination of existing audiences totaling in the millions globally, or seeking to capture the attention of new audiences through never-seen-before experiences, Laurence thrives in high-collaboration environments.</p>
       <div class="about-clients">
         {clients.map((c) => (
-          <div class="about-client"><img src={`/about/clients/${c.file}`} alt={c.name} loading="lazy" /></div>
+          <div class:list={['about-client', c.preTinted && 'is-pretinted']}><img src={`/about/clients/${c.file}`} alt={c.name} loading="lazy" /></div>
         ))}
       </div>
     </div>
@@ -215,6 +215,11 @@ const clients = [
     grid-template-columns: repeat(4, minmax(0, 1fr));   /* 4-up every breakpoint; minmax(0,…) lets cells shrink so logos scale down rather than overflow on mobile */
     gap: var(--space-24);
     margin-top: var(--space-96);    /* larger gap before the wall (Figma) */
+    /* Match the prose body width (blog measure), centred — Desktop/Large only.
+       Tablet/Mobile run full content width (cap removed in the ≤1279 block). */
+    max-width: var(--layout-max-width-blog);
+    margin-left: auto;
+    margin-right: auto;
   }
   .about-client {
     position: relative;
@@ -244,6 +249,9 @@ const clients = [
     mix-blend-mode: lighten;
     pointer-events: none;
   }
+  /* FOX is already blue (cell-render fallback — its black source is clipped),
+     so it doesn't get the blue lighten overlay. */
+  .about-client.is-pretinted::after { content: none; }
 
   /* ===== TABLET (≤1279) ===== */
   @media (max-width: 1279px) {
@@ -252,7 +260,8 @@ const clients = [
     .about-intro p,
     .about-section h2,
     .about-section p { max-width: none; margin-left: 0; margin-right: 0; }
-    /* wall stays 4-up (base) at every breakpoint */
+    /* wall stays 4-up; runs full content width below desktop (matches the prose) */
+    .about-clients { max-width: none; margin-left: 0; margin-right: 0; }
   }
 
   /* ===== MOBILE (≤800) ===== */
