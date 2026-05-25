@@ -13,9 +13,20 @@ html, body {
 a { color: inherit; text-decoration: none; }
 button { font-family: inherit; }
 
+/* Sticky footer (site-wide): the body is a full-height grid (navbar / main / footer
+   = auto / 1fr / auto) so the footer is pinned to the bottom of the viewport on
+   short pages (e.g. /process, /studies) and follows the content on long ones.
+   Grid is used deliberately rather than a flex column — a flex column makes
+   descendant block widths indefinite, which breaks nested `1fr` grids such as the
+   ABOUT client wall (columns stop filling and overflow). */
+body { min-height: 100vh; display: grid; grid-template-rows: auto 1fr auto; grid-template-columns: minmax(0, 1fr); }
+
 /* Every page's content sits in <main class="page-main"> (BaseLayout), so the gap
    from the navbar to the first element is set once here and is identical site-wide. */
-.page-main { padding-top: var(--page-top-gap); }
+/* min-width:0 lets this grid item shrink to the viewport instead of growing to its
+   content's min-content (which would let wide children — e.g. the ABOUT logo grid —
+   push it past the viewport). */
+.page-main { padding-top: var(--page-top-gap); min-width: 0; }
 
 /* Duotone image treatment. Wrap an <img> in a `.duo` element to drive the brand
    blue in CSS rather than relying on a baked-in tone: (1) a saturation filter

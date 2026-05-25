@@ -30,13 +30,13 @@ const icons = [
 </BaseLayout>
 
 <style>
-  /* Top gap comes from .page-main (global). Generous bottom gap pushes the footer
-     down so the coming-soon content sits high (Figma). */
-  .process .wrap { padding-bottom: var(--space-240); }
+  /* Top gap comes from .page-main (global). The footer is pinned to the bottom
+     site-wide (sticky footer in global.css), so only a small bottom pad here. */
+  .process .wrap { padding-bottom: var(--space-48); }
   .process h1 {
     font-size: var(--font-size-title); font-weight: var(--weight-h1);
     color: var(--text-h1); line-height: var(--leading-h1);
-    margin-bottom: var(--space-48);
+    margin-bottom: var(--space-96);   /* bigger gap heading → icons */
   }
 
   /* Icons — always 5 across (grid), square cells, scaling down with the column.
@@ -53,15 +53,13 @@ const icons = [
   .coming-soon {
     font-size: var(--font-size-h2); font-weight: var(--weight-h2);
     line-height: var(--leading-h2); color: var(--ink);
-    margin-top: var(--space-48);
+    margin-top: var(--space-96);   /* bigger gap icons → coming soon */
   }
 
   @media (max-width: 1279px) {
     .process-icons { gap: var(--space-24); }
-    .process .wrap { padding-bottom: var(--space-160); }
   }
   @media (max-width: 800px) {
     .process-icons { gap: var(--space-12); }
-    .process .wrap { padding-bottom: var(--space-96); }
   }
 </style>
