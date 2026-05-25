@@ -25,6 +25,7 @@ import HomePillar from '../components/HomePillar.astro';
   <!-- PILLARS -->
   <section class="pillars">
     <div class="wrap">
+      <h3 class="pillars-label">Learn more</h3>
       <HomePillar heading="/design_leadership" image="/Workshop2.webp">
         <p>Two decades leading multi-disciplinary teams across LEGO, Trigger XR and AI/XR-native organisations — taking ideas from earliest concept through to global launch. Building creative cultures, mentoring talent, and shaping product vision in spaces where the technology often hasn't been invented yet.</p>
       </HomePillar>
@@ -42,9 +43,9 @@ import HomePillar from '../components/HomePillar.astro';
   <!-- SECTION LINKS -->
   <section class="home-links">
     <div class="wrap">
-      <a class="home-link" href="#about">/about</a>
-      <a class="home-link" href="/experience">/experience</a>
-      <a class="home-link" href="#process">/process</a>
+      <a class="home-link reveal" href="#about">/about</a>
+      <a class="home-link reveal" href="/experience">/experience</a>
+      <a class="home-link reveal" href="#process">/process</a>
     </div>
   </section>
 </BaseLayout>
@@ -74,7 +75,7 @@ import HomePillar from '../components/HomePillar.astro';
 
   /* STATEMENT — divider line below removed per Figma (pillars begin with no rule
      above the first one). */
-  .home-statement .wrap { padding: 0 0 var(--space-160); }
+  .home-statement .wrap { padding: 0 0 var(--space-240); }   /* bigger gap statement → pillars (#2) */
   .home-statement p {
     font-size: var(--font-size-h1);  /* bumped one role h2→h1 (#6); colour stays ink
                                         — dark prose with blue inline links */
@@ -94,6 +95,14 @@ import HomePillar from '../components/HomePillar.astro';
      Blue line at the top of the first pillar's header (same rhythm as the
      inter-pillar dividers / border-bottoms — Figma). */
   .pillars .wrap { padding: var(--space-64) 0 var(--space-96); }
+  /* "Learn more" heading above the expandable pillars (#3 / #2 — an h3). */
+  .pillars-label {
+    font-size: var(--font-size-h3);
+    font-weight: var(--weight-h3);
+    line-height: var(--leading-h3);
+    color: var(--text-h3);
+    margin-bottom: var(--space-32);
+  }
   .pillars :global(.pillar:first-child) { border-top: var(--outline) solid var(--color-primary); }
 
   /* SECTION LINKS — keep the (large) gap up to the pillars; reduce the gap down
@@ -113,20 +122,31 @@ import HomePillar from '../components/HomePillar.astro';
     color: var(--color-primary);
     line-height: var(--leading-tight);
     cursor: pointer;
+    /* Hover shift uses transform (GPU-composited) rather than padding — animating
+       padding reflows the row every frame, which is the glitch (#4). */
     transition: opacity var(--duration-fast) var(--ease-standard),
-                padding-right var(--duration-standard) cubic-bezier(0.4, 0, 0.2, 1);
+                transform var(--duration-standard) cubic-bezier(0.4, 0, 0.2, 1);
     letter-spacing: -0.01em;         /* optical tighten — no tracking token at this size */
   }
   .home-link:hover {
     opacity: 0.55;
-    padding-right: var(--space-16);
+    transform: translateX(calc(-1 * var(--space-16)));   /* right-aligned → shifts left */
   }
+  /* Link reveals (site-wide .reveal — see global.css): a base delay so the fade
+     reads deliberately rather than instantly, then a stagger down the three. */
+  .home-link { --reveal-delay: 0.2s; }
+  .home-link:nth-child(2) { --reveal-delay: 0.32s; }
+  .home-link:nth-child(3) { --reveal-delay: 0.44s; }
+
+  /* STATEMENT parallax: the .wrap is transformed by the script; promote it so the
+     scroll-linked transform/opacity stay smooth. Only while the script is active. */
+  .home-statement .wrap.parallax-on { will-change: transform, opacity; }
 
   /* Spacing tightens below desktop (standard 1279 breakpoint; mobile ≤800 inherits).
      Type sizes shift independently via the font-size tokens. */
   @media (max-width: 1279px) {
     .hero { padding-bottom: var(--space-128); }
-    .home-statement .wrap { padding: 0 0 var(--space-128); }
+    .home-statement .wrap { padding: 0 0 var(--space-160); }
     .pillars .wrap { padding: var(--space-48) 0 var(--space-64); }
     .home-links { padding: var(--space-160) 0 var(--space-64); }
   }
@@ -142,4 +162,74 @@ import HomePillar from '../components/HomePillar.astro';
        64px minimum margin on its left/right (--hero-gap, read in .hero-inner). */
     .page-main { --hero-gap: 64px; --page-top-gap: var(--hero-gap); }
   }
+
+  /* Statement starts hidden — applied via the <head> `reveal-ready` flag so it's
+     in effect before first paint (no flash on tall/portrait windows where it'd
+     otherwise be in view at load). The parallax script drives opacity + the
+     slide-up transform from here. Reduced motion / no JS → no flag → visible. */
+  html.reveal-ready .home-statement .wrap { opacity: 0; }
 </style>
+
+<script>
+  // STATEMENT — slide-up + fade, then a gentle parallax. Keyed to scroll distance
+  // from the TOP (not the element's viewport position), so it's ALWAYS hidden + low
+  // at load no matter the window shape. The hero has no motion; pillars none.
+  // Skipped under prefers-reduced-motion (and with no JS) — text just visible/static.
+  // The SLIDE (motion) and the FADE (opacity) are fully independent:
+  //   • SLIDE — its own slow scroll-distance (RISE_VH). Tune this freely; it can keep
+  //     going as you read down the (tall) statement. No "finish before the top" limit.
+  //   • FADE — tied to POSITION (FINISH_VH) so it's at full opacity before the top
+  //     nears the navbar, on any window shape. This is the ONLY part with that limit:
+  //     the top reaches the top in ~1 screen of scroll, so the fade can't be longer.
+  const STMT = {
+    SLIDE_START: 320,  // px the statement sits BELOW its resting place at load.
+    RISE_VH: 2.4,      // SLIDE speed: slide-up over this fraction of a viewport of
+                       // scroll — bigger = slower/longer motion (auto-capped to fit).
+    FINISH_VH: 0.2,    // FADE completes when the statement's top reaches this fraction
+                       // of the viewport from the top — fully faded before the navbar.
+    SPEED: 0.88,       // parallax lag once the slide is done (<1 = slower rise).
+    PARALLAX_VH: 1.0,  // bound the parallax lag over this much further scroll.
+  };
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const section = document.querySelector('.home-statement');
+  const wrap = section?.querySelector('.wrap');
+
+  if (!reduceMotion && section && wrap) {
+    const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+    wrap.classList.add('parallax-on');
+
+    function update() {
+      const vh = window.innerHeight;
+      const y = window.scrollY;
+      // SLIDE — its own slow scroll-distance, capped so it still completes within the
+      // page's available scroll on very tall (short-scroll) windows.
+      const cap = Math.max(1, document.documentElement.scrollHeight - vh) * 0.85;
+      const riseDist = Math.min(vh * STMT.RISE_VH, cap);
+      const slideP = clamp(y / riseDist, 0, 1);
+      const slide = STMT.SLIDE_START * Math.pow(1 - slideP, 3);   // slide up, easing out
+
+      // FADE — keyed to POSITION: completes as the statement's top (fixed by the layout
+      // above it; unaffected by the wrap transform) reaches the finish line near the
+      // top. Hidden at load (fadeP = 0 at scrollY 0) on any window shape.
+      const docTop = section.getBoundingClientRect().top + y;
+      const fadeDist = Math.max(vh * 0.4, docTop - vh * STMT.FINISH_VH);
+      const fadeP = clamp(y / fadeDist, 0, 1);
+      const opacity = fadeP * fadeP * (3 - 2 * fadeP);           // smoothstep
+
+      // Gentle parallax once the slide is done.
+      const past = clamp(y - riseDist, 0, vh * STMT.PARALLAX_VH);
+      const lag = (1 - STMT.SPEED) * past;
+      wrap.style.transform = `translate3d(0, ${slide + lag}px, 0)`;
+      wrap.style.opacity = `${opacity}`;
+    }
+
+    let ticking = false;
+    function onScroll() {
+      if (!ticking) { ticking = true; requestAnimationFrame(() => { update(); ticking = false; }); }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  }
+</script>

@@ -31,6 +31,7 @@ const authError = Astro.locals.studiesAuthError;
           </div>
           {authError && <p class="gate-error">Incorrect password — try again.</p>}
           <p class="gate-note">For access, please get in touch.</p>
+          <a class="gate-back" href="/">← Back</a>
         </form>
       </main>
     </body>
@@ -39,7 +40,7 @@ const authError = Astro.locals.studiesAuthError;
   <BaseLayout title="/studies" active="studies">
     <section class="studies">
       <div class="wrap">
-        <h1>/studies</h1>
+        <h1 class="reveal">/studies</h1>
         <p class="coming-soon">Coming soon.</p>
       </div>
     </section>
@@ -76,6 +77,13 @@ const authError = Astro.locals.studiesAuthError;
   }
   .gate-error { font-size: var(--font-size-caption); color: var(--color-primary); text-align: center; }
   .gate-note { font-size: var(--font-size-caption); color: var(--grey-mid); text-align: center; }
+  /* Back to home (#9) */
+  .gate-back {
+    font-size: var(--font-size-label); letter-spacing: var(--tracking-label);
+    text-transform: uppercase; color: var(--color-primary);
+    transition: opacity var(--duration-fast) var(--ease-standard);
+  }
+  .gate-back:hover { opacity: 0.6; }
 
   @media (max-width: 800px) {
     .gate-form { flex-direction: column; width: 100%; }

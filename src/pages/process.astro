@@ -18,10 +18,14 @@ const icons = [
 <BaseLayout title="/process" active="process">
   <section class="process">
     <div class="wrap">
-      <h1>/process</h1>
+      <h1 class="reveal">/process</h1>
       <div class="process-icons">
-        {icons.map((i) => (
-          <div class="process-icon"><img src={`/process/${i.file}`} alt={i.label} width="208" height="208" /></div>
+        {/* Sequential reveal: title first (delay 0), then each diagram left→right.
+            Stagger via --reveal-delay; the site-wide .reveal handles the rest. */}
+        {icons.map((i, idx) => (
+          <div class="process-icon reveal" style={`--reveal-delay: ${(0.35 + idx * 0.15).toFixed(2)}s`}>
+            <img src={`/process/${i.file}`} alt={i.label} width="208" height="208" />
+          </div>
         ))}
       </div>
       <p class="coming-soon">Coming soon.</p>

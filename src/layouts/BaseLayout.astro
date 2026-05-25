@@ -15,10 +15,38 @@ const { title = 'laurence-dawes.design', active } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <Font cssVariable="--font-space-grotesk" preload />
+    <script is:inline>
+      // Set the motion flag in <head>, before <body> paints, so the reveal/parallax
+      // initial-hidden CSS applies with NO flash of un-hidden content (e.g. the HOME
+      // statement, which can sit in view at load on tall/portrait windows). Absent
+      // under prefers-reduced-motion (and with no JS) → everything stays visible.
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('reveal-ready');
+      }
+    </script>
   </head>
   <body>
     <Navbar active={active} />
     <main class="page-main"><slot /></main>
     <Footer />
+    <script>
+      // Site-wide reveal-on-scroll. Any element with class `reveal` fades + slides
+      // up the first time it enters the viewport, then the animation is torn down so
+      // the element returns to its plain state (hover etc. untouched). Gated on the
+      // `reveal-ready` flag set in <head> — absent under reduced motion / no JS, where
+      // elements are simply visible.
+      if (document.documentElement.classList.contains('reveal-ready')) {
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            const el = e.target;
+            el.classList.add('is-revealed');
+            el.addEventListener('animationend', () => el.classList.remove('reveal', 'is-revealed'), { once: true });
+            io.unobserve(el);
+          }
+        }, { threshold: 0.2 });
+        document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+      }
+    </script>
   </body>
 </html>

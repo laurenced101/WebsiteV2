@@ -71,3 +71,25 @@ body { min-height: 100vh; display: grid; grid-template-rows: auto 1fr auto; grid
     margin-right: var(--layout-margin-mobile);
   }
 }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Reveal-on-scroll (site-wide). Add the `reveal` class to any element — page
+   headings, links, key blocks — and it fades + slides up the first time it
+   scrolls into view. The reveal is a one-shot keyframe animation (not a
+   transition), and BaseLayout's script removes the classes on animationend, so
+   the element ends in its plain resting state — never interfering with hover or
+   other transitions. Gated behind `html.reveal-ready` (added by that script only
+   when motion is allowed), so with no JS — or under prefers-reduced-motion —
+   nothing is ever hidden. Stagger a group via `--reveal-delay`; tune speed via
+   `--reveal-dur`. */
+html.reveal-ready .reveal { opacity: 0; }
+html.reveal-ready .reveal.is-revealed {
+  animation: reveal-rise var(--reveal-dur, 1s) cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0s) both;
+}
+/* Uses the `translate` property (not `transform`) so elements that animate their
+   own `transform` on hover (e.g. the HOME links) aren't fought by this animation
+   while it runs — the two properties compose independently. */
+@keyframes reveal-rise {
+  from { opacity: 0; translate: 0 24px; }
+  to   { opacity: 1; translate: 0 0; }
+}
