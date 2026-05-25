@@ -18,7 +18,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const { url, request, cookies, redirect, locals } = context;
   if (!url.pathname.startsWith('/studies')) return next();
 
-  const password = process.env.STUDIES_PASSWORD ?? '';
+  // Vercel runtime populates process.env; local `astro dev` exposes .env via
+  // import.meta.env. Prefer process.env (prod) and fall back to import.meta.env (dev).
+  const password = process.env.STUDIES_PASSWORD || import.meta.env.STUDIES_PASSWORD || '';
   const expected = password ? token(password) : '';
 
   // Login attempt.
