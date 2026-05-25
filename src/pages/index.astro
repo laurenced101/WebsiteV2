@@ -8,9 +8,10 @@ import HomeSlideshow from '../components/HomeSlideshow.astro';
 import HomePillar from '../components/HomePillar.astro';
 ---
 <BaseLayout title="laurence-dawes.design">
-  <!-- HERO SLIDESHOW — full-bleed, flush under the navbar, 75vh -->
+  <!-- HERO SLIDESHOW — contained 16:9 on desktop/large (matches Figma, inset);
+       full-bleed 75vh on tablet/mobile. -->
   <section class="hero">
-    <HomeSlideshow />
+    <div class="hero-inner"><HomeSlideshow /></div>
   </section>
 
   <!-- STATEMENT -->
@@ -54,14 +55,24 @@ import HomePillar from '../components/HomePillar.astro';
      shared token stays 85vh for ABOUT). The slideshow canvas already bakes the
      blue duotone via its treatment CONFIG — same look as the ABOUT .duo photos —
      so no .duo wrapper is needed here. Only bottom padding below. */
-  .hero { --hero-height: 75vh; padding-bottom: var(--space-128); }
+  .hero { --hero-height: 75vh; padding-bottom: var(--space-160); }
+  /* Desktop/Large: contain the hero to the content width at a 16:9 box (inset,
+     not edge-to-edge — matches the Figma direction). Tablet/Mobile (≤1279) keep
+     the full-bleed 75vh box above. The canvas cover-crops to whatever box it gets. */
+  @media (min-width: 1280px) {
+    .hero-inner { max-width: var(--layout-max-width-desktop); margin: 0 auto; }
+    .hero :global(.hero-frame) { height: auto; aspect-ratio: 16 / 9; min-height: 0; }
+  }
+  @media (min-width: 1800px) {
+    .hero-inner { max-width: var(--layout-max-width-large); }
+  }
 
   /* STATEMENT — divider line below removed per Figma (pillars begin with no rule
      above the first one). */
-  .home-statement .wrap { padding: 0 0 var(--space-128); }
+  .home-statement .wrap { padding: 0 0 var(--space-160); }
   .home-statement p {
-    font-size: var(--font-size-h2);  /* colour stays ink — dark prose with blue
-                                        inline links, not a blue heading */
+    font-size: var(--font-size-h1);  /* bumped one role h2→h1 (#6); colour stays ink
+                                        — dark prose with blue inline links */
     font-weight: var(--weight-h2);
     line-height: 1.4;
     color: var(--ink);
@@ -82,7 +93,7 @@ import HomePillar from '../components/HomePillar.astro';
 
   /* SECTION LINKS — keep the (large) gap up to the pillars; reduce the gap down
      to the footer; more spacing between the links themselves (Figma). */
-  .home-links { padding: var(--space-160) 0 var(--space-96); }
+  .home-links { padding: var(--space-240) 0 var(--space-96); }   /* bigger gap above the links (#4) */
   .home-links .wrap {
     display: flex;
     flex-direction: column;
@@ -109,10 +120,10 @@ import HomePillar from '../components/HomePillar.astro';
   /* Spacing tightens below desktop (standard 1279 breakpoint; mobile ≤800 inherits).
      Type sizes shift independently via the font-size tokens. */
   @media (max-width: 1279px) {
-    .hero { padding-bottom: var(--space-96); }
-    .home-statement .wrap { padding: 0 0 var(--space-96); }
+    .hero { padding-bottom: var(--space-128); }
+    .home-statement .wrap { padding: 0 0 var(--space-128); }
     .pillars .wrap { padding: var(--space-48) 0 var(--space-64); }
-    .home-links { padding: var(--space-96) 0 var(--space-64); }
+    .home-links { padding: var(--space-160) 0 var(--space-64); }
   }
 </style>
 

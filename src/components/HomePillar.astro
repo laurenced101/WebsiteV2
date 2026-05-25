@@ -42,9 +42,13 @@ const { heading, image, imageAlt = '', ctaHref = '/experience', ctaLabel = 'See 
                 background var(--duration-standard) var(--ease-standard),
                 color var(--duration-standard) var(--ease-standard);
   }
-  /* Hover = full blue bar, white text, heading nudged right (Figma). */
+  /* Hover (collapsed) = full blue bar, white text, heading nudged right (Figma). */
   .pillar-heading:hover { background: var(--color-primary); color: var(--surface); padding-left: var(--space-24); }
   .pillar-heading:hover::after { color: var(--surface); }
+  /* Hover while EXPANDED = the lighter blue (--expand-tint, as on /experience),
+     no nudge, text/× stay blue (#3). More specific, so it overrides the above. */
+  .pillar.expanded .pillar-heading:hover { background: var(--expand-tint); color: var(--color-primary); padding-left: 0; }
+  .pillar.expanded .pillar-heading:hover::after { color: var(--color-primary); }
   .pillar-heading::after {
     content: "+";
     font-size: var(--font-size-feature);  /* toggle scales with the heading */
