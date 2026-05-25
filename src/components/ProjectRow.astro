@@ -105,7 +105,9 @@ const logo = resolveImage(brandLogoPath);
     display: none;
   }
   .row-discipline { font-size: var(--font-size-label); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--grey-mid); }
-  .row-year { font-size: var(--font-size-caption); color: var(--text-caption); }
+  /* Year matches the discipline label's treatment (same size/tracking/colour) so
+     "2014" no longer reads larger than "PRODUCT" (#5). */
+  .row-year { font-size: var(--font-size-label); letter-spacing: var(--tracking-label); color: var(--grey-mid); }
 
   /* THUMB — blue duotone at rest (shared `.duo` utility), reveals to full colour
      on hover / when expanded. Reveal = restore the saturation knob to 1 AND fade
@@ -144,7 +146,7 @@ const logo = resolveImage(brandLogoPath);
     color: var(--text-body);
     /* Bigger gap between the slideshow deck and the body copy (Figma). */
     margin-top: var(--space-32);
-    margin-bottom: var(--space-24);
+    margin-bottom: var(--space-48);   /* more space before the meta details row (#6) */
   }
   .panel-meta {
     display: flex; gap: var(--space-32); flex-wrap: wrap;

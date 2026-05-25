@@ -150,6 +150,7 @@ const TYPE_ROLES = [
 
         {TYPE_ROLES.map((r) => (
           <div class="sg-type-row">
+            <code class="sg-role-name">{r.role}</code>
             <div class={`sg-sample sg-sample-${r.role}`}>
               <p>{r.a}</p>
               <p>{r.b}</p>
@@ -1184,6 +1185,12 @@ ${aliasBlock('mobile')}
         display: flex; flex-direction: column; align-items: stretch; gap: 14px;
         padding: 22px 0; border-bottom: 1px solid var(--grey-bg);
       }
+      /* Role name above each sample, so "title", "stat", etc. are identifiable. */
+      .sg-role-name {
+        font-family: var(--font-family-mono);
+        font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase;
+        color: var(--color-primary);
+      }
       .sg-type-tokens { display: flex; flex-flow: row wrap; gap: 3px 16px; }
       .sg-type-tokens div { display: flex; gap: 8px; }
 
@@ -1220,6 +1227,13 @@ ${aliasBlock('mobile')}
       .sg-sample-feature p { font-size: var(--font-size-feature); line-height: 1.05; color: var(--color-primary); font-weight: var(--font-weight-regular); }
       .sg-sample-button-large { max-width: 100%; }
       .sg-sample-button-large p { font-size: var(--font-size-button-large); line-height: 1.05; letter-spacing: -0.01em; color: var(--color-primary); font-weight: var(--font-weight-regular); }
+      /* stat (/experience numerals) + title (page titles) samples — these were
+         missing their font-size binding, so the editor controls had no visible
+         effect on the preview. */
+      .sg-sample-stat { max-width: 100%; }
+      .sg-sample-stat p { font-size: var(--font-size-stat); line-height: 1.05; color: var(--color-primary); font-weight: var(--weight-h1); }
+      .sg-sample-title { max-width: 100%; }
+      .sg-sample-title p { font-size: var(--font-size-title); line-height: var(--leading-h1); color: var(--text-h1); font-weight: var(--weight-h1); }
       .sg-demo-family { font-size: 26px; flex: 1 1 240px; }
 
       /* Font-weight samples */

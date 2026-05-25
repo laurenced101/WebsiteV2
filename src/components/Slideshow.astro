@@ -50,7 +50,6 @@ const frames = await Promise.all(
       <button class="slideshow-btn slideshow-prev" aria-label="Previous image">←</button>
       <button class="slideshow-btn slideshow-next" aria-label="Next image">→</button>
       <span class="slideshow-counter">1 / {total}</span>
-      <span class="slideshow-status">Auto-advancing</span>
     </div>
   )}
 </div>
@@ -108,16 +107,6 @@ const frames = await Promise.all(
     color: var(--ink); font-weight: var(--weight-label);
     min-width: 50px;
   }
-  .slideshow-status {
-    font-size: var(--font-size-label);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    color: var(--text-label);
-    opacity: 0;
-    transition: opacity var(--duration-standard) var(--ease-standard);
-    margin-left: auto;
-  }
-  .panel-slideshow-wrapper.auto-on .slideshow-status { opacity: 1; }
 
   @media (max-width: 1279px) {
     .slideshow-image { width: 360px; height: 240px; }
