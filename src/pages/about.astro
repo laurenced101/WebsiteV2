@@ -250,8 +250,10 @@ const clients = [
     pointer-events: none;
   }
   /* FOX is already blue (cell-render fallback — its black source is clipped),
-     so it doesn't get the blue lighten overlay. */
+     so it doesn't get the blue lighten overlay. It's also a chunky, near-square
+     mark, so cap it narrower than the others to match their visual weight. */
   .about-client.is-pretinted::after { content: none; }
+  .about-client.is-pretinted img { max-width: 60%; }
 
   /* ===== TABLET (≤1279) ===== */
   @media (max-width: 1279px) {
