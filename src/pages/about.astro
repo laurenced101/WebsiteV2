@@ -148,8 +148,10 @@ const clients = [
   @media (min-width: 1800px) { .about-hero-title { font-size: 56px; } }
 
   /* ===== INTRO ===== */
-  /* Larger gap above the intro (hero→intro) per Figma. */
-  .about-intro .wrap { padding-top: var(--space-96); padding-bottom: var(--space-64); }
+  /* Generous gaps around the intro: cover image → first paragraph (padding-top)
+     and first paragraph → Physical play heading (padding-bottom), both bumped
+     per Figma feedback. */
+  .about-intro .wrap { padding-top: var(--space-128); padding-bottom: var(--space-96); }
   .about-intro p {
     font-size: var(--font-size-body);   /* body role per Figma (was an h3 lede) */
     font-weight: var(--weight-body);
@@ -159,7 +161,8 @@ const clients = [
   .about-intro p + p { margin-top: var(--space-24); }
 
   /* ===== SECTIONS ===== */
-  .about-section .wrap { padding-bottom: var(--space-96); }
+  /* More breathing room between sections (Figma feedback: "larger gap here"). */
+  .about-section .wrap { padding-bottom: var(--space-128); }
   /* Much larger gap before the footer (Figma). */
   .about-section--last .wrap { padding-bottom: var(--space-240); }
   /* Section headings sized to the h3 role (Figma), kept brand-blue (the h3 role
@@ -170,7 +173,8 @@ const clients = [
     line-height: var(--leading-h3);
     letter-spacing: var(--tracking-h3);
     color: var(--color-primary);
-    margin-bottom: var(--space-24);
+    /* More space heading → body (Figma feedback: "larger gap here"). */
+    margin-bottom: var(--space-32);
   }
   .about-section p {
     font-size: var(--font-size-body);
@@ -200,7 +204,8 @@ const clients = [
     grid-template-columns: 1fr 1fr;
     gap: var(--space-24);
     align-items: start;
-    margin-top: var(--space-32);
+    /* More space above the image pair (Figma feedback: "larger gap here"). */
+    margin-top: var(--space-48);
   }
 
   /* ===== CLIENT WALL ===== */

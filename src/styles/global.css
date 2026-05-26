@@ -18,8 +18,11 @@ button { font-family: inherit; }
    short pages (e.g. /process, /studies) and follows the content on long ones.
    Grid is used deliberately rather than a flex column — a flex column makes
    descendant block widths indefinite, which breaks nested `1fr` grids such as the
-   ABOUT client wall (columns stop filling and overflow). */
-body { min-height: 100vh; display: grid; grid-template-rows: auto 1fr auto; grid-template-columns: minmax(0, 1fr); }
+   ABOUT client wall (columns stop filling and overflow).
+   min-height is the global MIN PAGE LENGTH (--min-page-height, >100vh): on sparse
+   pages the 1fr main absorbs the extra height, pushing the footer below the fold
+   so it always feels far enough down. Long pages exceed it and grow naturally. */
+body { min-height: var(--min-page-height); display: grid; grid-template-rows: auto 1fr auto; grid-template-columns: minmax(0, 1fr); }
 
 /* Every page's content sits in <main class="page-main"> (BaseLayout), so the gap
    from the navbar to the first element is set once here and is identical site-wide. */

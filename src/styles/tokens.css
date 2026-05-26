@@ -60,6 +60,13 @@
      one shared knob so it's tunable. */
   --hero-height: 85vh;
 
+  /* Minimum total page length (site-wide). Floors every page's height so the
+     footer always lands BELOW the fold — even on sparse pages (/process,
+     /studies). Set >100vh so there's a little scroll past the fold before the
+     footer, rather than it sitting flush at the viewport bottom. Applied to
+     <body> in global.css (the sticky-footer grid). Viewport-relative; one knob. */
+  --min-page-height: 150vh;
+
   /* Spacing scale — primitives, no role aliases (Session 5).
      Spacing applies contextually to many components, so a "role" doesn't map
      cleanly: components consume these directly (e.g. var(--space-16)). Covers

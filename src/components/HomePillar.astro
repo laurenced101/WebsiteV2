@@ -45,21 +45,29 @@ const { heading, image, imageAlt = '', ctaHref = '/experience', ctaLabel = 'See 
   /* Hover (collapsed) = full blue bar, white text, heading nudged right (Figma). */
   .pillar-heading:hover { background: var(--color-primary); color: var(--surface); padding-left: var(--space-24); }
   .pillar-heading:hover::after { color: var(--surface); }
-  /* Hover while EXPANDED = the lighter blue (--expand-tint, as on /experience),
-     no nudge, text/× stay blue (#3). More specific, so it overrides the above. */
-  .pillar.expanded .pillar-heading:hover { background: var(--expand-tint); color: var(--color-primary); padding-left: 0; }
-  .pillar.expanded .pillar-heading:hover::after { color: var(--color-primary); }
+  /* Hover while EXPANDED = keep the DEFAULT look (no tint background, no nudge,
+     text/× stay blue); instead the × grows a little to signal it's interactive
+     (Figma feedback). More specific, so it overrides the collapsed-hover rule. */
+  .pillar.expanded .pillar-heading:hover { background: transparent; color: var(--color-primary); padding-left: 0; }
+  .pillar.expanded .pillar-heading:hover::after { transform: rotate(45deg) scale(1.18); color: var(--color-primary); }
   .pillar-heading::after {
-    content: "+";
-    font-size: var(--font-size-feature);  /* toggle scales with the heading */
-    font-weight: var(--font-weight-light);
+    content: "";
+    /* Drawn as two thin crossing bars rather than a "+" font glyph: the variable
+       font floors at weight 300, so a glyph can't get any thinner — these
+       hairline bars give the lighter line weight we want at this size (Figma
+       feedback). font-size only sizes the box (em units below) so the toggle
+       still scales per breakpoint with the heading; the bump above is kept. */
+    font-size: calc(var(--font-size-feature) * 1.4);
+    width: 0.55em; height: 0.55em;
+    flex: none;
     color: var(--color-primary);
+    background:
+      linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat,
+      linear-gradient(currentColor, currentColor) center / 2px 100% no-repeat;
     transition: transform var(--duration-standard) var(--ease-standard),
                 color var(--duration-standard) var(--ease-standard);
-    line-height: 1;
   }
-  /* Open = the white DEFAULT look (NOT blue), with the + rotated to × (Figma).
-     Blue is reserved for hover only. */
+  /* Open = the + rotated 45° to an × (Figma). */
   .pillar.expanded .pillar-heading::after { transform: rotate(45deg); }
 
   .pillar-panel {
@@ -88,7 +96,8 @@ const { heading, image, imageAlt = '', ctaHref = '/experience', ctaLabel = 'See 
     gap: var(--space-8);
     color: var(--color-primary);
     border-bottom: var(--outline) solid var(--color-primary);
-    font-size: var(--font-size-label);
+    /* One role up from label → caption (Figma feedback: "go a size larger"). */
+    font-size: var(--font-size-caption);
     text-transform: uppercase;
     letter-spacing: var(--tracking-wide);
     padding-bottom: 2px;

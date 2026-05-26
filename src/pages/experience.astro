@@ -108,8 +108,14 @@ const clientLogos = clients
     column-gap: var(--space-24);
     align-items: center;
   }
+  /* Tablet: the thumbnail is widened to a clear landscape rectangle (Figma
+     feedback: "make images more RECTANGLE"). Discipline/Year keep their normal
+     positions — they just shift left naturally as the wider thumb shrinks the
+     project column (the only movement that note intended). Brand column widened
+     130→160 to match the row height so the square brand-logo tile fills the full
+     height without overflowing into the project title. */
   @media (max-width: 1279px) {
-    .index-grid { grid-template-columns: 130px 1fr 100px 50px 160px; column-gap: var(--space-12); }
+    .index-grid { grid-template-columns: 160px 1fr 100px 50px 210px; column-gap: var(--space-12); }
   }
 </style>
 
