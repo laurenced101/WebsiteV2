@@ -36,16 +36,32 @@ const { title = 'laurence-dawes.design', active } = Astro.props;
       // `reveal-ready` flag set in <head> — absent under reduced motion / no JS, where
       // elements are simply visible.
       if (document.documentElement.classList.contains('reveal-ready')) {
+        const reveal = (el) => {
+          el.classList.add('is-revealed');
+          el.addEventListener('animationend', () => el.classList.remove('reveal', 'is-revealed'), { once: true });
+        };
         const io = new IntersectionObserver((entries) => {
           for (const e of entries) {
             if (!e.isIntersecting) continue;
             const el = e.target;
-            el.classList.add('is-revealed');
-            el.addEventListener('animationend', () => el.classList.remove('reveal', 'is-revealed'), { once: true });
+            // A `data-reveal-group` container triggers ALL its `.reveal` descendants
+            // together (each keeps its own `--reveal-delay` stagger), so the block
+            // becomes the single in-view trigger instead of each child firing on its
+            // own visibility. A plain `.reveal` element just reveals itself.
+            if (el.hasAttribute('data-reveal-group')) {
+              el.querySelectorAll('.reveal').forEach(reveal);
+            } else {
+              reveal(el);
+            }
             io.unobserve(el);
           }
         }, { threshold: 0.2 });
-        document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+        // Observe reveal-group containers + any standalone `.reveal` (i.e. not
+        // inside a group — those are driven by their group's trigger).
+        document.querySelectorAll('[data-reveal-group]').forEach((el) => io.observe(el));
+        document.querySelectorAll('.reveal').forEach((el) => {
+          if (!el.closest('[data-reveal-group]')) io.observe(el);
+        });
       }
     </script>
   </body>

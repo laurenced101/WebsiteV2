@@ -40,9 +40,10 @@ import HomePillar from '../components/HomePillar.astro';
     </div>
   </section>
 
-  <!-- SECTION LINKS -->
+  <!-- SECTION LINKS — the whole block is the reveal trigger (data-reveal-group);
+       each link then reveals on its own staggered --reveal-delay (CSS below). -->
   <section class="home-links">
-    <div class="wrap">
+    <div class="wrap" data-reveal-group>
       <a class="home-link reveal" href="#about">/about</a>
       <a class="home-link reveal" href="/experience">/experience</a>
       <a class="home-link reveal" href="#process">/process</a>
@@ -222,10 +223,19 @@ import HomePillar from '../components/HomePillar.astro';
       const lag = (1 - STMT.SPEED) * past;
       wrap.style.transform = `translate3d(0, ${slide + lag}px, 0)`;
       wrap.style.opacity = `${opacity}`;
+
+      // Past this scroll point both the slide/parallax and the fade are fully
+      // settled — the transform/opacity stop changing, so onScroll can skip the
+      // work (and its forced layout reads) entirely while you're down the page.
+      activeEnd = riseDist + vh * STMT.PARALLAX_VH;
     }
 
     let ticking = false;
+    let activeEnd = Infinity;
     function onScroll() {
+      // Nothing to recompute once scrolled past the statement's active range;
+      // re-engages automatically when you scroll back up into it.
+      if (window.scrollY > activeEnd) return;
       if (!ticking) { ticking = true; requestAnimationFrame(() => { update(); ticking = false; }); }
     }
     window.addEventListener('scroll', onScroll, { passive: true });

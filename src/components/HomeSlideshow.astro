@@ -6,8 +6,8 @@
 //  - Sizing fits the parent .hero-frame (5:3) via a ResizeObserver, instead of
 //    fitCanvas() filling the viewport on a window-resize listener. The
 //    cover-crop in drawSlideWithKB handles the 5:3-vs-source aspect mismatch.
-//  - Hover over the frame pauses the SLIDE timer only; the canvas keeps
-//    rendering so the static treatment (noise/scanlines/glitch) stays alive.
+//  - The render loop pauses entirely while the hero is scrolled off-screen
+//    (IntersectionObserver) so it stops competing for the main thread.
 //  - Mobile floors (mobileBreakpoint 800 / mobileMinHeight 500) are applied to
 //    the .hero-frame box in CSS below, not to the viewport.
 //
@@ -46,8 +46,9 @@
 
 <script>
   // ─────────────────────────────────────────────────────────────
-  //  CONFIG — locked. Do not tweak (per the brief). Tokenising these
-  //  for the live /styleguide editor is a deliberate follow-up.
+  //  CONFIG — locked baseline (per the brief), except crossfadeDuration, tuned
+  //  up for a smoother dissolve. Tokenising these for the live /styleguide editor
+  //  is a deliberate follow-up.
   // ─────────────────────────────────────────────────────────────
   const CONFIG = {
     // SLIDES — locked order. Bare filenames; resolved to /home-slideshow/ below
@@ -71,7 +72,8 @@
 
     // TIMING
     slideDuration:     2600,
-    crossfadeDuration: 200,
+    crossfadeDuration: 500,   // raised 200→500 for a smoother dissolve (~15 frames
+                              // @30fps instead of ~6); slide hold unchanged.
 
     // DUOTONE
     darkColor:  [0, 0, 245],
@@ -125,13 +127,17 @@
   let glitchTimer = 0;
   let prefersReducedMotion = false;
   let animationRunning = false;
+  // True while the hero is in (or near) the viewport. When it scrolls away the
+  // render loop stops entirely — the canvas is invisible offscreen, so this is a
+  // zero-visual-change optimization that hands the main thread back to the rest
+  // of the page (pillar hover/expand below the hero). Set by an IntersectionObserver.
+  let heroInView = true;
   const treatedSlides = [];
 
-  // Slide timing decoupled from the RAF clock so hover-to-pause can freeze the
-  // slide rotation/crossfade while the per-frame static treatment keeps running.
-  let slideClock = 0;     // ms — only advances while not paused
+  // Slide timing accumulates per RENDERED frame (not a wall clock), so it freezes
+  // automatically while the loop is stopped off-screen and resumes without jumping.
+  let slideClock = 0;     // ms
   let lastLoopT = 0;      // timestamp of the previous rendered frame
-  let paused = false;
 
   const frame   = document.getElementById('heroFrame');
   const visible = document.getElementById('heroCanvas');
@@ -188,9 +194,19 @@
     });
     ro.observe(frame);
 
-    // Hover pauses the slide timer only (canvas keeps rendering — see loop()).
-    frame.addEventListener('mouseenter', () => paused = true);
-    frame.addEventListener('mouseleave', () => paused = false);
+    // Pause the whole render loop while the hero is off-screen so it stops
+    // burning the main thread (noise generation + overlay-blend composite +
+    // scanlines) while you interact with the page below. rootMargin gives a head
+    // start so it's already rendering by the time it scrolls back into view.
+    const io = new IntersectionObserver((entries) => {
+      const wasInView = heroInView;
+      heroInView = entries[0].isIntersecting;
+      if (heroInView && !wasInView && animationRunning && !prefersReducedMotion) {
+        lastLoopT = 0;   // reset the frame-delta so the slide clock doesn't jump
+        requestAnimationFrame(loop);
+      }
+    }, { rootMargin: '150px' });
+    io.observe(frame);
 
     // Reduced-motion: respect the user's OS-level setting.
     const reducedMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -215,8 +231,16 @@
     }
   }
 
+  // Cap the canvas backing resolution. The hero is a heavy duotone + noise +
+  // scanline treatment, so rendering at full retina (dpr 2–3) is wasted work —
+  // every per-frame op (slide draw, the overlay-blend noise composite, scanlines)
+  // scales with pixel count, and Chrome in particular gets expensive on the blend
+  // at high res. 1.5 stays crisp under the grain while cutting ~1.8× the pixels vs
+  // dpr 2 (and 4× vs dpr 3). Single knob; raise it if any softness shows.
+  const RENDER_SCALE_CAP = 1.5;
+
   function fitCanvas() {
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = Math.min(window.devicePixelRatio || 1, RENDER_SCALE_CAP);
     const dw = frame.clientWidth;
     const dh = frame.clientHeight;
     if (dw === 0 || dh === 0) return;
@@ -228,8 +252,11 @@
     visible.height = Math.max(1, Math.round(dh * dpr));
     vctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    noiseW = Math.max(1, Math.round(dw * CONFIG.noiseResScale));
-    noiseH = Math.max(1, Math.round(dh * CONFIG.noiseResScale));
+    // Generate noise at no more than the rendered resolution. Oversampling it
+    // (noiseResScale) beyond the now-capped backing just burns the 10fps refresh
+    // loop on pixels that get downscaled away — the cap matches grain to output.
+    noiseW = Math.max(1, Math.min(Math.round(dw * CONFIG.noiseResScale), visible.width));
+    noiseH = Math.max(1, Math.min(Math.round(dh * CONFIG.noiseResScale), visible.height));
     noise.width  = noiseW;
     noise.height = noiseH;
     noiseImageData = nctx.createImageData(noiseW, noiseH);
@@ -284,7 +311,10 @@
 
     vctx.save();
     vctx.globalAlpha = alpha;
-    vctx.imageSmoothingQuality = 'high';
+    // 'low' (bilinear) instead of 'high': the per-frame downscale of the full-res
+    // treated slide is a real cost in Chrome, and any quality difference is hidden
+    // under the noise + scanlines on top.
+    vctx.imageSmoothingQuality = 'low';
     vctx.drawImage(slideCanvas, sx, sy, sw, sh, 0, 0, displayW, displayH);
     vctx.restore();
   }
@@ -314,7 +344,10 @@
   }
 
   function loop(t) {
-    if (!animationRunning) return;
+    // Stop (don't reschedule) when paused for reduced motion or while the hero is
+    // scrolled out of view; the IntersectionObserver below restarts the loop when
+    // it returns. The last drawn frame stays on the canvas in the meantime.
+    if (!animationRunning || !heroInView) return;
     requestAnimationFrame(loop);
     if (t - lastFrame < 1000 / CONFIG.fps) return;
 
@@ -324,7 +357,7 @@
     if (dt > 100) dt = 100;
     lastLoopT = t;
     lastFrame = t;
-    if (!paused) slideClock += dt;
+    slideClock += dt;
 
     const N = treatedSlides.length;
     const slot = CONFIG.slideDuration + CONFIG.crossfadeDuration;
@@ -352,9 +385,14 @@
       drawSlideWithKB(treatedSlides[slideIdx], tInSlot, 1.0);
     } else {
       const fadeT = (tInSlot - CONFIG.slideDuration) / CONFIG.crossfadeDuration;
+      // Ease the blend with a smoothstep rather than a linear ramp — softens the
+      // in/out so the dissolve doesn't start or stop abruptly. (Outgoing is drawn
+      // opaque and the incoming composites over it at the eased alpha, which is a
+      // true crossfade: incoming*a + outgoing*(1-a).)
+      const fadeEased = fadeT * fadeT * (3 - 2 * fadeT);
       const nextIdx = (slideIdx + 1) % N;
       drawSlideWithKB(treatedSlides[slideIdx], tInSlot, 1.0);
-      drawSlideWithKB(treatedSlides[nextIdx], fadeT * CONFIG.crossfadeDuration, fadeT);
+      drawSlideWithKB(treatedSlides[nextIdx], fadeT * CONFIG.crossfadeDuration, fadeEased);
     }
 
     vctx.restore();
