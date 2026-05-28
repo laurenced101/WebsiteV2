@@ -29,12 +29,13 @@ const { heading, image, imageAlt = '', ctaHref = '/experience', ctaLabel = 'See 
   .pillar { border-bottom: var(--outline) solid var(--color-primary); }
   .pillar-heading {
     font-size: var(--font-size-feature);
-    font-weight: var(--font-weight-regular);
-    color: var(--color-primary);
+    font-weight: var(--weight-feature);
+    color: var(--text-feature);
     cursor: pointer;
     padding: var(--space-48) 0;
     margin: 0;
-    line-height: 1;
+    line-height: var(--leading-feature);
+    letter-spacing: var(--tracking-feature);
     display: flex;
     align-items: center;
     justify-content: space-between;

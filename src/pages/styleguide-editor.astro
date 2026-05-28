@@ -111,10 +111,22 @@
         roleGroup('body', 'Body'),
         roleGroup('caption', 'Caption'),
         roleGroup('label', 'Label'),
-        // Size-only roles (no colour/weight/leading aliases — the consumers set those).
-        { title: 'Large button (HOME links)', controls: [bpsize('--font-size-button-large', 24, 240, 1)] },
-        { title: 'Feature heading (HOME pillars)', controls: [bpsize('--font-size-feature', 16, 160, 1)] },
-        // Stat carries a full alias set (decoupled from display), minus paragraph/measure.
+        // These carry a full alias set (size + colour/weight/leading/tracking), minus
+        // paragraph/measure — single-line display text doesn't use those (Ticket 31).
+        { title: 'Large button (HOME links)', controls: [
+          bpsize('--font-size-button-large', 24, 240, 1),
+          alias('--text-button-large', COLOR_PRIMS),
+          alias('--weight-button-large', WEIGHT_PRIMS),
+          alias('--leading-button-large', LEADING_PRIMS),
+          alias('--tracking-button-large', TRACKING_PRIMS),
+        ] },
+        { title: 'Feature heading (HOME pillars)', controls: [
+          bpsize('--font-size-feature', 16, 160, 1),
+          alias('--text-feature', COLOR_PRIMS),
+          alias('--weight-feature', WEIGHT_PRIMS),
+          alias('--leading-feature', LEADING_PRIMS),
+          alias('--tracking-feature', TRACKING_PRIMS),
+        ] },
         { title: 'Stat number (/experience)', controls: [
           bpsize('--font-size-stat', 16, 200, 1),
           alias('--text-stat', COLOR_PRIMS),
@@ -122,7 +134,13 @@
           alias('--leading-stat', LEADING_PRIMS),
           alias('--tracking-stat', TRACKING_PRIMS),
         ] },
-        { title: 'Title (page titles)', controls: [bpsize('--font-size-title', 24, 240, 1)] },
+        { title: 'Title (page titles)', controls: [
+          bpsize('--font-size-title', 24, 240, 1),
+          alias('--text-title', COLOR_PRIMS),
+          alias('--weight-title', WEIGHT_PRIMS),
+          alias('--leading-title', LEADING_PRIMS),
+          alias('--tracking-title', TRACKING_PRIMS),
+        ] },
         { title: 'Typography — shared', controls: [
           text('--font-family-primary'),
           text('--font-family-mono'),
@@ -482,6 +500,7 @@ ${roles.map((r) => `  --font-size-${r}: var(--font-size-${r}-desktop);`).join('\
   --leading-snug: ${g('--leading-snug')};
   --leading-normal: ${g('--leading-normal')};
   --leading-loose: ${g('--leading-loose')};
+  --leading-relaxed: ${g('--leading-relaxed')};
 
   /* Line-height role aliases */
 ${LEADING_ALIASES.map((a) => `  ${a}: var(${aliasTarget(readVal, a, LEADING_PRIMS)});`).join('\n')}
@@ -490,6 +509,7 @@ ${LEADING_ALIASES.map((a) => `  ${a}: var(${aliasTarget(readVal, a, LEADING_PRIM
   --tracking-tight: ${g('--tracking-tight')};
   --tracking-normal: ${g('--tracking-normal')};
   --tracking-wide: ${g('--tracking-wide')};
+  --tracking-snug: ${g('--tracking-snug')};
 
   /* Letter-spacing role aliases */
 ${TRACKING_ALIASES.map((a) => `  ${a}: var(${aliasTarget(readVal, a, TRACKING_PRIMS)});`).join('\n')}

@@ -119,15 +119,15 @@ import HomePillar from '../components/HomePillar.astro';
     font-size: var(--font-size-button-large);  /* dedicated "large button" type
                                                   role, editable per breakpoint in
                                                   /styleguide (Figma) */
-    font-weight: var(--font-weight-regular);
-    color: var(--color-primary);
-    line-height: var(--leading-tight);
+    font-weight: var(--weight-button-large);
+    color: var(--text-button-large);
+    line-height: var(--leading-button-large);
     cursor: pointer;
     /* Hover shift uses transform (GPU-composited) rather than padding — animating
        padding reflows the row every frame, which is the glitch (#4). */
     transition: opacity var(--duration-fast) var(--ease-standard),
                 transform var(--duration-standard) cubic-bezier(0.4, 0, 0.2, 1);
-    letter-spacing: -0.01em;         /* optical tighten — no tracking token at this size */
+    letter-spacing: var(--tracking-button-large);
   }
   .home-link:hover {
     opacity: 0.55;

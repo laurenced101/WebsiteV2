@@ -126,13 +126,13 @@ const TYPE_ROLES = [
       <section class="sg-section">
         <h2>Type roles</h2>
         <p class="sg-note">
-          Seven type roles (plus a size-only <code>button-large</code> role for the
-        oversized HOME section links). Each sample consumes <em>all</em> of its role's tokens — font
+          Each sample consumes <em>all</em> of its role's tokens — font
           size (per-breakpoint, so resize to watch it shift across Large&nbsp;1800+,
           Desktop&nbsp;≤1799, Tablet&nbsp;≤1279, Mobile&nbsp;≤800), colour, weight,
-          line-height, letter-spacing, paragraph spacing and measure — so editing any
-          of them in the token editor updates the sample in place. The gap between each
-          role's two paragraphs is its <code>--paragraph-*</code> token.
+          line-height and letter-spacing (the seven prose roles also carry paragraph
+          spacing and measure) — so editing any of them in the token editor updates the
+          sample in place. The gap between a role's two paragraphs is its
+          <code>--paragraph-*</code> token.
         </p>
 
         {TYPE_ROLES.map((r) => (
@@ -359,6 +359,10 @@ const TYPE_ROLES = [
           <div class="sg-type-tokens"><div><code class="sg-name">--leading-snug</code> <code class="sg-val" data-token="--leading-snug"></code></div></div>
         </div>
         <div class="sg-lh-row">
+          <p class="sg-lh-sample" style="line-height: var(--leading-relaxed)">Relaxed — the quick brown fox jumps over the lazy dog and keeps on running across two full lines of measure.</p>
+          <div class="sg-type-tokens"><div><code class="sg-name">--leading-relaxed</code> <code class="sg-val" data-token="--leading-relaxed"></code></div></div>
+        </div>
+        <div class="sg-lh-row">
           <p class="sg-lh-sample" style="line-height: var(--leading-normal)">Normal — the quick brown fox jumps over the lazy dog and keeps on running across two full lines of measure.</p>
           <div class="sg-type-tokens"><div><code class="sg-name">--leading-normal</code> <code class="sg-val" data-token="--leading-normal"></code></div></div>
         </div>
@@ -370,7 +374,7 @@ const TYPE_ROLES = [
         <h3 class="sg-subhead">Role aliases</h3>
         <p class="sg-note">Each alias currently points at the primitive shown — re-map in the editor.</p>
         <ul class="sg-alias-list">
-          {['--leading-display', '--leading-h1', '--leading-h2', '--leading-h3', '--leading-body', '--leading-caption', '--leading-label', '--leading-stat'].map((a) => (
+          {['--leading-display', '--leading-h1', '--leading-h2', '--leading-h3', '--leading-body', '--leading-caption', '--leading-label', '--leading-stat', '--leading-feature', '--leading-button-large', '--leading-title'].map((a) => (
             <li class="sg-alias-item">
               <code class="sg-name">{a}</code>
               <span class="sg-alias-arrow">→</span>
@@ -397,6 +401,10 @@ const TYPE_ROLES = [
           <div class="sg-type-tokens"><div><code class="sg-name">--tracking-tight</code> <code class="sg-val" data-token="--tracking-tight"></code></div></div>
         </div>
         <div class="sg-ls-row">
+          <p class="sg-ls-sample" style="letter-spacing: var(--tracking-snug)">Snug tracking — oversized links</p>
+          <div class="sg-type-tokens"><div><code class="sg-name">--tracking-snug</code> <code class="sg-val" data-token="--tracking-snug"></code></div></div>
+        </div>
+        <div class="sg-ls-row">
           <p class="sg-ls-sample" style="letter-spacing: var(--tracking-normal)">Normal tracking — body measure</p>
           <div class="sg-type-tokens"><div><code class="sg-name">--tracking-normal</code> <code class="sg-val" data-token="--tracking-normal"></code></div></div>
         </div>
@@ -408,7 +416,7 @@ const TYPE_ROLES = [
         <h3 class="sg-subhead">Role aliases</h3>
         <p class="sg-note">Each alias currently points at the primitive shown — re-map in the editor.</p>
         <ul class="sg-alias-list">
-          {['--tracking-display', '--tracking-h1', '--tracking-h2', '--tracking-h3', '--tracking-body', '--tracking-caption', '--tracking-label', '--tracking-stat'].map((a) => (
+          {['--tracking-display', '--tracking-h1', '--tracking-h2', '--tracking-h3', '--tracking-body', '--tracking-caption', '--tracking-label', '--tracking-stat', '--tracking-feature', '--tracking-button-large', '--tracking-title'].map((a) => (
             <li class="sg-alias-item">
               <code class="sg-name">{a}</code>
               <span class="sg-alias-arrow">→</span>
@@ -693,16 +701,16 @@ const TYPE_ROLES = [
       .sg-sample-label p:not(:last-child) { margin-bottom: var(--paragraph-label); }
       /* Size-only roles (match HOME's .home-link / pillar headings: brand blue, regular). */
       .sg-sample-feature { max-width: 100%; }
-      .sg-sample-feature p { font-size: var(--font-size-feature); line-height: 1.05; color: var(--color-primary); font-weight: var(--font-weight-regular); }
+      .sg-sample-feature p { font-size: var(--font-size-feature); line-height: var(--leading-feature); letter-spacing: var(--tracking-feature); color: var(--text-feature); font-weight: var(--weight-feature); }
       .sg-sample-button-large { max-width: 100%; }
-      .sg-sample-button-large p { font-size: var(--font-size-button-large); line-height: 1.05; letter-spacing: -0.01em; color: var(--color-primary); font-weight: var(--font-weight-regular); }
+      .sg-sample-button-large p { font-size: var(--font-size-button-large); line-height: var(--leading-button-large); letter-spacing: var(--tracking-button-large); color: var(--text-button-large); font-weight: var(--weight-button-large); }
       /* stat (/experience numerals) + title (page titles) samples — these were
          missing their font-size binding, so the editor controls had no visible
          effect on the preview. */
       .sg-sample-stat { max-width: 100%; }
       .sg-sample-stat p { font-size: var(--font-size-stat); line-height: var(--leading-stat); letter-spacing: var(--tracking-stat); color: var(--text-stat); font-weight: var(--weight-stat); }
       .sg-sample-title { max-width: 100%; }
-      .sg-sample-title p { font-size: var(--font-size-title); line-height: var(--leading-h1); color: var(--text-h1); font-weight: var(--weight-h1); }
+      .sg-sample-title p { font-size: var(--font-size-title); line-height: var(--leading-title); letter-spacing: var(--tracking-title); color: var(--text-title); font-weight: var(--weight-title); }
       .sg-demo-family { font-size: 26px; flex: 1 1 240px; }
 
       /* Font-weight samples */
