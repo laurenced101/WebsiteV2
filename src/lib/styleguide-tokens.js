@@ -31,7 +31,10 @@ export const TIER_LABELS = {
 export const tierLabel = (key) => TIER_LABELS[key] || key;
 
 // Type roles that carry a full alias set (color / weight / leading / tracking).
-export const ROLES = ['display', 'h1', 'h2', 'h3', 'body', 'caption', 'label'];
+// `stat` (the /experience figures) carries this set — decoupled from display so
+// it tunes independently — but NOT paragraph/measure (a single figure has no
+// paragraph spacing or line measure), so it stays out of the slice(0,7) groups.
+export const ROLES = ['display', 'h1', 'h2', 'h3', 'body', 'caption', 'label', 'stat'];
 
 // Primitive option-lists the per-role aliases point at.
 export const LEADING_PRIMS = ['--leading-tight', '--leading-snug', '--leading-normal', '--leading-loose'];

@@ -114,7 +114,14 @@
         // Size-only roles (no colour/weight/leading aliases — the consumers set those).
         { title: 'Large button (HOME links)', controls: [bpsize('--font-size-button-large', 24, 240, 1)] },
         { title: 'Feature heading (HOME pillars)', controls: [bpsize('--font-size-feature', 16, 160, 1)] },
-        { title: 'Stat number (/experience)', controls: [bpsize('--font-size-stat', 16, 200, 1)] },
+        // Stat carries a full alias set (decoupled from display), minus paragraph/measure.
+        { title: 'Stat number (/experience)', controls: [
+          bpsize('--font-size-stat', 16, 200, 1),
+          alias('--text-stat', COLOR_PRIMS),
+          alias('--weight-stat', WEIGHT_PRIMS),
+          alias('--leading-stat', LEADING_PRIMS),
+          alias('--tracking-stat', TRACKING_PRIMS),
+        ] },
         { title: 'Title (page titles)', controls: [bpsize('--font-size-title', 24, 240, 1)] },
         { title: 'Typography — shared', controls: [
           text('--font-family-primary'),

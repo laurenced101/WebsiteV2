@@ -210,6 +210,7 @@
   --leading-body:    var(--leading-normal);
   --leading-caption: var(--leading-normal);
   --leading-label:   var(--leading-tight);
+  --leading-stat:    var(--leading-tight);   /* decoupled from display (Ticket 23 follow-up); seeded to display's value */
 
   /* Letter-spacing primitives */
   --tracking-tight: -0.02em;
@@ -224,6 +225,7 @@
   --tracking-body:    var(--tracking-normal);
   --tracking-caption: var(--tracking-normal);
   --tracking-label:   var(--tracking-wide);
+  --tracking-stat:    var(--tracking-tight);   /* decoupled from display; seeded to display's value */
 
   /* Per-role text color — alias into the palette, re-pointable in /styleguide.
      Headings default to brand blue; supporting roles to ink / grey. */
@@ -234,6 +236,7 @@
   --text-body:    var(--ink);
   --text-caption: var(--grey-mid);
   --text-label:   var(--grey-light);
+  --text-stat:    var(--color-primary);   /* decoupled from display; seeded to display's value */
 
   /* Per-role font weight — alias into the weight scale, re-pointable in /styleguide. */
   --weight-display: var(--font-weight-semibold);
@@ -243,6 +246,7 @@
   --weight-body:    var(--font-weight-regular);
   --weight-caption: var(--font-weight-regular);
   --weight-label:   var(--font-weight-medium);
+  --weight-stat:    var(--font-weight-semibold);   /* decoupled from display; seeded to display's value */
 
   /* Per-role paragraph spacing — gap after a paragraph block. On-scale defaults;
      editable per role in /styleguide. */

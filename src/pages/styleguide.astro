@@ -370,7 +370,7 @@ const TYPE_ROLES = [
         <h3 class="sg-subhead">Role aliases</h3>
         <p class="sg-note">Each alias currently points at the primitive shown — re-map in the editor.</p>
         <ul class="sg-alias-list">
-          {['--leading-display', '--leading-h1', '--leading-h2', '--leading-h3', '--leading-body', '--leading-caption', '--leading-label'].map((a) => (
+          {['--leading-display', '--leading-h1', '--leading-h2', '--leading-h3', '--leading-body', '--leading-caption', '--leading-label', '--leading-stat'].map((a) => (
             <li class="sg-alias-item">
               <code class="sg-name">{a}</code>
               <span class="sg-alias-arrow">→</span>
@@ -408,7 +408,7 @@ const TYPE_ROLES = [
         <h3 class="sg-subhead">Role aliases</h3>
         <p class="sg-note">Each alias currently points at the primitive shown — re-map in the editor.</p>
         <ul class="sg-alias-list">
-          {['--tracking-display', '--tracking-h1', '--tracking-h2', '--tracking-h3', '--tracking-body', '--tracking-caption', '--tracking-label'].map((a) => (
+          {['--tracking-display', '--tracking-h1', '--tracking-h2', '--tracking-h3', '--tracking-body', '--tracking-caption', '--tracking-label', '--tracking-stat'].map((a) => (
             <li class="sg-alias-item">
               <code class="sg-name">{a}</code>
               <span class="sg-alias-arrow">→</span>
@@ -518,7 +518,7 @@ const TYPE_ROLES = [
       let editorWin = null;
       toggle.addEventListener('click', () => {
         if (editorWin && !editorWin.closed) { editorWin.focus(); return; }
-        editorWin = window.open('/styleguide-editor', 'sg-token-editor', 'popup,width=460,height=940');
+        editorWin = window.open('/styleguide-editor', 'sg-token-editor', 'popup,width=320,height=940');
         if (!editorWin) {
           toggle.textContent = '⚠ Allow pop-ups, then retry';
           setTimeout(() => { toggle.textContent = '✎ Edit tokens'; }, 2600);
@@ -700,7 +700,7 @@ const TYPE_ROLES = [
          missing their font-size binding, so the editor controls had no visible
          effect on the preview. */
       .sg-sample-stat { max-width: 100%; }
-      .sg-sample-stat p { font-size: var(--font-size-stat); line-height: 1.05; color: var(--color-primary); font-weight: var(--weight-h1); }
+      .sg-sample-stat p { font-size: var(--font-size-stat); line-height: var(--leading-stat); letter-spacing: var(--tracking-stat); color: var(--text-stat); font-weight: var(--weight-stat); }
       .sg-sample-title { max-width: 100%; }
       .sg-sample-title p { font-size: var(--font-size-title); line-height: var(--leading-h1); color: var(--text-h1); font-weight: var(--weight-h1); }
       .sg-demo-family { font-size: 26px; flex: 1 1 240px; }
