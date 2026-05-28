@@ -69,6 +69,22 @@ At the start of each session, query the DB for any active tickets (Status = `In 
 - **Branching** — Work on `dev`. `main` is live (Super's stylesheet link points there). Merge `dev` → `main` only when ready to ship.
 - **Testing** — Verify all CSS changes on the STYLEGUIDE Notion page across all four breakpoints (Large Desktop 1800+, Desktop ≤1799, Tablet ≤1279, Mobile ≤800) before they touch real content pages.
 
+## Site copy (copy updates)
+
+All user-facing body copy for HOME / ABOUT / EXPERIENCE is governed by the **Site Copy** Notion page (id `36c12c70512f805cb153e90334aad70a`). It is the **single source of truth** — when asked to "update the copy" (or similar), follow this process every time:
+
+1. **Pull** the Site Copy page in full, including nested column blocks (Disciplines + By The Numbers live in `column_list` children).
+2. **Diff** each Notion section against its mapped source file, verbatim:
+   | Notion section | Source file |
+   | --- | --- |
+   | Home Page (statement + expandable section) | `src/pages/index.astro` |
+   | ABOUT Page (intro + sections) | `src/pages/about.astro` |
+   | Experience Page (statement + disciplines + by-the-numbers) | `src/pages/experience.astro` |
+   Copy is **hardcoded inline** in these `.astro` files — there is no Notion pipeline for them (unlike `/experience`'s *project rows*, which do come from Notion).
+3. **Notion wins.** Apply Notion's copy to the code, including renamed/restructured/dropped sections. Preserve HTML markup & entities (`&amp;`, `&rsquo;`, `<span class="link">`/`<span class="accent">` highlights matching Notion's blue-coloured runs). Images/structure that Notion doesn't specify are a judgment call — flag them.
+4. **Reverse sync is mandatory.** If copy is tweaked *in code* during a session (a wording change Laurence approves), update the Site Copy Notion page to match via the API, so it stays the true source of truth. Never let code and Notion silently diverge.
+5. **Present** a clear diff summary and flag any judgment calls (image assignment, typography, apparent typos reproduced verbatim).
+
 ## Logging work back to Notion
 
 When closing a task, set "Added by" appropriately (`Claude Code` for tickets Claude Code created itself; leave alone if Laurence added it), flip Status to `For Review`, and add a brief summary in "Review Notes (Claude)" describing what changed and any caveats Laurence should know during review.
