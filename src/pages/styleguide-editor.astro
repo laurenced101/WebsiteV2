@@ -1,0 +1,697 @@
+---
+// styleguide-editor.astro — the pop-out token editor for /styleguide.
+//
+// Opened in its own browser window from the styleguide's "Edit tokens" button.
+// It drives the styleguide window via window.opener.__sgHost (same origin), so
+// the editor never steals layout width from the page being designed — the page
+// can be resized to any breakpoint and previewed at its true width.
+//
+// The headline feature: ONE slider per per-breakpoint size. The slider edits the
+// token for whichever breakpoint the styleguide window is CURRENTLY showing, and
+// re-targets live as that window is resized. So the H1 slider edits
+// --font-size-h1-desktop while the styleguide window is at desktop width, and
+// --font-size-h1-tablet once it crosses into tablet.
+//
+// Chrome uses literal colors (not tokens) so the editor stays legible even while
+// you push --ink / --surface to extremes in the styleguide window.
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>token editor — styleguide</title>
+  </head>
+  <body>
+    <div id="sg-nohost" class="sg-nohost" hidden>
+      Open this editor from the <code>/styleguide</code> page — click
+      <strong>“✎ Edit tokens”</strong>. It controls that window and has nothing to
+      edit on its own.
+    </div>
+
+    <header class="sg-ed-head">
+      <strong>Token editor</strong>
+      <span id="sg-tier" class="sg-tier-badge" aria-live="polite"></span>
+    </header>
+    <div class="sg-ed-actions">
+      <button id="sg-copy" type="button">Copy tokens.css</button>
+      <button id="sg-reset" type="button">Reset all</button>
+    </div>
+    <div class="sg-ed-hint">
+      Edits are live on the styleguide window + saved in this browser; they don't
+      change the repo until you Copy and commit. Sizes have one slider — it edits
+      whichever breakpoint the styleguide window is showing (badge above).
+    </div>
+    <div id="sg-editor-body" class="sg-ed-body"></div>
+    <textarea id="sg-export" class="sg-export" readonly hidden></textarea>
+
+    <script>
+      import {
+        tierFor, tierLabel,
+        LEADING_PRIMS, TRACKING_PRIMS, COLOR_PRIMS, WEIGHT_PRIMS,
+        LEADING_ALIASES, TRACKING_ALIASES, TEXT_ALIASES, WEIGHT_ALIASES,
+        aliasTarget, shortName, isHex,
+      } from '../lib/styleguide-tokens.js';
+
+      // ----- Link to the styleguide window -----
+      // Resolved fresh on each use rather than cached: if the styleguide window is
+      // reloaded while this editor is open, opener.__sgHost is rebuilt, so a cached
+      // reference would go stale. Cheap to re-read.
+      const currentHost = () =>
+        (window.opener && !window.opener.closed ? window.opener.__sgHost : null);
+      const openerWidth = () =>
+        (window.opener && !window.opener.closed ? window.opener.innerWidth : window.innerWidth);
+      const currentTier = () => tierFor(openerWidth());
+
+      const readVal = (name) => { const h = currentHost(); return h ? h.readVal(name) : ''; };
+
+      const bodyEl = document.getElementById('sg-editor-body');
+      const noHostEl = document.getElementById('sg-nohost');
+      const tierBadge = document.getElementById('sg-tier');
+      const copyBtn = document.getElementById('sg-copy');
+      const resetBtn = document.getElementById('sg-reset');
+      const exportArea = document.getElementById('sg-export');
+
+      // ----- Manifest: token names + control metadata only (values read live) -----
+      //   color | size (slider+number) | text | alias (dropdown re-pointing a var())
+      //   bpsize = ONE slider for a per-breakpoint family (--font-size-h1, --page-top-gap):
+      //            targets --<base>-<currentTier>, re-resolving as the opener resizes.
+      const color = (name) => ({ kind: 'color', name });
+      const size = (name, min, max, step, unit) => ({ kind: 'size', name, min, max, step, unit });
+      const text = (name) => ({ kind: 'text', name });
+      const alias = (name, prims) => ({ kind: 'alias', name, prims });
+      const bpsize = (base, min, max, step, unit) => ({ kind: 'bpsize', base, min, max, step, unit });
+
+      // One type-role group = its breakpoint-aware font size + everything else that
+      // shapes the role: text color, weight, line-height, letter-spacing, paragraph.
+      const roleGroup = (role, title) => ({
+        title,
+        controls: [
+          // 8–200 covers the whole role scale (Display runs to 160 at Large).
+          bpsize(`--font-size-${role}`, 8, 200, 1),
+          alias(`--text-${role}`, COLOR_PRIMS),
+          alias(`--weight-${role}`, WEIGHT_PRIMS),
+          alias(`--leading-${role}`, LEADING_PRIMS),
+          alias(`--tracking-${role}`, TRACKING_PRIMS),
+          size(`--paragraph-${role}`, 0, 96, 1),
+          size(`--measure-${role}`, 20, 100, 1, '%'),
+        ],
+      });
+
+      const CONTROL_GROUPS = [
+        { title: 'Color', controls: [
+          '--color-primary', '--surface', '--surface-trans', '--ink',
+          '--grey-mid', '--grey-light', '--grey-bg', '--expand-tint',
+        ].map(color) },
+        roleGroup('display', 'Display'),
+        roleGroup('h1', 'H1'),
+        roleGroup('h2', 'H2'),
+        roleGroup('h3', 'H3'),
+        roleGroup('body', 'Body'),
+        roleGroup('caption', 'Caption'),
+        roleGroup('label', 'Label'),
+        // Size-only roles (no colour/weight/leading aliases — the consumers set those).
+        { title: 'Large button (HOME links)', controls: [bpsize('--font-size-button-large', 24, 240, 1)] },
+        { title: 'Feature heading (HOME pillars)', controls: [bpsize('--font-size-feature', 16, 160, 1)] },
+        { title: 'Stat number (/experience)', controls: [bpsize('--font-size-stat', 16, 200, 1)] },
+        { title: 'Title (page titles)', controls: [bpsize('--font-size-title', 24, 240, 1)] },
+        { title: 'Typography — shared', controls: [
+          text('--font-family-primary'),
+          text('--font-family-mono'),
+          ...['light', 'regular', 'medium', 'semibold', 'bold'].map((w) => size(`--font-weight-${w}`, 100, 900, 100, '')),
+          ...LEADING_PRIMS.map((n) => size(n, 1, 2, 0.05, '')),
+          ...TRACKING_PRIMS.map((n) => size(n, -0.1, 0.3, 0.005, 'em')),
+        ] },
+        { title: 'Spacing scale', controls: [4, 8, 12, 16, 24, 32, 48, 64, 96, 128, 160, 240].map((n) => size(`--space-${n}`, 0, 256, 1)) },
+        { title: 'Rules', controls: [size('--outline', 0, 8, 0.5), size('--hard-rule', 0, 24, 0.5)] },
+        // Layout max-widths stay explicit large/desktop — there's no tablet/mobile
+        // width token (those tiers use the margin tokens), so they can't collapse
+        // into a single 4-tier slider like the font sizes.
+        { title: 'Layout', controls: [
+          size('--layout-max-width-large', 600, 2000, 10),
+          size('--layout-max-width-desktop', 600, 2000, 10),
+          size('--layout-max-width-blog-large', 400, 1200, 8),
+          size('--layout-max-width-blog-desktop', 400, 1200, 8),
+          size('--layout-margin-tablet', 0, 120, 1),
+          size('--layout-margin-mobile', 0, 120, 1),
+          bpsize('--page-top-gap', 0, 400, 4),
+          size('--hero-height', 40, 100, 1, 'vh'),
+        ] },
+        { title: 'Motion', controls: [
+          size('--duration-fast', 0, 1, 0.05, 's'),
+          size('--duration-standard', 0, 1, 0.05, 's'),
+          size('--duration-slow', 0, 1, 0.05, 's'),
+          text('--ease-standard'),
+        ] },
+      ];
+
+      // ----- Mutations (all go through the host) + undo / redo -----
+      // The host owns the override map + persistence; the editor records prev/next so
+      // Cmd/Z works. Consecutive edits to the same token coalesce into one step.
+      const undoStack = [], redoStack = [];
+      let lastEditName = null;
+      const controlSyncs = {};   // base/token name -> fn that re-reads its control
+
+      function recordSingle(name, next) {
+        const h = currentHost();
+        const cur = h ? h.getOverrides()[name] : undefined;
+        const top = undoStack[undoStack.length - 1];
+        if (lastEditName === name && top && top.kind === 'single' && top.name === name) {
+          top.next = next;
+        } else {
+          undoStack.push({ kind: 'single', name, prev: cur, next });
+          lastEditName = name;
+        }
+        redoStack.length = 0;
+      }
+      function applyToken(name, value) {
+        const h = currentHost(); if (!h) return;
+        recordSingle(name, value);
+        h.applyOverride(name, value);
+        refreshOverrideStates();
+      }
+      function clearToken(name, syncFn) {
+        const h = currentHost(); if (!h) return;
+        recordSingle(name, undefined);
+        h.removeOverride(name);
+        if (syncFn) syncFn();
+        refreshOverrideStates();
+      }
+      function applySingle(name, v) {
+        const h = currentHost(); if (!h) return;
+        if (v === undefined) h.removeOverride(name); else h.applyOverride(name, v);
+        syncAllControls();
+        refreshOverrideStates();
+      }
+      function applyBulk(snap) {
+        const h = currentHost(); if (!h) return;
+        h.resetAll();
+        Object.entries(snap).forEach(([k, v]) => h.applyOverride(k, v));
+        syncAllControls();
+        refreshOverrideStates();
+      }
+      function undo() {
+        const e = undoStack.pop(); if (!e) return;
+        lastEditName = null; redoStack.push(e);
+        if (e.kind === 'bulk') applyBulk(e.before); else applySingle(e.name, e.prev);
+      }
+      function redo() {
+        const e = redoStack.pop(); if (!e) return;
+        lastEditName = null; undoStack.push(e);
+        if (e.kind === 'bulk') applyBulk(e.after); else applySingle(e.name, e.next);
+      }
+
+      function refreshOverrideStates() {
+        const h = currentHost(); const ov = h ? h.getOverrides() : {};
+        bodyEl.querySelectorAll('.sg-ctl[data-token]').forEach((r) => {
+          r.classList.toggle('is-overridden', Object.prototype.hasOwnProperty.call(ov, r.dataset.token));
+        });
+      }
+      function syncAllControls() {
+        Object.values(controlSyncs).forEach((fn) => { try { fn(); } catch {} });
+      }
+
+      // ----- Control builders -----
+      // Label stacked above its inputs (long token names don't drift onto a
+      // neighbour), with a per-parameter ↺ reset. `tagEl` is an optional badge shown
+      // in the label row (used by bpsize to show which breakpoint it's editing).
+      function ctlRow(name, inputEls, syncFn, tagEl) {
+        if (syncFn) controlSyncs[name] = syncFn;
+        const row = document.createElement('div');
+        row.className = 'sg-ctl';
+        row.dataset.token = name;
+
+        const labelRow = document.createElement('div');
+        labelRow.className = 'sg-ctl-labelrow';
+        const label = document.createElement('label');
+        label.className = 'sg-ctl-label';
+        label.textContent = name;
+        labelRow.appendChild(label);
+        if (tagEl) labelRow.appendChild(tagEl);
+        const reset = document.createElement('button');
+        reset.type = 'button';
+        reset.className = 'sg-ctl-reset';
+        reset.textContent = '↺';
+        reset.title = 'Reset this token to its tokens.css default';
+        // Use row.dataset.token at click time: for bpsize it tracks the current tier.
+        reset.addEventListener('click', () => clearToken(row.dataset.token, syncFn));
+        labelRow.appendChild(reset);
+
+        const inputs = document.createElement('div');
+        inputs.className = 'sg-ctl-inputs';
+        inputs.append(...inputEls);
+
+        row.append(labelRow, inputs);
+        return row;
+      }
+
+      function colorRow(name) {
+        const textInput = document.createElement('input');
+        textInput.type = 'text';
+
+        let picker, swatch;
+        if (isHex(readVal(name))) {
+          picker = document.createElement('input');
+          picker.type = 'color';
+          picker.addEventListener('input', () => { textInput.value = picker.value; applyToken(name, picker.value); });
+        } else {
+          swatch = document.createElement('span');
+          swatch.className = 'sg-ctl-swatch';
+        }
+
+        textInput.addEventListener('input', () => {
+          applyToken(name, textInput.value);
+          if (picker && isHex(textInput.value)) picker.value = textInput.value;
+        });
+
+        const sync = () => {
+          const val = readVal(name);
+          textInput.value = val;
+          if (picker && isHex(val)) {
+            picker.value = val.length === 4
+              ? '#' + val.slice(1).split('').map((c) => c + c).join('')
+              : val;
+          }
+          if (swatch) swatch.style.background = val;
+        };
+        sync();
+        return ctlRow(name, [picker || swatch, textInput], sync);
+      }
+
+      function sizeRow(t) {
+        const range = document.createElement('input');
+        range.type = 'range';
+        range.min = t.min; range.max = t.max; range.step = t.step;
+        const number = document.createElement('input');
+        number.type = 'number';
+        number.min = t.min; number.max = t.max; number.step = 'any';
+
+        const unit = t.unit ?? 'px';
+        const apply = (v) => { range.value = v; number.value = v; applyToken(t.name, v + unit); };
+        range.addEventListener('input', () => apply(range.value));
+        number.addEventListener('input', () => apply(number.value));
+
+        const sync = () => { const v = parseFloat(readVal(t.name)) || 0; range.value = v; number.value = v; };
+        sync();
+        return ctlRow(t.name, [range, number], sync);
+      }
+
+      // One slider for a per-breakpoint family — edits --<base>-<currentTier>. On
+      // sync it re-resolves to the opener's current tier, re-reads that tier's value,
+      // updates the badge, and points row.dataset.token at the live tier so the ↺ and
+      // override-highlight act on the right token.
+      function bpsizeRow(t) {
+        const unit = t.unit ?? 'px';
+        const range = document.createElement('input');
+        range.type = 'range';
+        range.min = t.min; range.max = t.max; range.step = t.step;
+        const number = document.createElement('input');
+        number.type = 'number';
+        number.min = t.min; number.max = t.max; number.step = 'any';
+
+        const tag = document.createElement('span');
+        tag.className = 'sg-ctl-tier';
+
+        const resolved = () => `${t.base}-${currentTier()}`;
+        const apply = (v) => { range.value = v; number.value = v; applyToken(resolved(), v + unit); };
+        range.addEventListener('input', () => apply(range.value));
+        number.addEventListener('input', () => apply(number.value));
+
+        let row;
+        const sync = () => {
+          const name = resolved();
+          const tier = currentTier();
+          if (row) row.dataset.token = name;
+          const v = parseFloat(readVal(name)) || 0;
+          range.value = v; number.value = v;
+          tag.textContent = tier;
+          tag.dataset.bp = tier;
+        };
+        row = ctlRow(t.base, [range, number], sync, tag);
+        sync();
+        return row;
+      }
+
+      function textRow(name) {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'sg-ctl-text-wide';
+        input.value = readVal(name);
+        input.addEventListener('input', () => applyToken(name, input.value));
+        const sync = () => { input.value = readVal(name); };
+        return ctlRow(name, [input], sync);
+      }
+
+      function aliasRow(name, prims) {
+        const select = document.createElement('select');
+        prims.forEach((p) => {
+          const opt = document.createElement('option');
+          opt.value = p;
+          opt.textContent = shortName(p);
+          select.appendChild(opt);
+        });
+        const sync = () => { select.value = aliasTarget(readVal, name, prims); };
+        sync();
+        select.addEventListener('change', () => applyToken(name, `var(${select.value})`));
+        return ctlRow(name, [select], sync);
+      }
+
+      function buildControl(c) {
+        if (c.kind === 'color') return colorRow(c.name);
+        if (c.kind === 'alias') return aliasRow(c.name, c.prims);
+        if (c.kind === 'text') return textRow(c.name);
+        if (c.kind === 'bpsize') return bpsizeRow(c);
+        return sizeRow(c); // 'size'
+      }
+
+      function buildEditor() {
+        bodyEl.innerHTML = '';
+        CONTROL_GROUPS.forEach((group) => {
+          const head = document.createElement('div');
+          head.className = 'sg-editor-group';
+          head.textContent = group.title;
+          bodyEl.appendChild(head);
+          group.controls.forEach((c) => bodyEl.appendChild(buildControl(c)));
+        });
+        refreshOverrideStates();
+      }
+
+      // ----- Export: regenerate the tokens.css :root block from current values -----
+      function exportCss() {
+        const g = (n) => readVal(n);
+        const fs = (k) => `  --font-size-${k}: ${g('--font-size-' + k)};`;
+        const fsGroup = (role) => [`${role}-large`, `${role}-desktop`, `${role}-tablet`, `${role}-mobile`].map(fs).join('\n');
+        const roles = ['display', 'h1', 'h2', 'h3', 'body', 'caption', 'label', 'feature', 'button-large', 'stat', 'title'];
+        const aliases = roles.map((r) => `    --font-size-${r}: var(--font-size-${r}-TIER);`).join('\n');
+        const aliasBlock = (tier) => `  :root {\n${aliases.replace(/TIER/g, tier)}\n    --page-top-gap: var(--page-top-gap-${tier});\n  }`;
+        return `:root {
+  /* Color */
+  --color-primary: ${g('--color-primary')};
+
+  /* Surface + ink */
+  --surface: ${g('--surface')};
+  --surface-trans: ${g('--surface-trans')};
+  --ink: ${g('--ink')};
+
+  /* Greys */
+  --grey-mid: ${g('--grey-mid')};
+  --grey-light: ${g('--grey-light')};
+  --grey-bg: ${g('--grey-bg')};
+
+  /* Accent tint (expanded project panel) */
+  --expand-tint: ${g('--expand-tint')};
+
+  /* Rules */
+  --outline: ${g('--outline')};
+  --hard-rule: ${g('--hard-rule')};
+
+  /* Layout max-widths */
+  --layout-max-width-large: ${g('--layout-max-width-large')};
+  --layout-max-width-desktop: ${g('--layout-max-width-desktop')};
+
+  /* Blog body-width (ABOUT prose) — resolved alias picks the tier via the 1800+ query */
+  --layout-max-width-blog-large: ${g('--layout-max-width-blog-large')};
+  --layout-max-width-blog-desktop: ${g('--layout-max-width-blog-desktop')};
+  --layout-max-width-blog: var(--layout-max-width-blog-desktop);
+
+  /* Layout margins */
+  --layout-margin-tablet: ${g('--layout-margin-tablet')};
+  --layout-margin-mobile: ${g('--layout-margin-mobile')};
+
+  /* Page top gap — navbar → first content (per breakpoint), via .page-main.
+     Default below = Desktop; media queries at the bottom re-point per tier. */
+  --page-top-gap-large:   ${g('--page-top-gap-large')};
+  --page-top-gap-desktop: ${g('--page-top-gap-desktop')};
+  --page-top-gap-tablet:  ${g('--page-top-gap-tablet')};
+  --page-top-gap-mobile:  ${g('--page-top-gap-mobile')};
+  --page-top-gap: var(--page-top-gap-desktop);
+
+  /* Hero height (HOME + ABOUT) */
+  --hero-height: ${g('--hero-height')};
+
+  /* Spacing scale — primitives, no role aliases */
+${[4, 8, 12, 16, 24, 32, 48, 64, 96, 128, 160, 240].map((n) => `  --space-${n}: ${g('--space-' + n)};`).join('\n')}
+
+  /* Typography — font family */
+  --font-family-primary: ${g('--font-family-primary')};
+  --font-family-mono: ${g('--font-family-mono')};
+
+  /* Typography — font weights */
+  --font-weight-light: ${g('--font-weight-light')};
+  --font-weight-regular: ${g('--font-weight-regular')};
+  --font-weight-medium: ${g('--font-weight-medium')};
+  --font-weight-semibold: ${g('--font-weight-semibold')};
+  --font-weight-bold: ${g('--font-weight-bold')};
+
+  /* Type scale — granular per-breakpoint values. */
+${fsGroup('display')}
+
+${fsGroup('h1')}
+
+${fsGroup('h2')}
+
+${fsGroup('h3')}
+
+${fsGroup('body')}
+
+${fsGroup('caption')}
+
+${fsGroup('label')}
+
+${fsGroup('feature')}
+
+${fsGroup('button-large')}
+
+${fsGroup('stat')}
+
+${fsGroup('title')}
+
+  /* Resolved per-role aliases — default to the Desktop tier. */
+${roles.map((r) => `  --font-size-${r}: var(--font-size-${r}-desktop);`).join('\n')}
+
+  /* Line-height primitives */
+  --leading-tight: ${g('--leading-tight')};
+  --leading-snug: ${g('--leading-snug')};
+  --leading-normal: ${g('--leading-normal')};
+  --leading-loose: ${g('--leading-loose')};
+
+  /* Line-height role aliases */
+${LEADING_ALIASES.map((a) => `  ${a}: var(${aliasTarget(readVal, a, LEADING_PRIMS)});`).join('\n')}
+
+  /* Letter-spacing primitives */
+  --tracking-tight: ${g('--tracking-tight')};
+  --tracking-normal: ${g('--tracking-normal')};
+  --tracking-wide: ${g('--tracking-wide')};
+
+  /* Letter-spacing role aliases */
+${TRACKING_ALIASES.map((a) => `  ${a}: var(${aliasTarget(readVal, a, TRACKING_PRIMS)});`).join('\n')}
+
+  /* Per-role text color (palette aliases) */
+${TEXT_ALIASES.map((a) => `  ${a}: var(${aliasTarget(readVal, a, COLOR_PRIMS)});`).join('\n')}
+
+  /* Per-role font weight (weight-scale aliases) */
+${WEIGHT_ALIASES.map((a) => `  ${a}: var(${aliasTarget(readVal, a, WEIGHT_PRIMS)});`).join('\n')}
+
+  /* Per-role paragraph spacing */
+${roles.slice(0, 7).map((r) => `  --paragraph-${r}: ${g('--paragraph-' + r)};`).join('\n')}
+
+  /* Per-role measure (max line width) */
+${roles.slice(0, 7).map((r) => `  --measure-${r}: ${g('--measure-' + r)};`).join('\n')}
+
+  /* Motion */
+  --duration-fast: ${g('--duration-fast')};
+  --duration-standard: ${g('--duration-standard')};
+  --duration-slow: ${g('--duration-slow')};
+  --ease-standard: ${g('--ease-standard')};
+}
+
+@media (min-width: 1800px) {
+${aliasBlock('large')}
+  :root { --layout-max-width-blog: var(--layout-max-width-blog-large); }
+}
+@media (max-width: 1279px) {
+${aliasBlock('tablet')}
+}
+@media (max-width: 800px) {
+${aliasBlock('mobile')}
+}`;
+      }
+
+      // ----- Tier badge + follow the opener's breakpoint -----
+      function updateBadge() {
+        const w = openerWidth();
+        const key = tierFor(w);
+        tierBadge.dataset.bp = key;
+        tierBadge.innerHTML = `${tierLabel(key)} <span class="sg-tier-w">${w}px</span>`;
+      }
+
+      let lastTier = currentTier();
+      function onOpenerChange() {
+        if (!currentHost()) { showNoHost(); return; }
+        updateBadge();
+        const t = currentTier();
+        if (t !== lastTier) { lastTier = t; syncAllControls(); refreshOverrideStates(); }
+      }
+
+      function showNoHost() {
+        noHostEl.hidden = false;
+        bodyEl.hidden = true;
+        copyBtn.disabled = true;
+        resetBtn.disabled = true;
+        tierBadge.textContent = '—';
+      }
+
+      // ----- Init -----
+      if (!currentHost()) {
+        showNoHost();
+      } else {
+        buildEditor();
+        updateBadge();
+
+        copyBtn.addEventListener('click', async () => {
+          const css = exportCss();
+          exportArea.value = css;
+          exportArea.hidden = false;
+          try {
+            await navigator.clipboard.writeText(css);
+            copyBtn.textContent = 'Copied ✓';
+          } catch {
+            exportArea.select();
+            copyBtn.textContent = 'Select + copy ↓';
+          }
+          setTimeout(() => { copyBtn.textContent = 'Copy tokens.css'; }, 1800);
+        });
+
+        resetBtn.addEventListener('click', () => {
+          const h = currentHost(); if (!h) return;
+          const before = h.getOverrides();
+          h.resetAll();
+          exportArea.hidden = true;
+          syncAllControls();
+          refreshOverrideStates();
+          if (Object.keys(before).length) {
+            undoStack.push({ kind: 'bulk', before, after: {} });
+            redoStack.length = 0; lastEditName = null;
+          }
+        });
+
+        // Cmd/Ctrl+Z to undo, +Shift to redo. Skipped while typing in a text field
+        // so the browser's native text undo still works there.
+        document.addEventListener('keydown', (e) => {
+          if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== 'z') return;
+          const t = e.target;
+          if (t && (t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && t.type === 'text'))) return;
+          e.preventDefault();
+          if (e.shiftKey) redo(); else undo();
+        });
+
+        // Follow the styleguide window: re-target sliders when it crosses a breakpoint.
+        if (window.opener) window.opener.addEventListener('resize', onOpenerChange);
+        // Re-sync when this window regains focus (covers the opener being reloaded or
+        // resized while the editor was in the background).
+        window.addEventListener('focus', () => {
+          if (!currentHost()) { showNoHost(); return; }
+          lastTier = currentTier();
+          syncAllControls();
+          refreshOverrideStates();
+          updateBadge();
+        });
+      }
+    </script>
+
+    <style is:global>
+      :root { color-scheme: light; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; background: #fff; color: #111;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        display: flex; flex-direction: column; min-height: 100vh;
+      }
+
+      .sg-nohost {
+        margin: 16px; padding: 14px 16px; border: 1px solid #f0c0c0;
+        background: #fff6f6; color: #a33; font-size: 12px; line-height: 1.6;
+      }
+      .sg-nohost code { background: #f3e0e0; padding: 1px 5px; }
+
+      .sg-ed-head {
+        position: sticky; top: 0; z-index: 2; background: #fff;
+        display: flex; justify-content: space-between; align-items: center; gap: 10px;
+        padding: 14px 16px; border-bottom: 1px solid #eee; font-size: 13px;
+      }
+      /* Tier badge — mirrors the styleguide window's current breakpoint, color-coded
+         like the on-page indicator so it reads at a glance which tier you're editing. */
+      .sg-tier-badge {
+        display: inline-flex; align-items: center; gap: 7px;
+        padding: 4px 10px; border-radius: 999px;
+        background: #111; color: #fff; font-size: 11px; letter-spacing: 0.4px;
+        text-transform: capitalize;
+      }
+      .sg-tier-badge::before {
+        content: ''; width: 8px; height: 8px; border-radius: 50%;
+        background: var(--bp-dot, #888);
+      }
+      .sg-tier-badge .sg-tier-w { color: #bbb; text-transform: none; }
+      .sg-tier-badge[data-bp="large"]   { --bp-dot: #34d399; }
+      .sg-tier-badge[data-bp="desktop"] { --bp-dot: #60a5fa; }
+      .sg-tier-badge[data-bp="tablet"]  { --bp-dot: #fbbf24; }
+      .sg-tier-badge[data-bp="mobile"]  { --bp-dot: #f87171; }
+
+      .sg-ed-actions { display: flex; gap: 8px; padding: 12px 16px 6px; }
+      .sg-ed-actions button {
+        flex: 1; padding: 8px; font-size: 12px; cursor: pointer;
+        border: 1px solid #111; background: #fff; color: #111; font-family: inherit;
+      }
+      .sg-ed-actions button#sg-copy { background: #111; color: #fff; }
+      .sg-ed-actions button:disabled { opacity: 0.4; cursor: not-allowed; }
+      .sg-ed-hint { padding: 0 16px 10px; font-size: 10px; line-height: 1.5; color: #888; }
+
+      .sg-ed-body { overflow-y: auto; padding: 0 16px 24px; flex: 1; }
+      .sg-export { width: calc(100% - 32px); height: 180px; margin: 0 16px 16px; font-family: inherit; font-size: 10px; }
+
+      /* Group headers + control rows */
+      .sg-editor-group {
+        font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px;
+        color: #999; margin: 34px 0 12px; padding-top: 18px;
+        border-top: 1px solid #e6e6e6;
+      }
+      .sg-editor-group:first-child { margin-top: 6px; padding-top: 0; border-top: none; }
+
+      .sg-ctl { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; font-size: 11px; }
+      .sg-ctl-labelrow { display: flex; align-items: baseline; gap: 6px; }
+      .sg-ctl-label { color: #555; word-break: break-all; flex: 1; font-size: 11px; }
+      /* Per-parameter reset — faint until the token is actually overridden. */
+      .sg-ctl-reset {
+        flex: 0 0 auto; border: none; background: none; cursor: pointer;
+        font-size: 15px; line-height: 1; padding: 0 2px; color: #ccc;
+      }
+      .sg-ctl-reset:hover { color: #111; }
+      .sg-ctl.is-overridden .sg-ctl-label { color: #111; font-weight: 600; }
+      .sg-ctl.is-overridden .sg-ctl-reset { color: #c026d3; }
+      /* bpsize tier tag — which breakpoint this single slider currently edits. */
+      .sg-ctl-tier {
+        flex: 0 0 auto; font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px;
+        padding: 2px 6px; border-radius: 999px; color: #fff; background: #888;
+      }
+      .sg-ctl-tier[data-bp="large"]   { background: #10b981; }
+      .sg-ctl-tier[data-bp="desktop"] { background: #3b82f6; }
+      .sg-ctl-tier[data-bp="tablet"]  { background: #d97706; }
+      .sg-ctl-tier[data-bp="mobile"]  { background: #ef4444; }
+      .sg-ctl-inputs { display: flex; align-items: center; gap: 8px; }
+      .sg-ctl-swatch { width: 30px; height: 28px; border: 1px solid #ccc; flex: 0 0 auto; }
+      .sg-ctl input[type="text"] { flex: 1 1 auto; min-width: 60px; }
+      .sg-ctl input[type="color"] { width: 30px; height: 28px; padding: 0; border: 1px solid #ccc; cursor: pointer; flex: 0 0 auto; }
+      .sg-ctl input[type="range"] { flex: 1 1 auto; min-width: 60px; }
+      .sg-ctl input[type="number"] { width: 64px; flex: 0 0 auto; }
+      .sg-ctl input[type="text"], .sg-ctl input[type="number"] {
+        font-family: inherit; font-size: 13px; padding: 5px 7px; border: 1px solid #ccc;
+      }
+      .sg-ctl select {
+        font-family: inherit; font-size: 13px; padding: 5px 7px;
+        border: 1px solid #ccc; background: #fff; flex: 1 1 auto; min-width: 96px;
+      }
+      .sg-ctl input[type="text"].sg-ctl-text-wide { width: auto; flex: 1 1 auto; min-width: 0; }
+    </style>
+  </body>
+</html>
