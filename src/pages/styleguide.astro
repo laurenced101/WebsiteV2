@@ -36,6 +36,8 @@ const TYPE_ROLES = [
   { role: 'button-large', a: '/about', b: '/experience' },
   { role: 'stat', a: '20+', b: '100M+' },
   { role: 'title', a: '/experience', b: '/process' },
+  { role: 'hero-title', a: '/about', b: 'Hero overlay' },
+  { role: 'navbar-logo', a: 'laurence-dawes.', b: 'design' },
 ];
 ---
 <!DOCTYPE html>
@@ -374,7 +376,7 @@ const TYPE_ROLES = [
         <h3 class="sg-subhead">Role aliases</h3>
         <p class="sg-note">Each alias currently points at the primitive shown — re-map in the editor.</p>
         <ul class="sg-alias-list">
-          {['--leading-display', '--leading-h1', '--leading-h2', '--leading-h3', '--leading-body', '--leading-caption', '--leading-label', '--leading-stat', '--leading-feature', '--leading-button-large', '--leading-title'].map((a) => (
+          {['--leading-display', '--leading-h1', '--leading-h2', '--leading-h3', '--leading-body', '--leading-caption', '--leading-label', '--leading-stat', '--leading-feature', '--leading-button-large', '--leading-title', '--leading-hero-title'].map((a) => (
             <li class="sg-alias-item">
               <code class="sg-name">{a}</code>
               <span class="sg-alias-arrow">→</span>
@@ -405,6 +407,10 @@ const TYPE_ROLES = [
           <div class="sg-type-tokens"><div><code class="sg-name">--tracking-snug</code> <code class="sg-val" data-token="--tracking-snug"></code></div></div>
         </div>
         <div class="sg-ls-row">
+          <p class="sg-ls-sample" style="letter-spacing: var(--tracking-wider)">Wider tracking — hero title</p>
+          <div class="sg-type-tokens"><div><code class="sg-name">--tracking-wider</code> <code class="sg-val" data-token="--tracking-wider"></code></div></div>
+        </div>
+        <div class="sg-ls-row">
           <p class="sg-ls-sample" style="letter-spacing: var(--tracking-normal)">Normal tracking — body measure</p>
           <div class="sg-type-tokens"><div><code class="sg-name">--tracking-normal</code> <code class="sg-val" data-token="--tracking-normal"></code></div></div>
         </div>
@@ -416,7 +422,7 @@ const TYPE_ROLES = [
         <h3 class="sg-subhead">Role aliases</h3>
         <p class="sg-note">Each alias currently points at the primitive shown — re-map in the editor.</p>
         <ul class="sg-alias-list">
-          {['--tracking-display', '--tracking-h1', '--tracking-h2', '--tracking-h3', '--tracking-body', '--tracking-caption', '--tracking-label', '--tracking-stat', '--tracking-feature', '--tracking-button-large', '--tracking-title'].map((a) => (
+          {['--tracking-display', '--tracking-h1', '--tracking-h2', '--tracking-h3', '--tracking-body', '--tracking-caption', '--tracking-label', '--tracking-stat', '--tracking-feature', '--tracking-button-large', '--tracking-title', '--tracking-hero-title'].map((a) => (
             <li class="sg-alias-item">
               <code class="sg-name">{a}</code>
               <span class="sg-alias-arrow">→</span>
@@ -711,6 +717,11 @@ const TYPE_ROLES = [
       .sg-sample-stat p { font-size: var(--font-size-stat); line-height: var(--leading-stat); letter-spacing: var(--tracking-stat); color: var(--text-stat); font-weight: var(--weight-stat); }
       .sg-sample-title { max-width: 100%; }
       .sg-sample-title p { font-size: var(--font-size-title); line-height: var(--leading-title); letter-spacing: var(--tracking-title); color: var(--text-title); font-weight: var(--weight-title); }
+      /* hero-title renders white (--text-hero-title = surface) — shown on a dark cell so it's visible. */
+      .sg-sample-hero-title { max-width: 100%; background: var(--ink); padding: var(--space-24); }
+      .sg-sample-hero-title p { font-size: var(--font-size-hero-title); line-height: var(--leading-hero-title); letter-spacing: var(--tracking-hero-title); color: var(--text-hero-title); font-weight: var(--weight-hero-title); text-align: center; }
+      .sg-sample-navbar-logo { max-width: 100%; }
+      .sg-sample-navbar-logo p { font-size: var(--navbar-logo-size); letter-spacing: var(--navbar-logo-tracking); color: var(--navbar-logo-color); font-weight: var(--navbar-logo-weight); }
       .sg-demo-family { font-size: 26px; flex: 1 1 240px; }
 
       /* Font-weight samples */

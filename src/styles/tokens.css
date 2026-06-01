@@ -175,6 +175,13 @@
   --font-size-title-tablet: 60px;
   --font-size-title-mobile: 58px;
 
+  /* "Hero title" role — the ABOUT hero overlay (/about): centred white title over
+     the portrait, wide tracking. Standalone role (Ticket 31). */
+  --font-size-hero-title-large: 56px;
+  --font-size-hero-title-desktop: 48px;
+  --font-size-hero-title-tablet: 40px;
+  --font-size-hero-title-mobile: 32px;
+
   /* Resolved per-role aliases — what components consume. Default to the
      Desktop tier (≤1799); overridden per breakpoint at the bottom of the file. */
   --font-size-display: var(--font-size-display-desktop);
@@ -188,6 +195,7 @@
   --font-size-feature: var(--font-size-feature-desktop);
   --font-size-stat: var(--font-size-stat-desktop);
   --font-size-title: var(--font-size-title-desktop);
+  --font-size-hero-title: var(--font-size-hero-title-desktop);
 
   /* Line-height + letter-spacing (Session 5). Unitless ratios / em values that
      scale with font-size, so — unlike font-size — they need no per-breakpoint
@@ -205,7 +213,7 @@
 
   /* Line-height role aliases */
   --leading-display: var(--leading-tight);
-  --leading-h1:      var(--leading-tight);
+  --leading-h1:      var(--leading-relaxed);   /* h1 = the HOME statement (its sole consumer); retuned to that look (Ticket 31) */
   --leading-h2:      var(--leading-snug);
   --leading-h3:      var(--leading-snug);
   --leading-body:    var(--leading-normal);
@@ -217,16 +225,18 @@
   --leading-feature:      var(--leading-tight);   /* was line-height:1 on single-line pillar headings */
   --leading-button-large: var(--leading-tight);
   --leading-title:        var(--leading-tight);
+  --leading-hero-title:   var(--leading-tight);
 
   /* Letter-spacing primitives */
   --tracking-tight: -0.02em;
   --tracking-normal: 0;
   --tracking-wide: 0.08em;
   --tracking-snug: -0.01em;   /* subtle optical tighten for oversized links (HOME section links) */
+  --tracking-wider: 0.15em;   /* wide display tracking — ABOUT hero title */
 
   /* Letter-spacing role aliases */
   --tracking-display: var(--tracking-tight);
-  --tracking-h1:      var(--tracking-tight);
+  --tracking-h1:      var(--tracking-normal);
   --tracking-h2:      var(--tracking-normal);
   --tracking-h3:      var(--tracking-normal);
   --tracking-body:    var(--tracking-normal);
@@ -236,11 +246,12 @@
   --tracking-feature:      var(--tracking-normal);
   --tracking-button-large: var(--tracking-snug);   /* was a hardcoded -0.01em optical tighten */
   --tracking-title:        var(--tracking-normal);
+  --tracking-hero-title:   var(--tracking-wider);
 
   /* Per-role text color — alias into the palette, re-pointable in /styleguide.
      Headings default to brand blue; supporting roles to ink / grey. */
   --text-display: var(--color-primary);
-  --text-h1:      var(--color-primary);
+  --text-h1:      var(--ink);
   --text-h2:      var(--color-primary);
   --text-h3:      var(--ink);
   --text-body:    var(--ink);
@@ -250,10 +261,11 @@
   --text-feature:      var(--color-primary);
   --text-button-large: var(--color-primary);
   --text-title:        var(--color-primary);
+  --text-hero-title:   var(--surface);
 
   /* Per-role font weight — alias into the weight scale, re-pointable in /styleguide. */
   --weight-display: var(--font-weight-semibold);
-  --weight-h1:      var(--font-weight-regular);
+  --weight-h1:      var(--font-weight-medium);
   --weight-h2:      var(--font-weight-medium);
   --weight-h3:      var(--font-weight-medium);
   --weight-body:    var(--font-weight-regular);
@@ -263,6 +275,7 @@
   --weight-feature:      var(--font-weight-regular);
   --weight-button-large: var(--font-weight-regular);
   --weight-title:        var(--font-weight-regular);
+  --weight-hero-title:   var(--font-weight-regular);
 
   /* Per-role paragraph spacing — gap after a paragraph block. On-scale defaults;
      editable per role in /styleguide. */
@@ -300,6 +313,16 @@
   --duo-color: var(--color-primary);
   --duo-saturation: 0;
   --duo-blend: color;
+
+  /* "Navbar logo" role — the wordmark in the navbar + mobile menu. A standalone
+     brand role (fixed size, px tracking, two-tone weight) — deliberately OFF the
+     per-breakpoint type scale (Ticket 31). Editable in /styleguide. */
+  --navbar-logo-size: 16px;
+  --navbar-logo-weight: var(--font-weight-bold);
+  --navbar-logo-weight-light: var(--font-weight-regular);
+  --navbar-logo-tracking: 2px;
+  --navbar-logo-tracking-light: 4px;
+  --navbar-logo-color: var(--color-primary);
 }
 
 /* Type scale — breakpoint resolution for the per-role aliases.
@@ -317,6 +340,7 @@
     --font-size-feature: var(--font-size-feature-large);
     --font-size-stat: var(--font-size-stat-large);
     --font-size-title: var(--font-size-title-large);
+    --font-size-hero-title: var(--font-size-hero-title-large);
     --page-top-gap: var(--page-top-gap-large);
     --layout-max-width-blog: var(--layout-max-width-blog-large);
   }
@@ -334,6 +358,7 @@
     --font-size-feature: var(--font-size-feature-tablet);
     --font-size-stat: var(--font-size-stat-tablet);
     --font-size-title: var(--font-size-title-tablet);
+    --font-size-hero-title: var(--font-size-hero-title-tablet);
     --page-top-gap: var(--page-top-gap-tablet);
   }
 }
@@ -350,6 +375,7 @@
     --font-size-feature: var(--font-size-feature-mobile);
     --font-size-stat: var(--font-size-stat-mobile);
     --font-size-title: var(--font-size-title-mobile);
+    --font-size-hero-title: var(--font-size-hero-title-mobile);
     --page-top-gap: var(--page-top-gap-mobile);
   }
 }

@@ -134,18 +134,15 @@ const clients = [
     justify-content: center;        /* horizontally centred (Desktop/Large/Tablet); mobile → left */
   }
   .about-hero-title {
-    /* Smaller than the page h1 (Ticket 22), centred over the hero. Per-breakpoint
-       fixed sizes — a one-off hero treatment, not a global type role. */
-    font-size: 48px;
-    font-weight: var(--weight-h1);
-    line-height: var(--leading-h1);
-    letter-spacing: 0.15em;          /* much wider tracking on the page heading */
+    /* The `hero-title` type role (Ticket 31): centred white title over the hero,
+       per-breakpoint sizes + wide tracking, all editable in /styleguide. */
+    font-size: var(--font-size-hero-title);
+    font-weight: var(--weight-hero-title);
+    line-height: var(--leading-hero-title);
+    letter-spacing: var(--tracking-hero-title);
     text-align: center;
-    /* On the blue hero the brand-blue h1 colour would vanish — set in the surface
-       colour so it reads as the white overlay the live page uses. */
-    color: var(--surface);
+    color: var(--text-hero-title);
   }
-  @media (min-width: 1800px) { .about-hero-title { font-size: 56px; } }
 
   /* ===== INTRO ===== */
   /* Generous gaps around the intro: cover image → first paragraph (padding-top)
@@ -262,7 +259,6 @@ const clients = [
 
   /* ===== TABLET (≤1279) ===== */
   @media (max-width: 1279px) {
-    .about-hero-title { font-size: 40px; }
     /* Prose runs full content width below desktop (blog cap is Desktop/Large only). */
     .about-intro p,
     .about-section h2,
@@ -274,7 +270,7 @@ const clients = [
   /* ===== MOBILE (≤800) ===== */
   @media (max-width: 800px) {
     .about-hero-inner { justify-content: flex-start; }   /* hero title left-aligned on mobile */
-    .about-hero-title { font-size: 32px; text-align: left; }
+    .about-hero-title { text-align: left; }   /* size from the hero-title role; mobile alignment override only */
     .about-figrow { grid-template-columns: 1fr; gap: var(--space-16); }
     /* wall stays 4-up; tighten the cells so 4 fit at 375 */
     .about-clients { gap: var(--space-12); }

@@ -78,11 +78,13 @@ import HomePillar from '../components/HomePillar.astro';
      above the first one). */
   .home-statement .wrap { padding: 0 0 var(--space-240); }   /* bigger gap statement → pillars (#2) */
   .home-statement p {
-    font-size: var(--font-size-h1);  /* bumped one role h2→h1 (#6); colour stays ink
-                                        — dark prose with blue inline links */
-    font-weight: var(--weight-h2);
-    line-height: 1.4;
-    color: var(--ink);
+    /* The full h1 role (Ticket 31): h1 is now the statement's sole consumer, tuned
+       to this look — medium weight, ink, relaxed leading, blue inline links. */
+    font-size: var(--font-size-h1);
+    font-weight: var(--weight-h1);
+    line-height: var(--leading-h1);
+    letter-spacing: var(--tracking-h1);
+    color: var(--text-h1);
   }
   .home-statement p + p { margin-top: var(--space-32); }
   .home-statement .link {

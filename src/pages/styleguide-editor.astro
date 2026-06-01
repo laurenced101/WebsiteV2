@@ -141,6 +141,22 @@
           alias('--leading-title', LEADING_PRIMS),
           alias('--tracking-title', TRACKING_PRIMS),
         ] },
+        { title: 'Hero title (ABOUT hero)', controls: [
+          bpsize('--font-size-hero-title', 16, 120, 1),
+          alias('--text-hero-title', COLOR_PRIMS),
+          alias('--weight-hero-title', WEIGHT_PRIMS),
+          alias('--leading-hero-title', LEADING_PRIMS),
+          alias('--tracking-hero-title', TRACKING_PRIMS),
+        ] },
+        // Navbar logo — standalone brand role; direct (non-primitive) size + px tracking.
+        { title: 'Navbar logo (wordmark)', controls: [
+          size('--navbar-logo-size', 8, 48, 1),
+          alias('--navbar-logo-color', COLOR_PRIMS),
+          alias('--navbar-logo-weight', WEIGHT_PRIMS),
+          alias('--navbar-logo-weight-light', WEIGHT_PRIMS),
+          size('--navbar-logo-tracking', 0, 12, 0.5, 'px'),
+          size('--navbar-logo-tracking-light', 0, 12, 0.5, 'px'),
+        ] },
         { title: 'Typography — shared', controls: [
           text('--font-family-primary'),
           text('--font-family-mono'),
@@ -407,7 +423,7 @@
         const g = (n) => readVal(n);
         const fs = (k) => `  --font-size-${k}: ${g('--font-size-' + k)};`;
         const fsGroup = (role) => [`${role}-large`, `${role}-desktop`, `${role}-tablet`, `${role}-mobile`].map(fs).join('\n');
-        const roles = ['display', 'h1', 'h2', 'h3', 'body', 'caption', 'label', 'feature', 'button-large', 'stat', 'title'];
+        const roles = ['display', 'h1', 'h2', 'h3', 'body', 'caption', 'label', 'feature', 'button-large', 'stat', 'title', 'hero-title'];
         const aliases = roles.map((r) => `    --font-size-${r}: var(--font-size-${r}-TIER);`).join('\n');
         const aliasBlock = (tier) => `  :root {\n${aliases.replace(/TIER/g, tier)}\n    --page-top-gap: var(--page-top-gap-${tier});\n  }`;
         return `:root {
@@ -492,6 +508,8 @@ ${fsGroup('stat')}
 
 ${fsGroup('title')}
 
+${fsGroup('hero-title')}
+
   /* Resolved per-role aliases — default to the Desktop tier. */
 ${roles.map((r) => `  --font-size-${r}: var(--font-size-${r}-desktop);`).join('\n')}
 
@@ -510,6 +528,7 @@ ${LEADING_ALIASES.map((a) => `  ${a}: var(${aliasTarget(readVal, a, LEADING_PRIM
   --tracking-normal: ${g('--tracking-normal')};
   --tracking-wide: ${g('--tracking-wide')};
   --tracking-snug: ${g('--tracking-snug')};
+  --tracking-wider: ${g('--tracking-wider')};
 
   /* Letter-spacing role aliases */
 ${TRACKING_ALIASES.map((a) => `  ${a}: var(${aliasTarget(readVal, a, TRACKING_PRIMS)});`).join('\n')}
@@ -525,6 +544,14 @@ ${roles.slice(0, 7).map((r) => `  --paragraph-${r}: ${g('--paragraph-' + r)};`).
 
   /* Per-role measure (max line width) */
 ${roles.slice(0, 7).map((r) => `  --measure-${r}: ${g('--measure-' + r)};`).join('\n')}
+
+  /* Navbar logo (wordmark) — standalone brand role: fixed size, px tracking, two-tone weight */
+  --navbar-logo-size: ${g('--navbar-logo-size')};
+  --navbar-logo-weight: var(${aliasTarget(readVal, '--navbar-logo-weight', WEIGHT_PRIMS)});
+  --navbar-logo-weight-light: var(${aliasTarget(readVal, '--navbar-logo-weight-light', WEIGHT_PRIMS)});
+  --navbar-logo-tracking: ${g('--navbar-logo-tracking')};
+  --navbar-logo-tracking-light: ${g('--navbar-logo-tracking-light')};
+  --navbar-logo-color: var(${aliasTarget(readVal, '--navbar-logo-color', COLOR_PRIMS)});
 
   /* Motion */
   --duration-fast: ${g('--duration-fast')};

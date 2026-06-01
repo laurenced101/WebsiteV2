@@ -34,11 +34,11 @@ export const tierLabel = (key) => TIER_LABELS[key] || key;
 // `stat` (the /experience figures) carries this set — decoupled from display so
 // it tunes independently — but NOT paragraph/measure (a single figure has no
 // paragraph spacing or line measure), so it stays out of the slice(0,7) groups.
-export const ROLES = ['display', 'h1', 'h2', 'h3', 'body', 'caption', 'label', 'stat', 'feature', 'button-large', 'title'];
+export const ROLES = ['display', 'h1', 'h2', 'h3', 'body', 'caption', 'label', 'stat', 'feature', 'button-large', 'title', 'hero-title'];
 
 // Primitive option-lists the per-role aliases point at.
 export const LEADING_PRIMS = ['--leading-tight', '--leading-snug', '--leading-relaxed', '--leading-normal', '--leading-loose'];
-export const TRACKING_PRIMS = ['--tracking-tight', '--tracking-snug', '--tracking-normal', '--tracking-wide'];
+export const TRACKING_PRIMS = ['--tracking-tight', '--tracking-snug', '--tracking-normal', '--tracking-wide', '--tracking-wider'];
 export const COLOR_PRIMS = ['--color-primary', '--ink', '--grey-mid', '--grey-light', '--surface'];
 export const WEIGHT_PRIMS = ['--font-weight-light', '--font-weight-regular', '--font-weight-medium', '--font-weight-semibold', '--font-weight-bold'];
 

@@ -48,8 +48,8 @@ const links = [
   }
   .navbar-inner { display: flex; align-items: center; justify-content: space-between; }
   /* Logo: 16px, tighter tracking per Ticket 19 (laurence-dawes. 4px / design 2px). */
-  .logo { font-size: 16px; font-weight: var(--font-weight-bold); color: var(--color-primary); letter-spacing: 2px; }
-  .logo .light { font-weight: var(--font-weight-regular); letter-spacing: 4px; }
+  .logo { font-size: var(--navbar-logo-size); font-weight: var(--navbar-logo-weight); color: var(--navbar-logo-color); letter-spacing: var(--navbar-logo-tracking); }
+  .logo .light { font-weight: var(--navbar-logo-weight-light); letter-spacing: var(--navbar-logo-tracking-light); }
   .nav-buttons { display: flex; gap: var(--space-16); }
   .nav-btn {
     padding: var(--space-8) var(--space-16);
@@ -75,7 +75,7 @@ const links = [
     padding: var(--space-16) var(--space-12);
     border-bottom: var(--outline) solid var(--color-primary);
   }
-  .mobile-logo { font-size: 16px; letter-spacing: 2px; color: var(--color-primary); }
+  .mobile-logo { font-size: var(--navbar-logo-size); letter-spacing: var(--navbar-logo-tracking); color: var(--navbar-logo-color); }
   .nav-close { background: none; border: none; padding: 0; cursor: pointer; font-size: 24px; line-height: 1; color: var(--color-primary); }
   .mobile-menu-list { display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-16) var(--space-12) var(--space-24); }
   .mobile-menu-list a { font-size: 34px; line-height: 1; color: var(--color-primary); font-weight: var(--font-weight-regular); }
