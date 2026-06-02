@@ -252,7 +252,7 @@
      Headings default to brand blue; supporting roles to ink / grey. */
   --text-display: var(--color-primary);
   --text-h1:      var(--ink);
-  --text-h2:      var(--color-primary);
+  --text-h2:      var(--ink);   /* every h2-size element renders ink in practice; retuned so they stop overriding (Ticket 31) */
   --text-h3:      var(--ink);
   --text-body:    var(--ink);
   --text-caption: var(--grey-mid);

@@ -37,7 +37,6 @@ const TYPE_ROLES = [
   { role: 'stat', a: '20+', b: '100M+' },
   { role: 'title', a: '/experience', b: '/process' },
   { role: 'hero-title', a: '/about', b: 'Hero overlay' },
-  { role: 'navbar-logo', a: 'laurence-dawes.', b: 'design' },
 ];
 ---
 <!DOCTYPE html>
@@ -146,6 +145,14 @@ const TYPE_ROLES = [
             </div>
           </div>
         ))}
+        {/* navbar-logo is two-tone (a lighter wordmark half + a bold half), so the
+            generic two-line sample can't represent it — render the real wordmark. */}
+        <div class="sg-type-row">
+          <code class="sg-role-name">navbar-logo</code>
+          <div class="sg-sample sg-sample-navbar-logo">
+            <p><span class="light">laurence-dawes.</span>design</p>
+          </div>
+        </div>
       </section>
 
       <!-- TYPOGRAPHY: FONT FAMILY -->
@@ -722,6 +729,7 @@ const TYPE_ROLES = [
       .sg-sample-hero-title p { font-size: var(--font-size-hero-title); line-height: var(--leading-hero-title); letter-spacing: var(--tracking-hero-title); color: var(--text-hero-title); font-weight: var(--weight-hero-title); text-align: center; }
       .sg-sample-navbar-logo { max-width: 100%; }
       .sg-sample-navbar-logo p { font-size: var(--navbar-logo-size); letter-spacing: var(--navbar-logo-tracking); color: var(--navbar-logo-color); font-weight: var(--navbar-logo-weight); }
+      .sg-sample-navbar-logo .light { font-weight: var(--navbar-logo-weight-light); letter-spacing: var(--navbar-logo-tracking-light); }
       .sg-demo-family { font-size: 26px; flex: 1 1 240px; }
 
       /* Font-weight samples */
